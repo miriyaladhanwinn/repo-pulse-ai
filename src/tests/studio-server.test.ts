@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import { StudioServer } from '../server/studio-server.js';
 
 describe('StudioServer E2E Verification', () => {
-  const studio = new StudioServer(3948); // Unique test port
+  const studio = new StudioServer(0); // Dynamic ephemeral port for isolated tests
   let port: number;
 
   before(async () => {

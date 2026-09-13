@@ -96,7 +96,7 @@ describe('AuthService Core Security & OTP Unit Tests', () => {
 });
 
 describe('StudioServer Authentication HTTP Endpoints E2E', () => {
-  const studio = new StudioServer(3949);
+  const studio = new StudioServer(0);
   let port: number;
 
   before(async () => {

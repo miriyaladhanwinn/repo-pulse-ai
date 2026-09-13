@@ -322,13 +322,23 @@ export class StudioServer {
       this.server.on('error', (err: any) => {
         if (err.code === 'EADDRINUSE') {
           this.port++;
-          this.server?.listen(this.port);
+          this.server?.listen(this.port, () => {
+            const addr = this.server?.address();
+            if (typeof addr === 'object' && addr !== null) {
+              this.port = addr.port;
+            }
+            resolve(this.port);
+          });
         } else {
           reject(err);
         }
       });
 
       this.server.listen(this.port, () => {
+        const addr = this.server?.address();
+        if (typeof addr === 'object' && addr !== null) {
+          this.port = addr.port;
+        }
         resolve(this.port);
       });
     });
