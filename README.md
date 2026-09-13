@@ -18,7 +18,7 @@
 [![DeepSeek R1](https://img.shields.io/badge/DeepSeek-R1%20Reasoning-10b981.svg)](https://deepseek.com/)
 [![Models Catalog](https://img.shields.io/badge/AI%20Models-540%2B%20Verified-blue.svg)](https://github.com/miriyaladhanwinn/repo-pulse-ai)
 [![Assistants](https://img.shields.io/badge/Assistants-54%20Personas-purple.svg)](https://github.com/miriyaladhanwinn/repo-pulse-ai)
-[![Tests](https://img.shields.io/badge/tests-64%2F64%20passing-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-65%2F65%20passing-brightgreen.svg)]()
 
 <p align="center">
   <a href="#-desktop--studio-experience">Desktop Experience</a> •
@@ -63,7 +63,7 @@ RepoPulse is engineered from the ground up to match the desktop elegance of Cher
 | **Maintainer Personas** | Generic system prompts | **54 Specialized Personas across 8 Disciplines (Security, AST, SRE, DB, CI/CD, etc.)** |
 | **Local Knowledge Vault** | Basic vector indexing | **Hybrid BM25 Term-Saturation Engine with zero-dependency instant retrieval** |
 | **Automated PR Bot** | None | **Native GitHub Action Workflow (`codex-review.yml`) for pull request automation** |
-| **Test Suite Coverage** | ~10 Integration tests | **64/64 Tests Passing across 19 Suites in 473ms (`node:test`)** |
+| **Test Suite Coverage** | ~10 Integration tests | **65/65 Tests Passing across 19 Suites in 508ms (`node:test`)** |
 
 ---
 
