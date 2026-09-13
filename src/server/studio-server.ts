@@ -16,6 +16,7 @@ import { MCPServer } from '../mcp/mcp-server.js';
 import { MultiModelRouter } from '../providers/multi-model-router.js';
 import { AssistantMatrix } from '../core/assistant-matrix.js';
 import { KnowledgeVault } from '../core/knowledge-vault.js';
+import { AuthService } from './auth-service.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,6 +26,7 @@ export class StudioServer {
   private provider: OpenAICodexProvider;
   private mcpServer: MCPServer;
   private knowledgeVault: KnowledgeVault;
+  private authService: AuthService;
   private server: http.Server | null = null;
 
   constructor(port: number = 3000) {
@@ -32,6 +34,7 @@ export class StudioServer {
     this.provider = new OpenAICodexProvider();
     this.mcpServer = new MCPServer();
     this.knowledgeVault = new KnowledgeVault();
+    this.authService = new AuthService();
 
     // Pre-populate with essential maintainer guides
     this.knowledgeVault.indexDocument({
@@ -75,6 +78,81 @@ export class StudioServer {
               res.writeHead(404, { 'Content-Type': 'text/plain' });
               res.end('Studio UI asset not found');
             }
+            return;
+          }
+
+          // Serve Identity & Authentication Portal
+          if (req.method === 'GET' && (url.pathname === '/login' || url.pathname === '/signup' || url.pathname === '/verify' || url.pathname === '/auth')) {
+            let authHtmlPath = path.join(__dirname, 'assets', 'auth.html');
+            if (!fs.existsSync(authHtmlPath)) {
+              authHtmlPath = path.join(process.cwd(), 'src', 'server', 'assets', 'auth.html');
+            }
+            if (!fs.existsSync(authHtmlPath)) {
+              authHtmlPath = path.join(__dirname, '..', '..', 'src', 'server', 'assets', 'auth.html');
+            }
+            if (fs.existsSync(authHtmlPath)) {
+              const html = fs.readFileSync(authHtmlPath, 'utf-8');
+              res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+              res.end(html);
+            } else {
+              res.writeHead(404, { 'Content-Type': 'text/plain' });
+              res.end('Auth portal asset not found');
+            }
+            return;
+          }
+
+          // Auth: Register (Step 1: Credentials -> 6-digit OTP)
+          if (req.method === 'POST' && url.pathname === '/api/auth/register') {
+            const body = await this.readBody(req);
+            const { username, email, password } = JSON.parse(body || '{}');
+            const result = this.authService.register(username, email, password);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(result));
+            return;
+          }
+
+          // Auth: Verify Code (Step 2: 6-digit OTP -> Activated User Session)
+          if (req.method === 'POST' && url.pathname === '/api/auth/verify') {
+            const body = await this.readBody(req);
+            const { email, code } = JSON.parse(body || '{}');
+            const result = this.authService.verifyCode(email, code);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(result));
+            return;
+          }
+
+          // Auth: Login (Email/Username + Password)
+          if (req.method === 'POST' && url.pathname === '/api/auth/login') {
+            const body = await this.readBody(req);
+            const { identifier, password } = JSON.parse(body || '{}');
+            const result = this.authService.login(identifier, password);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(result));
+            return;
+          }
+
+          // Auth: Resend OTP Code
+          if (req.method === 'POST' && url.pathname === '/api/auth/resend-code') {
+            const body = await this.readBody(req);
+            const { email } = JSON.parse(body || '{}');
+            const result = this.authService.resendCode(email);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(result));
+            return;
+          }
+
+          // Auth: Get Active Session
+          if (req.method === 'GET' && url.pathname === '/api/auth/session') {
+            const authHeader = req.headers['authorization'] || '';
+            const token = authHeader.replace(/^Bearer\s+/i, '') || url.searchParams.get('token') || '';
+            const session = this.authService.validateToken(token);
+            if (!session) {
+              res.writeHead(401, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ error: 'Unauthorized or expired session' }));
+              return;
+            }
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ session }));
             return;
           }
 
@@ -244,6 +322,10 @@ export class StudioServer {
         resolve();
       }
     });
+  }
+
+  public getAuthService(): AuthService {
+    return this.authService;
   }
 
   private readBody(req: http.IncomingMessage): Promise<string> {

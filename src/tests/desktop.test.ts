@@ -28,6 +28,8 @@ describe('Native Desktop Architecture & Cherry Parity Verification', () => {
     assert.ok(content.includes("backgroundMaterial: 'acrylic'"), 'Supports Windows 11 acrylic material');
     assert.ok(content.includes("vibrancy: 'under-window'"), 'Supports macOS Apple Liquid Glass vibrancy');
     assert.ok(content.includes('requestSingleInstanceLock'), 'Enforces single-instance application lock');
+    assert.ok(content.includes('setAsDefaultProtocolClient'), 'Registers repopulse:// protocol client');
+    assert.ok(content.includes('handleDeepLink'), 'Implements handleDeepLink method');
   });
 
   test('Preload context bridge defines secure desktop API window bindings', async () => {
@@ -45,6 +47,8 @@ describe('Native Desktop Architecture & Cherry Parity Verification', () => {
     assert.ok(content.includes('openExternal: (url: string)'), 'Exposes secure external link opener');
     assert.ok(content.includes('selectDirectory: ()'), 'Exposes native folder picker');
     assert.ok(content.includes('getSystemInfo: ()'), 'Exposes native hardware/system diagnostics');
+    assert.ok(content.includes('openAuthPortal: ()'), 'Exposes openAuthPortal IPC');
+    assert.ok(content.includes('onDeepLink: (callback:'), 'Exposes onDeepLink listener');
   });
 
   test('Apple Duo fluid closing animation and dynamic island are integrated in UI', async () => {
@@ -57,13 +61,14 @@ describe('Native Desktop Architecture & Cherry Parity Verification', () => {
     assert.ok(html.includes('view-models'), 'Contains 540+ Model Explorer Matrix');
     assert.ok(html.includes('siri-border') || html.includes('siri'), 'Contains Apple Siri glow and glass styling');
     assert.ok(html.includes('window.electronAPI'), 'Contains native desktop IPC hooks in renderer');
+    assert.ok(html.includes('openAuthPage'), 'Contains openAuthPage launcher');
   });
 
   test('package.json specifies native desktop execution scripts', async () => {
     const pkgPath = path.join(rootDir, 'package.json');
     const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
     
-    assert.equal(pkg.version, '2.2.0');
+    assert.equal(pkg.version, '2.3.0');
     assert.ok(pkg.scripts.desktop, 'Contains npm run desktop script');
     assert.ok(pkg.devDependencies.electron, 'Contains electron devDependency');
     assert.equal(pkg.main, 'dist/desktop/main.js', 'Points main to Electron desktop entry');

@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RepoPulse Cloud • Sign In & Verification</title>
+  <style>
+    :root {
+      --bg: #04050c;
+      --card-bg: rgba(14, 18, 36, 0.72);
+      --card-border: rgba(255, 255, 255, 0.12);
+      --card-border-glow: rgba(99, 102, 241, 0.35);
+      --accent-indigo: #6366f1;
+      --accent-cyan: #06b6d4;
+      --accent-emerald: #10b981;
+      --accent-purple: #a855f7;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --glass-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.65), 0 0 40px rgba(99, 102, 241, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient Kinetic Aurora */
+    .aurora-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .aurora-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.45;
+      animation: floatOrb 18s ease-in-out infinite alternate;
+    }
+
+    .orb-1 {
+      width: 550px;
+      height: 550px;
+      background: radial-gradient(circle, #6366f1, transparent 70%);
+      top: -100px;
+      left: 20%;
+    }
+
+    .orb-2 {
+      width: 480px;
+      height: 480px;
+      background: radial-gradient(circle, #06b6d4, transparent 70%);
+      bottom: -120px;
+      right: 15%;
+      animation-duration: 22s;
+    }
+
+    .orb-3 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, #a855f7, transparent 70%);
+      top: 40%;
+      right: 35%;
+      animation-duration: 14s;
+    }
+
+    @keyframes floatOrb {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(40px, -30px) scale(1.08); }
+      100% { transform: translate(-30px, 40px) scale(0.95); }
+    }
+
+    /* Apple Dynamic Island Pill */
+    .dynamic-island {
+      position: fixed;
+      top: 24px;
+      height: 38px;
+      padding: 0 18px;
+      background: rgba(10, 14, 28, 0.85);
+      backdrop-filter: blur(28px) saturate(190%);
+      -webkit-backdrop-filter: blur(28px) saturate(190%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.4px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+      z-index: 50;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .island-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-emerald);
+      box-shadow: 0 0 12px var(--accent-emerald);
+      animation: pulseDot 2s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.7; }
+    }
+
+    /* Main Auth Container */
+    .auth-wrapper {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 480px;
+      padding: 20px;
+    }
+
+    .auth-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(36px) saturate(180%);
+      -webkit-backdrop-filter: blur(36px) saturate(180%);
+      border: 1px solid var(--card-border);
+      border-radius: 28px;
+      padding: 38px 34px;
+      box-shadow: var(--glass-shadow);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+    }
+
+    /* Siri Glow Perimeter */
+    .auth-card::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 28px;
+      padding: 1.5px;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.6), rgba(6, 182, 212, 0.2), rgba(168, 85, 247, 0.5), transparent 60%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    .brand-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .brand-logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 58px;
+      height: 58px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(6, 182, 212, 0.15));
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      font-size: 26px;
+      margin-bottom: 14px;
+      box-shadow: 0 8px 20px -4px rgba(99, 102, 241, 0.4);
+    }
+
+    .brand-title {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(180deg, #ffffff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+
+    .brand-subtitle {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Tab Switcher */
+    .tab-pills {
+      display: flex;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 4px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .tab-pill {
+      flex: 1;
+      text-align: center;
+      padding: 9px 0;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      border: none;
+      background: transparent;
+    }
+
+    .tab-pill.active {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 18px;
+      text-align: left;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 7px;
+      letter-spacing: 0.2px;
+      text-transform: uppercase;
+    }
+
+    .input-box {
+      width: 100%;
+      height: 44px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 0 14px;
+      font-size: 14px;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .input-box:focus {
+      border-color: var(--accent-indigo);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.22);
+      background: rgba(0, 0, 0, 0.55);
+    }
+
+    .password-wrap {
+      position: relative;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      font-size: 13px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .password-toggle:hover {
+      color: var(--text-muted);
+    }
+
+    /* Primary Button */
+    .btn-submit {
+      width: 100%;
+      height: 46px;
+      margin-top: 10px;
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 13px;
+      color: #fff;
+      font-size: 14.5px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 10px 24px -4px rgba(99, 102, 241, 0.5);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-1.5px);
+      box-shadow: 0 14px 28px -4px rgba(99, 102, 241, 0.65);
+      filter: brightness(1.08);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0.5px);
+    }
+
+    /* 6-Digit OTP Inputs */
+    .otp-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 24px 0;
+    }
+
+    .otp-digit {
+      width: 54px;
+      height: 60px;
+      font-size: 26px;
+      font-weight: 700;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1.5px solid rgba(255, 255, 255, 0.14);
+      border-radius: 14px;
+      color: #fff;
+      outline: none;
+      transition: all 0.25s ease;
+    }
+
+    .otp-digit:focus {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 0 3.5px rgba(6, 182, 212, 0.25);
+      background: rgba(0, 0, 0, 0.7);
+      transform: translateY(-2px);
+    }
+
+    /* Notification Sandbox Badge */
+    .sandbox-toast {
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 20px;
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: #cbd5e1;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .sandbox-toast b {
+      color: var(--accent-cyan);
+      font-family: monospace;
+      font-size: 14px;
+      letter-spacing: 1px;
+    }
+
+    /* Error Message Box */
+    .error-box {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      border-radius: 12px;
+      padding: 10px 14px;
+      margin-bottom: 16px;
+      font-size: 12.5px;
+      color: #fca5a5;
+      display: none;
+    }
+
+    /* Steps Containers */
+    .step-view {
+      display: none;
+      animation: fadeInStep 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .step-view.active {
+      display: block;
+    }
+
+    @keyframes fadeInStep {
+      from { opacity: 0; transform: translateY(12px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Step 3: Success Screen */
+    .success-hero {
+      text-align: center;
+      padding: 10px 0 20px;
+    }
+
+    .success-checkmark {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(6, 182, 212, 0.2));
+      border: 2px solid rgba(16, 185, 129, 0.6);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 38px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 35px rgba(16, 185, 129, 0.35);
+      animation: springBounce 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes springBounce {
+      0% { transform: scale(0.2); opacity: 0; }
+      70% { transform: scale(1.15); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+
+    .btn-handoff {
+      width: 100%;
+      height: 48px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 14px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.45);
+      transition: all 0.25s ease;
+      margin-top: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-handoff:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 30px -5px rgba(16, 185, 129, 0.6);
+    }
+
+    .btn-close-tab {
+      width: 100%;
+      height: 42px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-close-tab:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .resend-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12.5px;
+      color: var(--text-dim);
+      margin-top: 14px;
+    }
+
+    .resend-link {
+      color: var(--accent-cyan);
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .resend-link.disabled {
+      color: var(--text-dim);
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    /* Apple Duo Closing Simulation */
+    .closing-physics {
+      animation: duoCloseTab 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+
+    @keyframes duoCloseTab {
+      0% { transform: scale(1) rotateY(0); opacity: 1; filter: blur(0); }
+      50% { transform: scale(0.96) rotateY(-15deg); opacity: 0.8; filter: blur(2px); }
+      100% { transform: scale(0.85) rotateY(-85deg); opacity: 0; filter: blur(14px); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Ambient Lights -->
+  <div class="aurora-bg">
+    <div class="aurora-orb orb-1"></div>
+    <div class="aurora-orb orb-2"></div>
+    <div class="aurora-orb orb-3"></div>
+  </div>
+
+  <!-- Apple Dynamic Island -->
+  <div class="dynamic-island">
+    <div class="island-dot"></div>
+    <span>REPO_PULSE_CLOUD • AUTH_GATEWAY</span>
+  </div>
+
+  <div class="auth-wrapper">
+    <div class="auth-card" id="auth-card">
+      
+      <!-- Brand Header -->
+      <div class="brand-header">
+        <div class="brand-logo">⚡</div>
+        <h1 class="brand-title">RepoPulse Studio</h1>
+        <p class="brand-subtitle" id="header-desc">Sign in or create your maintainer account to link with the native desktop shell.</p>
+      </div>
+
+      <div class="error-box" id="error-box"></div>
+
+      <!-- ================= STEP 1: CREDENTIALS (SIGN UP / SIGN IN) ================= -->
+      <div class="step-view active" id="view-credentials">
+        <div class="tab-pills">
+          <button class="tab-pill active" id="tab-signup" onclick="switchAuthMode('signup')">Create Account</button>
+          <button class="tab-pill" id="tab-signin" onclick="switchAuthMode('signin')">Sign In</button>
+        </div>
+
+        <form id="auth-form" onsubmit="handleCredentialsSubmit(event)">
+          <div class="form-group" id="group-username">
+            <label class="form-label">Username</label>
+            <input type="text" class="input-box" id="field-username" placeholder="e.g. miriyaladhanwinn" autocomplete="username" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="input-box" id="field-email" placeholder="name@domain.com" required autocomplete="email" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <div class="password-wrap">
+              <input type="password" class="input-box" id="field-password" placeholder="At least 6 characters" required autocomplete="current-password" />
+              <button type="button" class="password-toggle" onclick="togglePasswordVisibility()">Show</button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit" id="btn-submit-creds">
+            <span>Continue & Get Verification Code</span>
+            <span style="font-size: 16px;">→</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- ================= STEP 2: 6-DIGIT EMAIL OTP VERIFICATION ================= -->
+      <div class="step-view" id="view-otp">
+        <div class="sandbox-toast" id="sandbox-toast">
+          <span>📬</span>
+          <div>
+            <div>Verification code sent to <b id="otp-target-email">user@domain.com</b></div>
+            <div style="margin-top: 4px;">Sandbox Simulated Inbox Code: <b id="sandbox-code-preview">------</b></div>
+          </div>
+        </div>
+
+        <p style="font-size: 13.5px; color: var(--text-muted); text-align: center; margin-bottom: 18px;">
+          Enter the 6-digit verification code sent to your email.
+        </p>
+
+        <form onsubmit="handleOtpSubmit(event)">
+          <div class="otp-container">
+            <input type="text" maxlength="1" class="otp-digit" id="otp-0" autofocus />
+            <input type="text" maxlength="1" class="otp-digit" id="otp-1" />
+            <input type="text" maxlength="1" class="otp-digit" id="otp-2" />
+            <input type="text" maxlength="1" class="otp-digit" id="otp-3" />
+            <input type="text" maxlength="1" class="otp-digit" id="otp-4" />
+            <input type="text" maxlength="1" class="otp-digit" id="otp-5" />
+          </div>
+
+          <button type="submit" class="btn-submit" id="btn-verify-otp">
+            <span>Verify & Link Account</span>
+            <span style="font-size: 16px;">✓</span>
+          </button>
+        </form>
+
+        <div class="resend-row">
+          <span>Didn't receive the code?</span>
+          <a class="resend-link" id="resend-btn" onclick="resendOtpCode()">Resend Code</a>
+        </div>
+      </div>
+
+      <!-- ================= STEP 3: SUCCESS & DESKTOP HANDOFF ================= -->
+      <div class="step-view" id="view-success">
+        <div class="success-hero">
+          <div class="success-checkmark">✓</div>
+          <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 8px;">Account Created & Verified!</h2>
+          <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.6;">
+            Welcome, <b id="success-username" style="color:#fff;">developer</b>! Your identity is authenticated and granted <b style="color:var(--accent-cyan);">Titan PRO Tier</b> access.
+          </p>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 16px; text-align: left; font-size: 12.5px; color: var(--text-muted);">
+          <div style="display:flex; justify-content:space-between; margin-bottom: 6px;">
+            <span>Handoff Status:</span>
+            <span style="color:var(--accent-emerald); font-weight:600;">● Connected</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom: 6px;">
+            <span>Target Shell:</span>
+            <span style="color:#fff;">RepoPulse Desktop</span>
+          </div>
+          <div style="display:flex; justify-content:space-between;">
+            <span>Action Required:</span>
+            <span style="color:#cbd5e1;">Close tab to continue in app</span>
+          </div>
+        </div>
+
+        <button class="btn-handoff" onclick="returnToDesktopApp()">
+          <span>Launch RepoPulse Desktop Shell</span>
+          <span>↗</span>
+        </button>
+
+        <button class="btn-close-tab" onclick="closeAuthTab()">
+          Close This Tab & Return to App
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let authMode = 'signup'; // 'signup' | 'signin'
+    let currentEmail = '';
+    let currentUsername = '';
+    let authToken = '';
+    let resendCountdown = 60;
+    let resendTimer = null;
+
+    function switchAuthMode(mode) {
+      authMode = mode;
+      hideError();
+      const tabSignup = document.getElementById('tab-signup');
+      const tabSignin = document.getElementById('tab-signin');
+      const groupUsername = document.getElementById('group-username');
+      const btnSubmit = document.getElementById('btn-submit-creds');
+      const headerDesc = document.getElementById('header-desc');
+
+      if (mode === 'signup') {
+        tabSignup.classList.add('active');
+        tabSignin.classList.remove('active');
+        groupUsername.style.display = 'block';
+        btnSubmit.querySelector('span').innerText = 'Continue & Get Verification Code';
+        headerDesc.innerText = 'Create your maintainer account to link with the native desktop shell.';
+      } else {
+        tabSignin.classList.add('active');
+        tabSignup.classList.remove('active');
+        groupUsername.style.display = 'none';
+        btnSubmit.querySelector('span').innerText = 'Sign In to RepoPulse';
+        headerDesc.innerText = 'Sign in to access 540+ models, PR intelligence, and cloud telemetry.';
+      }
+    }
+
+    function togglePasswordVisibility() {
+      const passField = document.getElementById('field-password');
+      const btn = event.target;
+      if (passField.type === 'password') {
+        passField.type = 'text';
+        btn.innerText = 'Hide';
+      } else {
+        passField.type = 'password';
+        btn.innerText = 'Show';
+      }
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('error-box');
+      el.innerText = msg;
+      el.style.display = 'block';
+    }
+
+    function hideError() {
+      const el = document.getElementById('error-box');
+      el.innerText = '';
+      el.style.display = 'none';
+    }
+
+    function showStep(stepId) {
+      document.querySelectorAll('.step-view').forEach(el => el.classList.remove('active'));
+      const target = document.getElementById(stepId);
+      if (target) target.classList.add('active');
+    }
+
+    // Step 1: Submit Credentials
+    async function handleCredentialsSubmit(e) {
+      e.preventDefault();
+      hideError();
+
+      const email = document.getElementById('field-email').value.trim();
+      const password = document.getElementById('field-password').value;
+      const username = document.getElementById('field-username').value.trim() || email.split('@')[0];
+
+      if (!email) {
+        showError('Please enter a valid email.');
+        return;
+      }
+
+      currentEmail = email;
+      currentUsername = username;
+
+      if (authMode === 'signup') {
+        try {
+          const res = await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, email, password })
+          });
+          const data = await res.json();
+          if (!res.ok || !data.success) {
+            showError(data.error || 'Registration failed.');
+            return;
+          }
+
+          // Show Step 2: OTP
+          document.getElementById('otp-target-email').innerText = email;
+          document.getElementById('sandbox-code-preview').innerText = data.code || 'Check Email';
+          showStep('view-otp');
+          setupOtpInputs();
+          startResendCountdown();
+
+          // Auto-fill OTP in sandbox/dev mode after 1s for seamless user UX
+          if (data.code) {
+            setTimeout(() => {
+              for (let i = 0; i < 6; i++) {
+                const box = document.getElementById(`otp-${i}`);
+                if (box) box.value = data.code[i];
+              }
+            }, 800);
+          }
+        } catch (err) {
+          showError(err.message);
+        }
+      } else {
+        // Sign In Flow
+        try {
+          const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ identifier: email, password })
+          });
+          const data = await res.json();
+          if (!res.ok || !data.success) {
+            showError(data.error || 'Invalid credentials.');
+            return;
+          }
+
+          handleSuccessfulAuth(data);
+        } catch (err) {
+          showError(err.message);
+        }
+      }
+    }
+
+    // Step 2: OTP Input Handling
+    function setupOtpInputs() {
+      const inputs = document.querySelectorAll('.otp-digit');
+      inputs.forEach((input, idx) => {
+        input.value = '';
+        input.addEventListener('input', (e) => {
+          if (input.value.length === 1 && idx < inputs.length - 1) {
+            inputs[idx + 1].focus();
+          }
+        });
+
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Backspace' && !input.value && idx > 0) {
+            inputs[idx - 1].focus();
+          }
+        });
+
+        input.addEventListener('paste', (e) => {
+          e.preventDefault();
+          const pasteData = (e.clipboardData || window.clipboardData).getData('text').trim();
+          if (/^\d{6}$/.test(pasteData)) {
+            pasteData.split('').forEach((char, i) => {
+              if (inputs[i]) inputs[i].value = char;
+            });
+            inputs[5].focus();
+          }
+        });
+      });
+      inputs[0]?.focus();
+    }
+
+    async function handleOtpSubmit(e) {
+      e.preventDefault();
+      hideError();
+
+      let code = '';
+      for (let i = 0; i < 6; i++) {
+        code += (document.getElementById(`otp-${i}`)?.value || '');
+      }
+
+      if (code.length !== 6) {
+        showError('Please enter all 6 digits of the verification code.');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/auth/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: currentEmail, code })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          showError(data.error || 'Invalid or expired verification code.');
+          return;
+        }
+
+        handleSuccessfulAuth(data);
+      } catch (err) {
+        showError(err.message);
+      }
+    }
+
+    function startResendCountdown() {
+      resendCountdown = 60;
+      const btn = document.getElementById('resend-btn');
+      btn.classList.add('disabled');
+      btn.innerText = `Resend Code (${resendCountdown}s)`;
+
+      clearInterval(resendTimer);
+      resendTimer = setInterval(() => {
+        resendCountdown--;
+        if (resendCountdown <= 0) {
+          clearInterval(resendTimer);
+          btn.classList.remove('disabled');
+          btn.innerText = 'Resend Code';
+        } else {
+          btn.innerText = `Resend Code (${resendCountdown}s)`;
+        }
+      }, 1000);
+    }
+
+    async function resendOtpCode() {
+      try {
+        const res = await fetch('/api/auth/resend-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: currentEmail })
+        });
+        const data = await res.json();
+        if (data.code) {
+          document.getElementById('sandbox-code-preview').innerText = data.code;
+        }
+        startResendCountdown();
+      } catch (err) {
+        showError('Failed to resend verification code.');
+      }
+    }
+
+    // Step 3: Success & Handoff
+    function handleSuccessfulAuth(authData) {
+      authToken = authData.token;
+      currentUsername = authData.user.username;
+
+      // Persist to local storage
+      localStorage.setItem('repopulse_token', authData.token);
+      localStorage.setItem('repopulse_user', JSON.stringify(authData.user));
+
+      // Broadcast authentication to any other open tabs or Electron webview
+      try {
+        const channel = new BroadcastChannel('repopulse_auth');
+        channel.postMessage({ type: 'AUTHENTICATED', token: authData.token, user: authData.user });
+      } catch (_) {}
+
+      // Update success view
+      document.getElementById('success-username').innerText = authData.user.username;
+      showStep('view-success');
+
+      // Attempt deep-link back to Electron desktop shell
+      setTimeout(() => {
+        try {
+          window.location.href = `repopulse://auth?token=${encodeURIComponent(authData.token)}&user=${encodeURIComponent(authData.user.username)}`;
+        } catch (_) {}
+      }, 800);
+    }
+
+    function returnToDesktopApp() {
+      window.location.href = `repopulse://auth?token=${encodeURIComponent(authToken)}&user=${encodeURIComponent(currentUsername)}`;
+    }
+
+    function closeAuthTab() {
+      const card = document.getElementById('auth-card');
+      card.classList.add('closing-physics');
+      setTimeout(() => {
+        window.close();
+        // If window.close() blocked by browser:
+        document.body.innerHTML = `
+          <div style="text-align:center; padding: 40px; color:#94a3b8;">
+            <div style="font-size:48px; margin-bottom:12px;">✓</div>
+            <h2 style="color:#fff; margin-bottom:8px;">Authentication Linked</h2>
+            <p>You can now safely close this browser window and continue inside <b>RepoPulse Studio</b>.</p>
+          </div>
+        `;
+      }, 700);
+    }
+
+    // Check if user is already authenticated
+    window.addEventListener('DOMContentLoaded', () => {
+      const existingToken = localStorage.getItem('repopulse_token');
+      const existingUser = localStorage.getItem('repopulse_user');
+      if (existingToken && existingUser) {
+        try {
+          const user = JSON.parse(existingUser);
+          document.getElementById('success-username').innerText = user.username;
+          // Optionally let them re-verify or continue
+        } catch (_) {}
+      }
+    });
+  </script>
+</body>
+</html>

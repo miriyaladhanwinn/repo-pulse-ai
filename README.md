@@ -6,10 +6,11 @@
 **540+ Production AI Models • Apple Duo Fluid Closing Animation • Dynamic Island • Native Electron Shell • AST-Bounded Review • MCP Server**
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Release](https://img.shields.io/badge/Release-v2.2.0-indigo.svg)](https://github.com/miriyaladhanwinn/repo-pulse-ai/releases)
+[![Release](https://img.shields.io/badge/Release-v2.3.0-indigo.svg)](https://github.com/miriyaladhanwinn/repo-pulse-ai/releases)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7+-blue.svg)](https://www.typescriptlang.org/)
 [![Electron](https://img.shields.io/badge/Electron-44.3+-2b2d42.svg)](https://www.electronjs.org/)
+[![Auth](https://img.shields.io/badge/Auth-6--Digit%20Email%20OTP-10b981.svg)](https://github.com/miriyaladhanwinn/repo-pulse-ai)
 [![MCP](https://img.shields.io/badge/MCP-Compatible-orange.svg)](https://modelcontextprotocol.io/)
 [![OpenAI Codex](https://img.shields.io/badge/OpenAI-Codex%20Powered-purple.svg)](https://developers.openai.com/codex/)
 [![Claude 3.7](https://img.shields.io/badge/Anthropic-Claude%203.7%20Sonnet-d97706.svg)](https://anthropic.com/)
@@ -17,10 +18,11 @@
 [![DeepSeek R1](https://img.shields.io/badge/DeepSeek-R1%20Reasoning-10b981.svg)](https://deepseek.com/)
 [![Models Catalog](https://img.shields.io/badge/AI%20Models-540%2B%20Verified-blue.svg)](https://github.com/miriyaladhanwinn/repo-pulse-ai)
 [![Assistants](https://img.shields.io/badge/Assistants-54%20Personas-purple.svg)](https://github.com/miriyaladhanwinn/repo-pulse-ai)
-[![Tests](https://img.shields.io/badge/tests-56%2F56%20passing-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-64%2F64%20passing-brightgreen.svg)]()
 
 <p align="center">
   <a href="#-desktop--studio-experience">Desktop Experience</a> •
+  <a href="#-web-authentication--email-otp-portal">Auth Portal</a> •
   <a href="#-repopulse-vs-cherry-studio">RepoPulse vs Cherry Studio</a> •
   <a href="#-540-model-catalog">540+ Models</a> •
   <a href="#-quick-start">Quick Start</a> •
@@ -35,7 +37,7 @@
 
 ## 📖 Overview
 
-**RepoPulse AI (Titan Desktop Edition)** is a desktop-native open-source maintainer harness and multi-model gateway engineered to eliminate software maintenance debt. Combining **native Electron desktop architecture with Apple Liquid Glass framing**, **Apple Duo fluid closing animations**, **Dynamic Island pill status**, a **universal catalog of 540+ verified AI models**, **54 specialized maintainer personas**, **AST-bounded diff decomposition**, and an embedded **Model Context Protocol (MCP)** server, RepoPulse provides an unmatched development intelligence workstation.
+**RepoPulse AI (Titan Desktop Edition)** is a desktop-native open-source maintainer harness and multi-model gateway engineered to eliminate software maintenance debt. Combining **native Electron desktop architecture with Apple Liquid Glass framing**, **Apple Duo fluid closing animations**, **Dynamic Island pill status**, a **web authentication & 6-digit email OTP verification portal**, a **universal catalog of 540+ verified AI models**, **54 specialized maintainer personas**, **AST-bounded diff decomposition**, and an embedded **Model Context Protocol (MCP)** server, RepoPulse provides an unmatched development intelligence workstation.
 
 Whether operated as a standalone **native Electron desktop app**, a **local Web Studio on `localhost:3000`**, an autonomous **GitHub Actions Review Bot**, or as an **MCP Server** powering ChatGPT Pro, Claude Code, Cursor, and Cherry Studio, RepoPulse delivers high-velocity, verifiable code governance.
 
@@ -48,6 +50,7 @@ RepoPulse is engineered from the ground up to match the desktop elegance of Cher
 | Capability | Cherry Studio | RepoPulse AI (Titan Edition) |
 | :--- | :--- | :--- |
 | **Native Desktop App** | Electron | **Native Electron + Apple Liquid Glass + Windows Acrylic** |
+| **Auth & Verification** | Standard Web Login | **Apple Liquid Glass Portal + 6-Digit Email OTP + Auto-Close Tab + Deep-Link Handoff (`repopulse://`)** |
 | **Closing Animation** | Standard window dismiss | **Apple Duo Fluid Spring Closing Animation (`@keyframes appleDuoClosing`)** |
 | **Interactive Pill** | None | **Apple Dynamic Island with real-time model & AST status telemetry** |
 | **Color Schemes** | Dark / Light | **5 Dynamic High-Contrast Themes (Siri Iridescent, Midnight, Cyberpunk, Obsidian, Emerald)** |
@@ -58,7 +61,7 @@ RepoPulse is engineered from the ground up to match the desktop elegance of Cher
 | **Maintainer Personas** | Generic system prompts | **54 Specialized Personas across 8 Disciplines (Security, AST, SRE, DB, CI/CD, etc.)** |
 | **Local Knowledge Vault** | Basic vector indexing | **Hybrid BM25 Term-Saturation Engine with zero-dependency instant retrieval** |
 | **Automated PR Bot** | None | **Native GitHub Action Workflow (`codex-review.yml`) for pull request automation** |
-| **Test Suite Coverage** | ~10 Integration tests | **56/56 Tests Passing across 17 Suites in 305ms (`node:test`)** |
+| **Test Suite Coverage** | ~10 Integration tests | **64/64 Tests Passing across 19 Suites in 473ms (`node:test`)** |
 
 ---
 
@@ -87,6 +90,13 @@ Explore, test, and route across every major foundation model in existence:
 - **Security & Zero-Trust**: Vulnerability Auditor, Prototype Pollution Hunter, ReDoS Specialist, Hardcoded Secret Sniffer.
 - **Architecture & Systems**: AST Refactorer, Distributed Systems SRE, Event-Loop Latency Optimizer, Database Query Tuner.
 - **DevOps & Protocols**: CI/CD Hardener, OIDC Minting Specialist, MCP Protocol Dispatcher, Docker Shrinker.
+
+### 4. Apple Liquid Glass Web Authentication & Email Verification Portal
+Engineered for frictionless developer onboarding and native desktop handoff:
+- **Interactive Web Portal (`/login`, `/signup`, `/verify`)**: Served with kinetic aurora mesh orbs, Apple Liquid Glass card, and real-time password strength metering.
+- **6-Digit Email OTP Verification**: Cryptographically secure numeric OTP codes generated via `node:crypto`, auto-advancing across 6 individual digit inputs with paste support.
+- **Titan PRO Tier Activation**: Verification marks user accounts as verified and grants immediate PRO Tier benefits.
+- **Deep-Link Desktop Handoff (`repopulse://auth?token=...`)**: Links browser sessions directly with the native Electron desktop shell, triggers Apple Duo fluid closing physics, and signals the user to return to the app.
 
 ---
 
@@ -232,6 +242,8 @@ npm test
 
 ```
 ✔ AssistantMatrix Persona Registry (6 tests)
+✔ AuthService Core Security & OTP Unit Tests (6 tests)
+✔ StudioServer Authentication HTTP Endpoints E2E (2 tests)
 ✔ TokenBudgeter Module (2 tests)
 ✔ Native Desktop Architecture & Cherry Parity Verification (4 tests)
 ✔ DiffAnalyzer Module (3 tests)
@@ -243,11 +255,11 @@ npm test
 ✔ MultiModelRouter Frontier Gateway (6 tests)
 ✔ StudioServer E2E Verification (7 tests)
 
-ℹ tests 56
-ℹ suites 17
-ℹ pass 56
+ℹ tests 64
+ℹ suites 19
+ℹ pass 64
 ℹ fail 0
-ℹ duration_ms 305ms
+ℹ duration_ms 473ms
 ```
 
 ---

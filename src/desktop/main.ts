@@ -25,6 +25,15 @@ export class RepoPulseDesktopApp {
   }
 
   private initLifecycle(): void {
+    // Register custom protocol for web-to-desktop auth handoff
+    if (process.defaultApp) {
+      if (process.argv.length >= 2) {
+        app.setAsDefaultProtocolClient('repopulse', process.execPath, [path.resolve(process.argv[1])]);
+      }
+    } else {
+      app.setAsDefaultProtocolClient('repopulse');
+    }
+
     // Enforce single instance lock
     const gotLock = app.requestSingleInstanceLock();
     if (!gotLock) {
@@ -32,11 +41,23 @@ export class RepoPulseDesktopApp {
       return;
     }
 
-    app.on('second-instance', () => {
+    app.on('second-instance', (_event, commandLine) => {
       if (this.mainWindow) {
         if (this.mainWindow.isMinimized()) this.mainWindow.restore();
         this.mainWindow.focus();
+
+        // Check if secondary launch was triggered by deep-link protocol (Windows)
+        const deepLink = commandLine.find(arg => arg.startsWith('repopulse://'));
+        if (deepLink) {
+          this.handleDeepLink(deepLink);
+        }
       }
+    });
+
+    // macOS protocol handoff
+    app.on('open-url', (event, url) => {
+      event.preventDefault();
+      this.handleDeepLink(url);
     });
 
     app.whenReady().then(async () => {
@@ -155,6 +176,11 @@ export class RepoPulseDesktopApp {
       return result.canceled ? null : result.filePaths[0];
     });
 
+    ipcMain.handle('desktop:openAuthPortal', async () => {
+      await shell.openExternal(`http://localhost:${this.serverPort}/login?source=desktop`);
+      return true;
+    });
+
     ipcMain.handle('desktop:getSystemInfo', () => {
       return {
         platform: process.platform,
@@ -167,6 +193,20 @@ export class RepoPulseDesktopApp {
         studioPort: this.serverPort
       };
     });
+  }
+
+  private handleDeepLink(url: string): void {
+    if (!url) return;
+    try {
+      console.log(`[RepoPulse Desktop] Received deep link: ${url}`);
+      if (this.mainWindow) {
+        if (this.mainWindow.isMinimized()) this.mainWindow.restore();
+        this.mainWindow.focus();
+        this.mainWindow.webContents.send('desktop:deepLink', url);
+      }
+    } catch (err) {
+      console.error('[RepoPulse Desktop] Error handling deep link:', err);
+    }
   }
 
   private setupApplicationMenu(): void {
@@ -189,6 +229,14 @@ export class RepoPulseDesktopApp {
       {
         label: 'File',
         submenu: [
+          {
+            label: 'Sign In to RepoPulse Cloud...',
+            accelerator: 'CmdOrCtrl+Shift+L',
+            click: async () => {
+              await shell.openExternal(`http://localhost:${this.serverPort}/login?source=desktop`);
+            }
+          },
+          { type: 'separator' },
           {
             label: 'Open Repository Directory...',
             accelerator: 'CmdOrCtrl+O',
