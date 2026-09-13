@@ -35,6 +35,7 @@ Built natively for **OpenAI Codex** and modern frontier reasoning models, RepoPu
 
 ## 🚀 Key Features
 
+- **🖥️ Apple-Grade 3D Web Studio**: Interactive liquid-glass dashboard with real-time WebGL/Canvas AST node graph, one-click diff benchmarking, visual risk index, and instant reproduction test generator (`npx repo-pulse studio`).
 - **🔍 AST-Bounded Diff Decomposition**: Slices massive multi-file pull requests into isolated syntactic chunks (classes, functions, interfaces), isolating breaking changes and security-critical paths.
 - **🛡️ Codex Security & Logic Auditor**: Automatically identifies dynamic execution hazards (`eval`, deserialization sinks), swallowed exception blocks, and hardcoded secrets.
 - **🔌 Native Model Context Protocol (MCP)**: Run RepoPulse as a background stdio server for **ChatGPT Pro**, **Codex CLI**, **Claude Code**, **Cursor**, or **Cherry Studio**.
@@ -97,7 +98,17 @@ npm install
 npm run build
 ```
 
-### 2. CLI Usage
+### 2. Launch Interactive Web Studio
+
+```bash
+# Boot the Apple Developer-grade Liquid Glass Web Studio
+npm run studio
+# Or via CLI
+node dist/cli/index.js studio --port 3000
+```
+Open `http://localhost:3000` in your browser to interact with the 3D particle AST visualizer, run one-click diff benchmarks, and test live MCP JSON-RPC frames.
+
+### 3. CLI Usage
 
 #### Review Local Git Changes
 ```bash

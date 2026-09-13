@@ -29,6 +29,7 @@ Usage: repo-pulse <command> [options]
 Commands:
   review [options]     Review a unified git diff using OpenAI Codex AST heuristics
   triage [options]     Classify and triage an open-source issue description
+  studio [--port <n>]  Launch the interactive 3D Web Studio (Apple Developer grade)
   serve-mcp            Start standard Model Context Protocol (MCP) stdio server
   health               Verify provider configurations and credentials
   help                 Display this help reference
@@ -179,6 +180,21 @@ async function main() {
     case 'health':
       await handleHealth();
       break;
+    case 'studio': {
+      const { StudioServer } = await import('../server/studio-server.js');
+      let port = 3000;
+      const portIdx = args.indexOf('--port');
+      if (portIdx !== -1 && args[portIdx + 1]) {
+        port = parseInt(args[portIdx + 1], 10);
+      }
+      const studio = new StudioServer(port);
+      const activePort = await studio.start();
+      printBanner();
+      console.log(`⚡ RepoPulse Maintainer Studio live at: http://localhost:${activePort}`);
+      console.log(`   Interactive 3D PR Reviewer, Triage Engine & MCP Inspector ready.`);
+      console.log(`   Press Ctrl+C to shutdown studio.\n`);
+      break;
+    }
     case 'help':
     case '--help':
     case '-h':

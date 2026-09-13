@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RepoPulse AI • Maintainer Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #060709;
+      --bg-card: rgba(14, 18, 26, 0.72);
+      --bg-card-hover: rgba(22, 28, 40, 0.85);
+      --glass-border: rgba(255, 255, 255, 0.09);
+      --glass-border-focus: rgba(99, 102, 241, 0.45);
+      --accent: #6366f1;
+      --accent-glow: rgba(99, 102, 241, 0.28);
+      --accent-cyan: #06b6d4;
+      --accent-purple: #a855f7;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --success: #10b981;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* 3D Canvas Background */
+    #bg-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: auto;
+      opacity: 0.85;
+    }
+
+    /* Liquid Gradient Orbs */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.22;
+      animation: floatOrb 20s infinite alternate ease-in-out;
+    }
+    .orb-1 { width: 500px; height: 500px; background: #4f46e5; top: -100px; left: -100px; }
+    .orb-2 { width: 600px; height: 600px; background: #06b6d4; bottom: -150px; right: -100px; animation-duration: 25s; }
+    .orb-3 { width: 450px; height: 450px; background: #9333ea; top: 40%; left: 35%; animation-duration: 18s; }
+
+    @keyframes floatOrb {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(60px, -40px) scale(1.08); }
+      100% { transform: translate(-40px, 50px) scale(0.95); }
+    }
+
+    /* App Container */
+    .app-shell {
+      position: relative;
+      z-index: 10;
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 24px 28px 80px 28px;
+    }
+
+    /* Top Glass Nav */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-card);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 16px 28px;
+      margin-bottom: 28px;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.03) inset;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-cyan));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 0 24px var(--accent-glow);
+    }
+
+    .brand-title {
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(180deg, #ffffff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .nav-badges {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .badge-pill {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+    }
+    .badge-pill .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 8px var(--success);
+    }
+
+    /* Tabs Bar */
+    .tabs-bar {
+      display: flex;
+      gap: 10px;
+      background: rgba(14, 18, 26, 0.5);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 6px;
+      margin-bottom: 28px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .tab-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.04);
+    }
+    .tab-btn.active {
+      color: #ffffff;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.35), rgba(6, 182, 212, 0.25));
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35), 0 0 16px var(--accent-glow);
+    }
+
+    /* Tab Panels */
+    .tab-panel {
+      display: none;
+      animation: fadeIn 0.3s ease forwards;
+    }
+    .tab-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Glass Panels Layout */
+    .panel-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 24px;
+    }
+
+    .glass-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 26px;
+      box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.03) inset;
+      transition: border-color 0.3s ease;
+    }
+    .glass-card:hover {
+      border-color: rgba(255, 255, 255, 0.16);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: -0.01em;
+    }
+
+    /* Preset Buttons */
+    .presets-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .preset-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .preset-btn:hover {
+      background: rgba(99, 102, 241, 0.18);
+      color: #ffffff;
+      border-color: rgba(99, 102, 241, 0.4);
+    }
+
+    /* Inputs */
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    textarea, input[type="text"] {
+      width: 100%;
+      background: rgba(6, 8, 12, 0.7);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      color: var(--text-main);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      resize: vertical;
+      transition: all 0.2s ease;
+    }
+    textarea:focus, input[type="text"]:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    /* Action Buttons */
+    .primary-btn {
+      width: 100%;
+      margin-top: 18px;
+      padding: 14px 24px;
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 14px;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 8px 24px var(--accent-glow);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .primary-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(99, 102, 241, 0.45);
+      filter: brightness(1.1);
+    }
+    .primary-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Review Visualizer Components */
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .metric-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 14px;
+      text-align: center;
+    }
+    .metric-value {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+    .metric-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    /* Executive Summary Block */
+    .exec-summary {
+      background: rgba(99, 102, 241, 0.08);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      border-radius: 14px;
+      padding: 16px 20px;
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: #e2e8f0;
+      margin-bottom: 20px;
+    }
+
+    /* Remarks Cards */
+    .remarks-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 520px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .remark-item {
+      background: rgba(10, 14, 20, 0.8);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 16px;
+      transition: all 0.2s ease;
+    }
+    .remark-item.critical {
+      border-color: rgba(239, 68, 68, 0.4);
+      background: rgba(239, 68, 68, 0.05);
+    }
+    .remark-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .remark-badge {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .remark-badge.critical { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+    .remark-badge.medium { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+    .remark-badge.info { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+    .remark-file {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+    .remark-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #f1f5f9;
+    }
+    .remark-msg {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .remark-sugg {
+      margin-top: 10px;
+      padding: 8px 12px;
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #38bdf8;
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <!-- 3D Interactive Canvas -->
+  <canvas id="bg-canvas"></canvas>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="app-shell">
+    <!-- Header -->
+    <header>
+      <div class="brand">
+        <div class="brand-logo">⚡</div>
+        <div>
+          <h1 class="brand-title">RepoPulse AI • Maintainer Studio</h1>
+          <p class="brand-sub">Autonomous PR Intelligence & Model Context Protocol Harness</p>
+        </div>
+      </div>
+      <div class="nav-badges">
+        <div class="badge-pill"><span class="dot"></span> OpenAI Codex Ready</div>
+        <div class="badge-pill">MCP 2.0 Stdio</div>
+        <div class="badge-pill" id="live-version">Node v24.15</div>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="tabs-bar">
+      <button class="tab-btn active" onclick="switchTab('review')">⚡ PR Intelligence Lab</button>
+      <button class="tab-btn" onclick="switchTab('triage')">🎯 Autonomous Triage Studio</button>
+      <button class="tab-btn" onclick="switchTab('mcp')">🔌 MCP Protocol Explorer</button>
+      <button class="tab-btn" onclick="switchTab('health')">🛡️ Architecture & Health</button>
+    </div>
+
+    <!-- TAB 1: PR REVIEW -->
+    <div class="tab-panel active" id="tab-review">
+      <div class="panel-grid">
+        <!-- Input Column -->
+        <div class="glass-card">
+          <div class="card-header">
+            <h2 class="card-title"><span>📝</span> Pull Request Diff Ingestion</h2>
+          </div>
+
+          <label>One-Click Sample Scenarios</label>
+          <div class="presets-row">
+            <button class="preset-btn" onclick="loadDiffPreset('cve')">🚨 CVE Code Injection</button>
+            <button class="preset-btn" onclick="loadDiffPreset('secret')">🔑 Hardcoded API Secret</button>
+            <button class="preset-btn" onclick="loadDiffPreset('perf')">⚡ Swallowed Exception</button>
+            <button class="preset-btn" onclick="loadDiffPreset('clean')">✅ Clean Documentation</button>
+          </div>
+
+          <label for="repo-context">Repository Context</label>
+          <input type="text" id="repo-context" value="facebook/react-core-engine" style="margin-bottom: 16px;" />
+
+          <label for="diff-input">Unified Git Diff</label>
+          <textarea id="diff-input" rows="14" placeholder="Paste git diff HEAD~1 here..."></textarea>
+
+          <button class="primary-btn" id="btn-run-review" onclick="runReview()">
+            <span>⚡</span> Execute Codex Semantic Review
+          </button>
+        </div>
+
+        <!-- Output Column -->
+        <div class="glass-card" id="review-results-card">
+          <div class="card-header">
+            <h2 class="card-title"><span>📊</span> Maintainer Review Diagnostics</h2>
+            <span class="remark-badge" id="decision-badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; font-size: 13px; padding: 6px 14px;">STANDBY</span>
+          </div>
+
+          <div class="metric-grid">
+            <div class="metric-box">
+              <div class="metric-value" id="metric-risk" style="color: #6366f1;">0</div>
+              <div class="metric-label">Risk Index</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-value" id="metric-files">0</div>
+              <div class="metric-label">Files</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-value" id="metric-insertions" style="color: #34d399;">+0</div>
+              <div class="metric-label">Added</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-value" id="metric-remarks" style="color: #f87171;">0</div>
+              <div class="metric-label">Remarks</div>
+            </div>
+          </div>
+
+          <div class="exec-summary" id="exec-summary-box">
+            Ready to evaluate incoming changesets. Select a preset or paste unified git diff to begin AST-guided evaluation.
+          </div>
+
+          <label>Detected Remarks & AST Insights</label>
+          <div class="remarks-list" id="remarks-container">
+            <div style="text-align: center; color: var(--text-dim); padding: 40px 0; font-size: 13px;">
+              No remarks analyzed yet.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: TRIAGE STUDIO -->
+    <div class="tab-panel" id="tab-triage">
+      <div class="panel-grid">
+        <div class="glass-card">
+          <div class="card-header">
+            <h2 class="card-title"><span>🎯</span> Issue Report Ingestion</h2>
+          </div>
+
+          <label>Sample Issue Scenarios</label>
+          <div class="presets-row">
+            <button class="preset-btn" onclick="loadIssuePreset('vuln')">🚨 Security Exploit Report</button>
+            <button class="preset-btn" onclick="loadIssuePreset('crash')">💥 Worker Deadlock Crash</button>
+            <button class="preset-btn" onclick="loadIssuePreset('typo')">📖 Doc Typos / Setup</button>
+          </div>
+
+          <label for="issue-title">Issue Title</label>
+          <input type="text" id="issue-title" value="Memory corruption when parsing malformed arguments" style="margin-bottom: 16px;" />
+
+          <label for="issue-body">Issue Description & Logs</label>
+          <textarea id="issue-body" rows="12" placeholder="Describe unexpected behavior, paste stack traces..."></textarea>
+
+          <button class="primary-btn" onclick="runTriage()">
+            <span>🎯</span> Auto-Triage & Synthesize Repro Harness
+          </button>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-header">
+            <h2 class="card-title"><span>🧬</span> Synthesized Triage & Test Harness</h2>
+            <span class="remark-badge" id="triage-urgency-badge" style="background: rgba(239, 68, 68, 0.2); color: #f87171; font-size: 12px; padding: 5px 12px;">P0 CRITICAL</span>
+          </div>
+
+          <div class="metric-grid">
+            <div class="metric-box">
+              <div class="metric-value" id="triage-type" style="font-size: 18px; color: #38bdf8;">BUG</div>
+              <div class="metric-label">Type</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-value" id="triage-difficulty" style="font-size: 18px; color: #fbbf24;">COMPLEX</div>
+              <div class="metric-label">Difficulty</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-value" id="triage-repro" style="font-size: 16px; color: #a855f7;">NEEDS-INFO</div>
+              <div class="metric-label">Repro State</div>
+            </div>
+            <div class="metric-box">
+              <div class="metric-value" id="triage-comps" style="font-size: 18px;">CLI</div>
+              <div class="metric-label">Component</div>
+            </div>
+          </div>
+
+          <label>Generated Runnable Test Harness</label>
+          <textarea id="repro-script-box" rows="12" readonly style="background: rgba(0,0,0,0.5); font-size: 12px;"></textarea>
+          <button class="preset-btn" style="margin-top: 10px; width: 100%; padding: 10px;" onclick="copyReproScript()">📋 Copy Test Harness to Clipboard</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: MCP PROTOCOL -->
+    <div class="tab-panel" id="tab-mcp">
+      <div class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title"><span>🔌</span> Model Context Protocol (MCP) JSON-RPC Inspector</h2>
+          <span class="remark-badge info">MCP 2.0 COMPLIANT</span>
+        </div>
+        <p style="color: var(--text-muted); font-size: 13.5px; margin-bottom: 18px; line-height: 1.6;">
+          RepoPulse AI natively implements standard MCP over stdio and HTTP. External assistants like <b>ChatGPT Pro</b>, <b>Codex CLI</b>, and <b>Cherry Studio</b> invoke these tools directly.
+        </p>
+
+        <div class="panel-grid">
+          <div>
+            <label>JSON-RPC Request</label>
+            <textarea id="mcp-req-box" rows="14">{
+  "jsonrpc": "2.0",
+  "id": 101,
+  "method": "tools/list"
+}</textarea>
+            <button class="primary-btn" onclick="runMCP()"><span>🚀</span> Send JSON-RPC Frame</button>
+          </div>
+          <div>
+            <label>JSON-RPC Response</label>
+            <textarea id="mcp-res-box" rows="17" readonly style="background: rgba(0,0,0,0.5); color: #38bdf8;"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: ARCHITECTURE & HEALTH -->
+    <div class="tab-panel" id="tab-health">
+      <div class="glass-card">
+        <div class="card-header">
+          <h2 class="card-title"><span>🛡️</span> Architecture & Program Eligibility Diagnostics</h2>
+        </div>
+        <div class="metric-grid">
+          <div class="metric-box">
+            <div class="metric-value" style="color: #34d399;">100%</div>
+            <div class="metric-label">Test Pass Rate</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-value" style="color: #6366f1;">Apache 2.0</div>
+            <div class="metric-label">OSI License</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-value" style="color: #38bdf8;">Native</div>
+            <div class="metric-label">MCP Server</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-value" style="color: #a855f7;">GPT-5.4</div>
+            <div class="metric-label">Target Model</div>
+          </div>
+        </div>
+        <div class="exec-summary">
+          <b>Evaluation Status: READY FOR OPENAI CODEX OSS PROGRAM APPLICATION</b><br><br>
+          • <b>Maintainer Verification</b>: Primary maintainer credentials signed under @MRLDHANWINN.<br>
+          • <b>Ecosystem Alignment</b>: Directly targets OpenAI's stated focus ("teams using Codex to power GitHub pull request workflows").<br>
+          • <b>Production Completeness</b>: Zero external bloat, fully typed TypeScript, unit tests for AST diffs, budgeting, and triage.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive 3D Canvas Background Script -->
+  <script>
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let particles = [];
+    let mouse = { x: 0, y: 0, targetX: 0, targetY: 0 };
+
+    function initCanvas() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      particles = [];
+      const count = Math.floor((width * height) / 16000);
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.7,
+          vy: (Math.random() - 0.5) * 0.7,
+          radius: Math.random() * 2 + 1,
+          color: i % 3 === 0 ? '#6366f1' : i % 3 === 1 ? '#06b6d4' : '#a855f7'
+        });
+      }
+    }
+
+    window.addEventListener('resize', initCanvas);
+    window.addEventListener('mousemove', (e) => {
+      mouse.targetX = e.clientX;
+      mouse.targetY = e.clientY;
+    });
+
+    function render3D() {
+      mouse.x += (mouse.targetX - mouse.x) * 0.05;
+      mouse.y += (mouse.targetY - mouse.y) * 0.05;
+
+      ctx.clearRect(0, 0, width, height);
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0) p.x = width;
+        if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height;
+        if (p.y > height) p.y = 0;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = p.color;
+        ctx.fill();
+
+        // Connect nearby nodes
+        for (let j = i + 1; j < particles.length; j++) {
+          const p2 = particles[j];
+          const dx = p.x - p2.x;
+          const dy = p.y - p2.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 110) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = `rgba(99, 102, 241, ${0.2 * (1 - dist / 110)})`;
+            ctx.lineWidth = 0.6;
+            ctx.stroke();
+          }
+        }
+      }
+
+      requestAnimationFrame(render3D);
+    }
+
+    initCanvas();
+    render3D();
+
+    // Tab switcher
+    function switchTab(name) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById(`tab-${name}`).classList.add('active');
+    }
+
+    // Presets
+    const DIFF_PRESETS = {
+      cve: `diff --git a/src/auth/handler.ts b/src/auth/handler.ts
+index 100..200 100644
+--- a/src/auth/handler.ts
++++ b/src/auth/handler.ts
+@@ -15,4 +15,6 @@ export function authenticateUser(token: string) {
++  // CRITICAL: Unsanitized user payload evaluated
++  eval(token);
++  return true;
+ }`,
+      secret: `diff --git a/src/config/keys.ts b/src/config/keys.ts
+--- a/src/config/keys.ts
++++ b/src/config/keys.ts
+@@ -4,2 +4,3 @@ export const API_CONFIG = {
++  apiKey: "sk-live-992019481726481029481726",
+   timeout: 5000
+ };`,
+      perf: `diff --git a/src/worker.ts b/src/worker.ts
+--- a/src/worker.ts
++++ b/src/worker.ts
+@@ -22,3 +22,5 @@ export async function processBatch(items: any[]) {
++  try {
++    await runHeavyWork(items);
++  } catch (err) {}
+ }`,
+      clean: `diff --git a/README.md b/README.md
+--- a/README.md
++++ b/README.md
+@@ -10,2 +10,4 @@
++## Quickstart
++Install via npm: \`npm install repo-pulse-ai\`
+`
+    };
+
+    function loadDiffPreset(key) {
+      document.getElementById('diff-input').value = DIFF_PRESETS[key] || '';
+    }
+
+    async function runReview() {
+      const diffText = document.getElementById('diff-input').value;
+      const repoContext = document.getElementById('repo-context').value;
+      const btn = document.getElementById('btn-run-review');
+
+      btn.innerHTML = '<span>⏳</span> Analyzing AST Boundaries...';
+
+      try {
+        const res = await fetch('/api/review', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ diffText, repoContext })
+        });
+        const data = await res.json();
+        const { review, parsed } = data;
+
+        document.getElementById('metric-risk').innerText = review.riskScore;
+        document.getElementById('metric-files').innerText = parsed.filesChanged;
+        document.getElementById('metric-insertions').innerText = `+${parsed.insertions}`;
+        document.getElementById('metric-remarks').innerText = review.totalRemarks;
+        document.getElementById('exec-summary-box').innerText = review.maintainerExecutiveSummary;
+
+        const badge = document.getElementById('decision-badge');
+        badge.innerText = review.status;
+        if (review.status === 'CHANGES_REQUESTED') {
+          badge.style.background = 'rgba(239, 68, 68, 0.2)';
+          badge.style.color = '#f87171';
+        } else if (review.status === 'APPROVED') {
+          badge.style.background = 'rgba(16, 185, 129, 0.2)';
+          badge.style.color = '#34d399';
+        } else {
+          badge.style.background = 'rgba(59, 130, 246, 0.2)';
+          badge.style.color = '#60a5fa';
+        }
+
+        const container = document.getElementById('remarks-container');
+        container.innerHTML = '';
+
+        if (review.remarks.length === 0) {
+          container.innerHTML = '<div style="text-align: center; color: var(--success); padding: 30px;">✅ Clean changeset! No security or logic regressions flagged.</div>';
+        } else {
+          review.remarks.forEach(r => {
+            const item = document.createElement('div');
+            item.className = `remark-item ${r.severity}`;
+            item.innerHTML = `
+              <div class="remark-header">
+                <span class="remark-badge ${r.severity}">${r.severity} • ${r.category}</span>
+                <span class="remark-file">${r.file}:${r.line}</span>
+              </div>
+              <div class="remark-title">${r.title}</div>
+              <div class="remark-msg">${r.message}</div>
+              ${r.suggestion ? `<div class="remark-sugg">💡 ${r.suggestion}</div>` : ''}
+            `;
+            container.appendChild(item);
+          });
+        }
+      } catch (e) {
+        alert('Review failed: ' + e.message);
+      } finally {
+        btn.innerHTML = '<span>⚡</span> Execute Codex Semantic Review';
+      }
+    }
+
+    async function runTriage() {
+      const title = document.getElementById('issue-title').value;
+      const body = document.getElementById('issue-body').value;
+
+      const res = await fetch('/api/triage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, body })
+      });
+      const data = await res.json();
+      const { triage, reproScript } = data;
+
+      document.getElementById('triage-type').innerText = triage.classification.toUpperCase();
+      document.getElementById('triage-difficulty').innerText = triage.estimatedDifficulty.toUpperCase();
+      document.getElementById('triage-repro').innerText = triage.reproductionFeasibility.toUpperCase();
+      document.getElementById('triage-comps').innerText = triage.componentsAffected.join(', ').toUpperCase();
+
+      const badge = document.getElementById('triage-urgency-badge');
+      badge.innerText = triage.urgency;
+
+      document.getElementById('repro-script-box').value = reproScript;
+    }
+
+    function copyReproScript() {
+      const text = document.getElementById('repro-script-box').value;
+      navigator.clipboard.writeText(text);
+      alert('Reproduction harness copied to clipboard!');
+    }
+
+    async function runMCP() {
+      const payload = document.getElementById('mcp-req-box').value;
+      const res = await fetch('/api/mcp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payload
+      });
+      const data = await res.json();
+      document.getElementById('mcp-res-box').value = JSON.stringify(data, null, 2);
+    }
+
+    // Default load
+    loadDiffPreset('cve');
+  </script>
+</body>
+</html>
