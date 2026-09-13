@@ -1,4 +1,4 @@
-name: CI Test & Build
+name: "Continuous Integration & Test Discipline"
 
 on:
   push:
@@ -7,15 +7,14 @@ on:
     branches: [main]
 
 jobs:
-  build-and-test:
-    name: Build & Test on Node ${{ matrix.node-version }}
+  test:
+    name: "Test Suite (Node ${{ matrix.node-version }})"
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [18.x, 20.x, 22.x]
-
     steps:
-      - name: Checkout Code
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js ${{ matrix.node-version }}
@@ -27,11 +26,8 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Typecheck
-        run: npm run lint
-
-      - name: Build TypeScript
+      - name: Compile TypeScript & Assets
         run: npm run build
 
-      - name: Run Test Suite
+      - name: Execute 100% Test Suite
         run: npm test

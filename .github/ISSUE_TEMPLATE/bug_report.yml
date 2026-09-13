@@ -1,37 +1,28 @@
-name: 🐛 Bug Report
-description: File a reproducible bug report for RepoPulse AI
-labels: ["bug", "triage"]
+name: "Bug Report"
+description: "Report a bug or unexpected behavior in RepoPulse AI"
+labels: ["bug", "triage-needed"]
 body:
   - type: markdown
     attributes:
-      value: |
-        Thank you for reporting a bug! Please ensure you have tested against the latest version.
+      value: "Thanks for reporting an issue! Please provide detailed reproduction steps."
   - type: input
     id: version
     attributes:
-      label: RepoPulse Version
-      description: What version are you using? (e.g. 2.0.0)
-      placeholder: "2.0.0"
+      label: "RepoPulse Version"
+      placeholder: "v2.3.1"
     validations:
       required: true
   - type: textarea
     id: description
     attributes:
-      label: Bug Description
-      description: A clear and concise description of the bug.
+      label: "Description"
+      placeholder: "A clear and concise description of what the bug is."
     validations:
       required: true
   - type: textarea
-    id: repro
+    id: reproduction
     attributes:
-      label: Minimal Reproduction Steps
-      description: Steps or code snippet to trigger the fault.
-    validations:
-      required: true
-  - type: textarea
-    id: expected
-    attributes:
-      label: Expected Behavior
-      description: What did you expect to happen?
+      label: "Steps to Reproduce"
+      placeholder: "1. Run command '...'\n2. Inspect AST output..."
     validations:
       required: true

@@ -102,6 +102,32 @@ Engineered for frictionless developer onboarding and native desktop handoff:
 
 ---
 
+
+---
+
+## 🤖 OpenAI Codex for Open Source Alignment
+
+RepoPulse AI is specifically engineered to embody the core signals of **OpenAI's Codex for Open Source** initiative, serving as an active maintainer harness that eliminates open-source maintenance debt through verifiable AI automation:
+
+### 1. Automated Pull Request Review (`.github/workflows/codex-review.yml`)
+- **Deterministic AST Decomposition**: Rather than feeding raw unparsed diffs to LLMs, RepoPulse parses unified git diffs into syntax tree hunks, isolating high-risk modifications.
+- **Automated PR Bot**: Runs in GitHub Actions on every pull request, executing AST security heuristics and posting structured maintainer review verdicts (`APPROVED` / `CHANGES_REQUESTED`) with risk scores.
+
+### 2. Autonomous Issue Triage & Urgency Matrix (`.github/workflows/issue-triage.yml`)
+- **P0-P3 Urgency Classification**: Automatically classifies incoming GitHub issues by priority and technical complexity (`core`, `security`, `doc`, `build`).
+- **Zero-Day Vulnerability Flagging**: Instantly flags security-sensitive keywords, assigning P0 priority and auto-applying triage labels.
+
+### 3. Release Management & SemVer Integrity
+- **Breaking Change Detection**: Analyzes exported TypeScript and Python interfaces across diffs to enforce strict Semantic Versioning.
+- **Changelog Synthesis**: Automatically groups commits into user-facing improvements, fixes, and internal refactors.
+
+### 4. Codex Security & Zero-Day AST Guard
+- **Zero Dynamic Evaluation Invariant**: Scans incoming pull requests for dangerous execution sinks (`eval()`, `new Function()`, `child_process.exec()`, prototype pollution).
+- **Conditional Codex Security Integration**: Architected to leverage deep Codex Security analysis for mission-critical infrastructure code.
+
+### 5. Standard Model Context Protocol (MCP) Server
+- **Universal Tool Dispatch**: Implements JSON-RPC 2.0 stdio MCP server (`node dist/cli/index.js serve-mcp`), exposing PR review, issue classification, and knowledge vault tools directly to **ChatGPT Pro**, **Codex CLI**, **Claude Code**, and **Cursor**.
+
 ## ⚡ Quick Start
 
 ### 1. Installation

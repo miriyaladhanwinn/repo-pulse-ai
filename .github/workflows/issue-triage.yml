@@ -1,0 +1,57 @@
+name: "Automated Issue Triage & Urgency Classification"
+
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  issues: write
+
+jobs:
+  triage:
+    name: "RepoPulse AI • Issue Classifier"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Dependencies & Build
+        run: |
+          npm ci
+          npm run build
+
+      - name: Classify Issue
+        id: classify
+        run: |
+          node dist/cli/index.js triage --title "${{ github.event.issue.title }}" --body "${{ github.event.issue.body }}"
+
+      - name: Apply Suggested Labels
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const title = context.payload.issue.title.toLowerCase();
+            const body = (context.payload.issue.body || '').toLowerCase();
+            
+            const labels = ['triage-complete'];
+            if (title.includes('security') || body.includes('vulnerability') || body.includes('cve')) {
+              labels.push('security', 'priority-p0');
+            } else if (title.includes('bug') || title.includes('error') || title.includes('fail')) {
+              labels.push('bug', 'priority-p1');
+            } else if (title.includes('feature') || title.includes('enhancement')) {
+              labels.push('enhancement', 'priority-p2');
+            } else {
+              labels.push('question');
+            }
+
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: labels
+            });
