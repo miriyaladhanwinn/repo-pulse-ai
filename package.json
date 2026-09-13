@@ -1,7 +1,7 @@
 {
   "name": "repo-pulse-ai",
-  "version": "1.0.0",
-  "description": "Autonomous AI Maintainer Harness & PR Intelligence Engine for GitHub with Model Context Protocol (MCP)",
+  "version": "2.0.0",
+  "description": "Autonomous AI Maintainer Harness, PR Intelligence Lab & Multi-Model Gateway for GitHub with Model Context Protocol (MCP)",
   "main": "dist/index.js",
   "bin": {
     "repo-pulse": "dist/cli/index.js"
@@ -9,6 +9,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
+    "postbuild": "node -e \"const fs = require('fs'); fs.mkdirSync('dist/server/assets', { recursive: true }); fs.copyFileSync('src/server/assets/studio.html', 'dist/server/assets/studio.html');\"",
     "start": "node dist/cli/index.js",
     "studio": "node dist/cli/index.js studio",
     "test": "node --test dist/tests/**/*.test.js",
@@ -32,12 +33,12 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/MRLDHANWINN/repo-pulse-ai.git"
+    "url": "https://github.com/miriyaladhanwinn/repo-pulse-ai.git"
   },
   "bugs": {
-    "url": "https://github.com/MRLDHANWINN/repo-pulse-ai/issues"
+    "url": "https://github.com/miriyaladhanwinn/repo-pulse-ai/issues"
   },
-  "homepage": "https://github.com/MRLDHANWINN/repo-pulse-ai#readme",
+  "homepage": "https://github.com/miriyaladhanwinn/repo-pulse-ai#readme",
   "devDependencies": {
     "@types/node": "^22.10.0",
     "typescript": "^5.7.0"

@@ -24,7 +24,8 @@ describe('StudioServer E2E Verification', () => {
     const res = await fetch(`http://localhost:${port}/`);
     assert.equal(res.status, 200);
     const html = await res.text();
-    assert.ok(html.includes('RepoPulse AI • Maintainer Studio'));
+    assert.ok(html.includes('RepoPulse Studio'));
+    assert.ok(html.includes('Titan Edition v2.0'));
     assert.ok(html.includes('bg-canvas'));
     assert.ok(html.includes('PR Intelligence Lab'));
   });
@@ -50,11 +51,69 @@ describe('StudioServer E2E Verification', () => {
     assert.equal(data.review.status, 'CHANGES_REQUESTED');
   });
 
-  test('GET /api/health reports system status', async () => {
+  test('GET /api/models returns supported frontier and local models', async () => {
+    const res = await fetch(`http://localhost:${port}/api/models`);
+    assert.equal(res.status, 200);
+    const data = await res.json() as any;
+    assert.ok(Array.isArray(data.models));
+    assert.ok(data.models.length >= 6);
+  });
+
+  test('GET /api/assistants returns assistant matrix personas', async () => {
+    const res = await fetch(`http://localhost:${port}/api/assistants`);
+    assert.equal(res.status, 200);
+    const data = await res.json() as any;
+    assert.ok(Array.isArray(data.assistants));
+    assert.ok(data.assistants.length >= 6);
+  });
+
+  test('POST /api/chat completes universal chat request', async () => {
+    const res = await fetch(`http://localhost:${port}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [{ role: 'user', content: 'Audit this pull request for breaking changes.' }],
+        modelId: 'gpt-5.4-codex',
+        assistantId: 'maintainer-lead'
+      })
+    });
+
+    assert.equal(res.status, 200);
+    const data = await res.json() as any;
+    assert.equal(data.modelId, 'gpt-5.4-codex');
+    assert.ok(data.content.length > 0);
+  });
+
+  test('GET and POST /api/knowledge manages indexed documents', async () => {
+    const postRes = await fetch(`http://localhost:${port}/api/knowledge`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: 'Security Invariants',
+        path: 'security.md',
+        content: 'No arbitrary code execution allowed.',
+        category: 'doc'
+      })
+    });
+    assert.equal(postRes.status, 200);
+    const postData = await postRes.json() as any;
+    assert.ok(postData.doc.id);
+
+    const getRes = await fetch(`http://localhost:${port}/api/knowledge`);
+    assert.equal(getRes.status, 200);
+    const getData = await getRes.json() as any;
+    assert.ok(Array.isArray(getData.documents));
+    assert.ok(getData.documents.length >= 2);
+  });
+
+  test('GET /api/health reports system status and Titan metrics', async () => {
     const res = await fetch(`http://localhost:${port}/api/health`);
     assert.equal(res.status, 200);
     const data = await res.json() as any;
     assert.equal(data.status, 'operational');
     assert.ok(data.toolsCount >= 3);
+    assert.ok(data.modelsAvailable >= 6);
+    assert.ok(data.assistantsAvailable >= 6);
+    assert.ok(data.knowledgeDocsCount >= 1);
   });
 });

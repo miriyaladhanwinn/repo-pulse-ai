@@ -13,6 +13,9 @@ import { OpenAICodexProvider } from '../providers/openai-codex.js';
 import { IssueClassifier } from '../triage/issue-classifier.js';
 import { Reproducer } from '../triage/reproducer.js';
 import { MCPServer } from '../mcp/mcp-server.js';
+import { MultiModelRouter } from '../providers/multi-model-router.js';
+import { AssistantMatrix } from '../core/assistant-matrix.js';
+import { KnowledgeVault } from '../core/knowledge-vault.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,12 +24,22 @@ export class StudioServer {
   private port: number;
   private provider: OpenAICodexProvider;
   private mcpServer: MCPServer;
+  private knowledgeVault: KnowledgeVault;
   private server: http.Server | null = null;
 
   constructor(port: number = 3000) {
     this.port = port;
     this.provider = new OpenAICodexProvider();
     this.mcpServer = new MCPServer();
+    this.knowledgeVault = new KnowledgeVault();
+
+    // Pre-populate with essential maintainer guides
+    this.knowledgeVault.indexDocument({
+      title: 'RepoPulse Governance & Architectural Invariants',
+      path: 'docs/architecture.md',
+      category: 'doc',
+      content: 'RepoPulse enforces strict backward compatibility, zero dynamic evaluation sinks, bounded token scheduling, and native MCP stdio interoperability.'
+    });
   }
 
   public start(): Promise<number> {
@@ -35,7 +48,7 @@ export class StudioServer {
         // Enable CORS
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
         if (req.method === 'OPTIONS') {
           res.writeHead(204);
@@ -65,6 +78,45 @@ export class StudioServer {
             return;
           }
 
+          // 1. Models Catalog Endpoint
+          if (req.method === 'GET' && url.pathname === '/api/models') {
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ models: MultiModelRouter.getModels() }));
+            return;
+          }
+
+          // 2. Assistants Catalog Endpoint
+          if (req.method === 'GET' && url.pathname === '/api/assistants') {
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ assistants: AssistantMatrix.getAll() }));
+            return;
+          }
+
+          // 3. Multi-Model Universal Chat Endpoint
+          if (req.method === 'POST' && url.pathname === '/api/chat') {
+            const body = await this.readBody(req);
+            const { messages, modelId, assistantId, apiKeys, temperature } = JSON.parse(body || '{}');
+
+            const fullMessages = [...(messages || [])];
+            if (assistantId) {
+              const assistant = AssistantMatrix.getById(assistantId);
+              if (assistant && !fullMessages.some(m => m.role === 'system')) {
+                fullMessages.unshift({ role: 'system', content: assistant.systemPrompt });
+              }
+            }
+
+            const result = await MultiModelRouter.complete(fullMessages, {
+              modelId,
+              apiKeys,
+              temperature
+            });
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(result));
+            return;
+          }
+
+          // 4. PR Diff Review Endpoint
           if (req.method === 'POST' && url.pathname === '/api/review') {
             const body = await this.readBody(req);
             const { diffText, repoContext } = JSON.parse(body || '{}');
@@ -75,6 +127,7 @@ export class StudioServer {
             return;
           }
 
+          // 5. Issue Triage Endpoint
           if (req.method === 'POST' && url.pathname === '/api/triage') {
             const body = await this.readBody(req);
             const { id, title, body: issueBody } = JSON.parse(body || '{}');
@@ -93,6 +146,28 @@ export class StudioServer {
             return;
           }
 
+          // 6. Knowledge Vault Endpoints
+          if (req.method === 'GET' && url.pathname === '/api/knowledge') {
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ documents: this.knowledgeVault.getAll() }));
+            return;
+          }
+
+          if (req.method === 'POST' && url.pathname === '/api/knowledge') {
+            const body = await this.readBody(req);
+            const { title, path: docPath, content, category } = JSON.parse(body || '{}');
+            const doc = this.knowledgeVault.indexDocument({
+              title: title || 'Untitled Note',
+              path: docPath || 'snippet.ts',
+              content: content || '',
+              category: category || 'code'
+            });
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ doc }));
+            return;
+          }
+
+          // 7. MCP JSON-RPC Endpoint
           if (req.method === 'POST' && url.pathname === '/api/mcp') {
             const body = await this.readBody(req);
             const rpcReq = JSON.parse(body || '{}');
@@ -102,6 +177,7 @@ export class StudioServer {
             return;
           }
 
+          // 8. System Health Endpoint
           if (req.method === 'GET' && url.pathname === '/api/health') {
             const isConfigured = await this.provider.isConfigured();
             res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -111,6 +187,9 @@ export class StudioServer {
               hasApiKey: isConfigured,
               nodeVersion: process.version,
               toolsCount: this.mcpServer.getSupportedTools().length,
+              modelsAvailable: MultiModelRouter.getModels().length,
+              assistantsAvailable: AssistantMatrix.getAll().length,
+              knowledgeDocsCount: this.knowledgeVault.getAll().length,
               timestamp: new Date().toISOString()
             }));
             return;
@@ -126,7 +205,6 @@ export class StudioServer {
 
       this.server.on('error', (err: any) => {
         if (err.code === 'EADDRINUSE') {
-          // Fallback to port + 1
           this.port++;
           this.server?.listen(this.port);
         } else {
