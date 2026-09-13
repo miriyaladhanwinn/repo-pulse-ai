@@ -4,6 +4,31 @@ All notable changes to **RepoPulse AI** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-09-13 - Apple Liquid Glass & 540+ Models Horizon
+
+### Added
+- **Apple iOS 18 / macOS Liquid Glass Visual Engine**:
+  - Continuous ambient Aurora hue rotation (`@keyframes auroraHue`) on interactive canvas.
+  - Siri / Apple Intelligence iridescent dynamic glowing borders (`linear-gradient(90deg, #ff2d55, ...)`).
+  - 5 Dynamic Color Palettes switchable via real-time header picker:
+    1. **Apple Aurora** (Default - Space Black & Siri Glow)
+    2. **Space Titanium** (Deep Obsidian & Platinum Slate)
+    3. **Pacific Blue** (Midnight Navy & Marine Teal)
+    4. **Cyber Neon** (Void Black & Neon Magenta)
+    5. **Cupertino Mint** (Dark Forest & Apple Emerald)
+  - Specular glass rim reflections (`inset 0 1px 0 rgba(255, 255, 255, 0.18)`), spring physics micro-interactions, and message pop animations.
+- **Universal Model Catalog Expansion (540+ Models)**:
+  - 540 verified production AI models across 35 global providers with complete metadata.
+  - Apple Spotlight Model Switcher (`Cmd+K` / `Ctrl+K`) with instant search, category filters, and keyboard navigation.
+- **Assistant Matrix Expansion (54 Maintainer Personas)**:
+  - 54 specialized personas across 8 maintainer disciplines with category tabs and search.
+- **Multi-Session Chat & Markdown Export**:
+  - Isolated thread sessions with one-click export to GitHub-flavored Markdown.
+
+### Changed
+- Expanded automated test suite to 52 native unit and integration tests passing in under 300ms.
+- Updated StudioServer health check reporting 540 models and 54 assistants.
+
 ---
 
 ## [2.0.0] - 2026-09-13 - Titan Edition

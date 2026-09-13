@@ -12,8 +12,8 @@ RepoPulse AI is engineered as a decoupled, zero-runtime-overhead system consisti
 flowchart TB
     subgraph InputSurface["Input Layer"]
         CLI["Maintainer CLI"]
-        STUDIO["Liquid Glass Studio (Port 3000)"]
-        MCP_STDIO["Model Context Protocol (stdio)"]
+        STUDIO["Apple Liquid Glass Studio<br/>(Aurora Animations, Spotlight ⌘K, 5 Palettes)"]
+        MCP_STDIO["Model Context Protocol (stdio & JSON-RPC)"]
         GH_ACTIONS["GitHub Actions PR Bot"]
     end
 
@@ -21,13 +21,15 @@ flowchart TB
         DIFF["DiffAnalyzer<br/>(Unified Diff Parser)"]
         AST["ASTParser<br/>(Symbol Decomposition)"]
         BUDGET["TokenBudgeter<br/>(Prompt Chunk Planner)"]
+        MATRIX["AssistantMatrix<br/>(54 Maintainer Personas)"]
         TRIAGE["IssueClassifier & Reproducer"]
         VAULT["KnowledgeVault<br/>(BM25 Context Pinning)"]
     end
 
     subgraph ModelGateway["Universal Multi-Model Router"]
+        CATALOG["Universal Model Catalog (540+ Models)"]
         ROUTER["MultiModelRouter"]
-        OPENAI["OpenAI GPT-5.4 Codex / 4o"]
+        OPENAI["OpenAI GPT-5.4 Codex / 4o / o3"]
         CLAUDE["Anthropic Claude 3.7 Sonnet"]
         GEMINI["Google Gemini 2.5 Pro"]
         DEEPSEEK["DeepSeek R1 Reasoning"]
