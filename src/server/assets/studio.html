@@ -2337,6 +2337,36 @@ export function routeRequest(req: any, res: any) {
         sendChatMessage();
       }
     });
+
+    // Native Electron Desktop Integration Bridge
+    if (typeof window !== 'undefined' && window.electronAPI) {
+      console.log('⚡ Connected to RepoPulse Native Electron Shell');
+      if (window.electronAPI.onSpotlight) {
+        window.electronAPI.onSpotlight(() => {
+          openSpotlight();
+        });
+      }
+      if (window.electronAPI.onSwitchView) {
+        window.electronAPI.onSwitchView((view) => {
+          switchView(view);
+        });
+      }
+      if (window.electronAPI.onRepoOpened) {
+        window.electronAPI.onRepoOpened((dirPath) => {
+          if (document.getElementById('doc-path')) document.getElementById('doc-path').value = dirPath;
+          setIslandStatus('Opened: ' + dirPath.split(/[\\/]/).pop());
+        });
+      }
+      if (window.electronAPI.getSystemInfo) {
+        window.electronAPI.getSystemInfo().then(info => {
+          console.log('Native Desktop Environment:', info);
+          const island = document.getElementById('dynamic-island');
+          if (island) {
+            island.setAttribute('title', `Desktop Shell • Electron ${info.electronVersion} • ${info.modelsCount} Models`);
+          }
+        }).catch(() => {});
+      }
+    }
   </script>
 </body>
 </html>

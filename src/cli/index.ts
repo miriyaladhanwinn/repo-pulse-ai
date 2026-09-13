@@ -30,6 +30,7 @@ Commands:
   review [options]     Review a unified git diff using OpenAI Codex AST heuristics
   triage [options]     Classify and triage an open-source issue description
   studio [--port <n>]  Launch the interactive 3D Web Studio (Apple Developer grade)
+  desktop              Launch the native Electron desktop application (Apple Liquid Glass)
   serve-mcp            Start standard Model Context Protocol (MCP) stdio server
   health               Verify provider configurations and credentials
   help                 Display this help reference
@@ -193,6 +194,34 @@ async function main() {
       console.log(`⚡ RepoPulse Maintainer Studio live at: http://localhost:${activePort}`);
       console.log(`   Interactive 3D PR Reviewer, Triage Engine & MCP Inspector ready.`);
       console.log(`   Press Ctrl+C to shutdown studio.\n`);
+      break;
+    }
+    case 'desktop': {
+      const { spawn } = await import('child_process');
+      const { fileURLToPath } = await import('url');
+      const { createRequire } = await import('module');
+      const req = createRequire(import.meta.url);
+      const electronPath = req('electron') as string;
+      const currentDir = path.dirname(fileURLToPath(import.meta.url));
+      const desktopMain = path.resolve(currentDir, '..', 'desktop', 'main.js');
+
+      printBanner();
+      console.log('⚡ Launching RepoPulse Studio Native Desktop Shell...');
+      console.log('   Native Apple Liquid Glass frame, Dynamic Island & 540+ AI model catalog.');
+
+      const child = spawn(electronPath, [desktopMain, ...args.slice(1)], {
+        stdio: 'inherit',
+        windowsHide: false
+      });
+
+      child.on('error', (err: Error) => {
+        console.error('Failed to spawn desktop process:', err.message);
+        console.log('Tip: You can also run the web studio directly via: repo-pulse studio');
+      });
+
+      child.on('exit', (code: number | null) => {
+        process.exit(code ?? 0);
+      });
       break;
     }
     case 'help':

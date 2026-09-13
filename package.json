@@ -1,8 +1,8 @@
 {
   "name": "repo-pulse-ai",
-  "version": "2.0.0",
-  "description": "Autonomous AI Maintainer Harness, PR Intelligence Lab & Multi-Model Gateway for GitHub with Model Context Protocol (MCP)",
-  "main": "dist/index.js",
+  "version": "2.2.0",
+  "description": "Autonomous AI Maintainer Harness, PR Intelligence Lab & Multi-Model Desktop Shell with 540+ AI Models & Apple Duo Animation",
+  "main": "dist/desktop/main.js",
   "bin": {
     "repo-pulse": "dist/cli/index.js"
   },
@@ -12,6 +12,7 @@
     "postbuild": "node -e \"const fs = require('fs'); fs.mkdirSync('dist/server/assets', { recursive: true }); fs.copyFileSync('src/server/assets/studio.html', 'dist/server/assets/studio.html');\"",
     "start": "node dist/cli/index.js",
     "studio": "node dist/cli/index.js studio",
+    "desktop": "npm run build && electron dist/desktop/main.js",
     "test": "node --test dist/tests/**/*.test.js",
     "pretest": "npm run build",
     "lint": "tsc --noEmit",
@@ -41,6 +42,7 @@
   "homepage": "https://github.com/miriyaladhanwinn/repo-pulse-ai#readme",
   "devDependencies": {
     "@types/node": "^22.10.0",
+    "electron": "^44.3.0",
     "typescript": "^5.7.0"
   }
 }
