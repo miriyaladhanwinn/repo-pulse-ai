@@ -3,28 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RepoPulse Cloud • Sign In & Verification</title>
+  <title>RepoPulse Studio • Sign In & Verification</title>
   <style>
     :root {
-      --bg: #04050c;
-      --card-bg: rgba(14, 18, 36, 0.72);
-      --card-border: rgba(255, 255, 255, 0.12);
-      --card-border-glow: rgba(99, 102, 241, 0.35);
-      --accent-indigo: #6366f1;
-      --accent-cyan: #06b6d4;
-      --accent-emerald: #10b981;
-      --accent-purple: #a855f7;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --text-dim: #64748b;
-      --glass-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.65), 0 0 40px rgba(99, 102, 241, 0.15);
+      --bg: #171717;
+      --card-bg: #212121;
+      --card-border: rgba(255, 255, 255, 0.1);
+      --input-bg: #2a2a2a;
+      --accent-green: #10a37f;
+      --text-main: #ececec;
+      --text-muted: #b4b4b4;
+      --text-dim: #737373;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -36,185 +32,83 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      overflow-x: hidden;
+      padding: 20px;
       position: relative;
     }
 
-    /* Ambient Kinetic Aurora */
-    .aurora-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
-    }
-
-    .aurora-orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(100px);
-      opacity: 0.45;
-      animation: floatOrb 18s ease-in-out infinite alternate;
-    }
-
-    .orb-1 {
-      width: 550px;
-      height: 550px;
-      background: radial-gradient(circle, #6366f1, transparent 70%);
-      top: -100px;
-      left: 20%;
-    }
-
-    .orb-2 {
-      width: 480px;
-      height: 480px;
-      background: radial-gradient(circle, #06b6d4, transparent 70%);
-      bottom: -120px;
-      right: 15%;
-      animation-duration: 22s;
-    }
-
-    .orb-3 {
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, #a855f7, transparent 70%);
-      top: 40%;
-      right: 35%;
-      animation-duration: 14s;
-    }
-
-    @keyframes floatOrb {
-      0% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(40px, -30px) scale(1.08); }
-      100% { transform: translate(-30px, 40px) scale(0.95); }
-    }
-
-    /* Apple Dynamic Island Pill */
+    /* Minimal Dynamic Island Pill */
     .dynamic-island {
       position: fixed;
-      top: 24px;
-      height: 38px;
-      padding: 0 18px;
-      background: rgba(10, 14, 28, 0.85);
-      backdrop-filter: blur(28px) saturate(190%);
-      -webkit-backdrop-filter: blur(28px) saturate(190%);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      top: 20px;
+      height: 34px;
+      padding: 0 16px;
+      background: #212121;
+      border: 1px solid var(--card-border);
       border-radius: 9999px;
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-size: 12px;
+      gap: 9px;
+      font-size: 11.5px;
       font-weight: 600;
       color: var(--text-muted);
-      letter-spacing: 0.4px;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+      letter-spacing: 0.3px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
       z-index: 50;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .island-dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
-      background: var(--accent-emerald);
-      box-shadow: 0 0 12px var(--accent-emerald);
-      animation: pulseDot 2s infinite;
+      background: var(--accent-green);
     }
 
-    @keyframes pulseDot {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.3); opacity: 0.7; }
-    }
-
-    /* Main Auth Container */
     .auth-wrapper {
-      position: relative;
-      z-index: 10;
       width: 100%;
-      max-width: 490px;
-      padding: 20px;
-      perspective: 1200px;
+      max-width: 440px;
+      z-index: 10;
+      margin-top: 30px;
     }
 
+    /* Clean, Simple Auth Card (No 3D tilt, no crazy glow) */
     .auth-card {
       background: var(--card-bg);
-      backdrop-filter: blur(40px) saturate(220%);
-      -webkit-backdrop-filter: blur(40px) saturate(220%);
       border: 1px solid var(--card-border);
-      border-radius: 30px;
-      padding: 38px 34px;
-      box-shadow: var(--glass-shadow), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      padding: 36px 32px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
       position: relative;
-      overflow: hidden;
-      transform-style: preserve-3d;
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
-    }
-
-    .auth-card::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      background: radial-gradient(420px circle at var(--mouse-x, -500px) var(--mouse-y, -500px), rgba(255, 255, 255, 0.12), transparent 70%);
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      mix-blend-mode: overlay;
-    }
-
-    .auth-card:hover::after {
-      opacity: 1;
-    }
-
-    /* Siri Glow Perimeter */
-    .auth-card::before {
-      content: '';
-      position: absolute;
-      inset: -1px;
-      border-radius: 30px;
-      padding: 1.5px;
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.6), rgba(6, 182, 212, 0.2), rgba(168, 85, 247, 0.5), transparent 60%);
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      pointer-events: none;
     }
 
     .brand-header {
       text-align: center;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
 
-    .brand-logo {
+    /* Simple, Elegant Brand Icon */
+    .brand-logo-simple {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 58px;
-      height: 58px;
-      border-radius: 18px;
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(6, 182, 212, 0.15));
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      font-size: 26px;
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      background: #2a2a2a;
+      border: 1px solid var(--card-border);
       margin-bottom: 14px;
-      box-shadow: 0 8px 20px -4px rgba(99, 102, 241, 0.4);
+      color: var(--accent-green);
     }
 
     .brand-title {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 700;
-      letter-spacing: -0.5px;
-      background: linear-gradient(180deg, #ffffff, #cbd5e1);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.3px;
+      color: #fff;
       margin-bottom: 6px;
     }
 
     .brand-subtitle {
-      font-size: 13.5px;
+      font-size: 13px;
       color: var(--text-muted);
       line-height: 1.5;
     }
@@ -222,74 +116,69 @@
     /* Tab Switcher */
     .tab-pills {
       display: flex;
-      background: rgba(0, 0, 0, 0.35);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 14px;
+      background: #171717;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
       padding: 4px;
-      margin-bottom: 24px;
-      position: relative;
+      margin-bottom: 22px;
     }
 
     .tab-pill {
       flex: 1;
       text-align: center;
-      padding: 9px 0;
+      padding: 8px 0;
       font-size: 13px;
       font-weight: 600;
       color: var(--text-muted);
-      border-radius: 10px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: all 0.25s ease;
-      border: none;
-      background: transparent;
+      transition: all 0.15s ease;
+      user-select: none;
     }
 
     .tab-pill.active {
+      background: #2a2a2a;
       color: #fff;
-      background: rgba(255, 255, 255, 0.1);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
     }
 
-    /* Form Elements */
+    /* Form Fields */
     .form-group {
-      margin-bottom: 18px;
+      margin-bottom: 16px;
       text-align: left;
     }
 
     .form-label {
       display: block;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-muted);
-      margin-bottom: 7px;
-      letter-spacing: 0.2px;
+      font-size: 11px;
+      font-weight: 700;
       text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-dim);
+      margin-bottom: 6px;
     }
 
-    .input-box {
+    .form-input {
       width: 100%;
-      height: 44px;
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 12px;
+      height: 42px;
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
       padding: 0 14px;
+      color: #fff;
       font-size: 14px;
-      color: var(--text-main);
       outline: none;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: border-color 0.15s ease;
     }
 
-    .input-box:focus {
-      border-color: var(--accent-indigo);
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.22);
-      background: rgba(0, 0, 0, 0.55);
+    .form-input:focus {
+      border-color: var(--accent-green);
     }
 
     .password-wrap {
       position: relative;
     }
 
-    .password-toggle {
+    .pwd-toggle {
       position: absolute;
       right: 12px;
       top: 50%;
@@ -297,247 +186,99 @@
       background: none;
       border: none;
       color: var(--text-dim);
-      font-size: 13px;
+      font-size: 12px;
       cursor: pointer;
-      padding: 4px;
+      font-weight: 600;
     }
 
-    .password-toggle:hover {
+    .pwd-toggle:hover {
       color: var(--text-muted);
     }
 
-    /* Primary Button */
-    .btn-submit {
+    /* Primary Submit Button */
+    .btn-primary {
       width: 100%;
-      height: 46px;
-      margin-top: 10px;
-      background: linear-gradient(135deg, #6366f1, #4f46e5);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 13px;
+      height: 44px;
+      background: var(--accent-green);
+      border: none;
+      border-radius: 10px;
       color: #fff;
-      font-size: 14.5px;
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-      box-shadow: 0 10px 24px -4px rgba(99, 102, 241, 0.5);
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      margin-top: 10px;
+      transition: opacity 0.15s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 6px;
     }
 
-    .btn-submit:hover {
-      transform: translateY(-1.5px);
-      box-shadow: 0 14px 28px -4px rgba(99, 102, 241, 0.65);
-      filter: brightness(1.08);
+    .btn-primary:hover {
+      opacity: 0.92;
     }
 
-    .btn-submit:active {
-      transform: translateY(0.5px);
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
 
-    /* 6-Digit OTP Inputs */
+    /* OTP Container (6 digits) */
     .otp-container {
       display: flex;
       justify-content: space-between;
       gap: 8px;
-      margin: 24px 0;
+      margin: 20px 0 16px 0;
     }
 
-    .otp-digit {
-      width: 54px;
-      height: 60px;
-      font-size: 26px;
-      font-weight: 700;
+    .otp-input {
+      width: 48px;
+      height: 52px;
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
       text-align: center;
-      background: rgba(0, 0, 0, 0.5);
-      border: 1.5px solid rgba(255, 255, 255, 0.14);
-      border-radius: 14px;
+      font-size: 22px;
+      font-weight: 700;
       color: #fff;
+      font-family: 'JetBrains Mono', monospace;
       outline: none;
-      transition: all 0.25s ease;
+      transition: border-color 0.15s;
     }
 
-    .otp-digit:focus {
-      border-color: var(--accent-cyan);
-      box-shadow: 0 0 0 3.5px rgba(6, 182, 212, 0.25);
-      background: rgba(0, 0, 0, 0.7);
-      transform: translateY(-2px);
+    .otp-input:focus {
+      border-color: var(--accent-green);
     }
 
-    .otp-container.has-error {
-      animation: shakeOtp 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    .otp-input.error {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
     }
 
-    @keyframes shakeOtp {
-      10%, 90% { transform: translate3d(-3px, 0, 0); }
-      20%, 80% { transform: translate3d(5px, 0, 0); }
-      30%, 50%, 70% { transform: translate3d(-7px, 0, 0); }
-      40%, 60% { transform: translate3d(7px, 0, 0); }
-    }
-
-    .otp-digit.error-state {
-      border-color: #ef4444 !important;
-      background: rgba(239, 68, 68, 0.18) !important;
-      color: #fca5a5 !important;
-      box-shadow: 0 0 14px rgba(239, 68, 68, 0.4) !important;
-    }
-
-    .otp-digit.success-state {
-      border-color: #10b981 !important;
-      background: rgba(16, 185, 129, 0.18) !important;
-      color: #6ee7b7 !important;
-      box-shadow: 0 0 14px rgba(16, 185, 129, 0.4) !important;
-    }
-
-    .resend-link.highlight-resend {
-      color: #f59e0b !important;
-      font-weight: 700;
-      text-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
-      animation: pulseGlow 1s infinite alternate;
-    }
-
-    @keyframes pulseGlow {
-      from { opacity: 0.7; transform: scale(1); }
-      to { opacity: 1; transform: scale(1.06); }
-    }
-
-    .btn-micro {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 7px;
-      color: #cbd5e1;
-      padding: 3px 8px;
-      font-size: 11px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .btn-micro:hover {
-      background: rgba(255, 255, 255, 0.22);
-      color: #fff;
-      transform: translateY(-1px);
-    }
-
-    /* Notification Sandbox Badge */
-    .sandbox-toast {
-      background: rgba(99, 102, 241, 0.12);
-      border: 1px solid rgba(99, 102, 241, 0.3);
-      border-radius: 12px;
-      padding: 12px 14px;
-      margin-bottom: 20px;
-      font-size: 12.5px;
-      line-height: 1.5;
-      color: #cbd5e1;
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      transition: all 0.3s ease;
-    }
-
-    .sandbox-toast b {
-      color: var(--accent-cyan);
-      font-family: monospace;
-      font-size: 14px;
-      letter-spacing: 1px;
-    }
-
-    /* Error Message Box */
-    .error-box {
+    /* Error Message */
+    .error-banner {
       background: rgba(239, 68, 68, 0.12);
-      border: 1px solid rgba(239, 68, 68, 0.35);
-      border-radius: 12px;
-      padding: 10px 14px;
-      margin-bottom: 16px;
-      font-size: 12.5px;
+      border: 1px solid rgba(239, 68, 68, 0.3);
       color: #fca5a5;
+      font-size: 12.5px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-bottom: 16px;
       display: none;
-      animation: fadeInStep 0.3s ease;
     }
 
-    /* Steps Containers */
-    .step-view {
-      display: none;
-      animation: fadeInStep 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    .step-view.active {
-      display: block;
-    }
-
-    @keyframes fadeInStep {
-      from { opacity: 0; transform: translateY(12px) scale(0.98); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    /* Step 3: Success Screen */
-    .success-hero {
-      text-align: center;
-      padding: 10px 0 20px;
-    }
-
-    .success-checkmark {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(6, 182, 212, 0.2));
-      border: 2px solid rgba(16, 185, 129, 0.6);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 38px;
-      margin-bottom: 20px;
-      box-shadow: 0 0 35px rgba(16, 185, 129, 0.35);
-      animation: springBounce 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    }
-
-    @keyframes springBounce {
-      0% { transform: scale(0.2); opacity: 0; }
-      70% { transform: scale(1.15); opacity: 1; }
-      100% { transform: scale(1); }
-    }
-
-    .btn-handoff {
-      width: 100%;
-      height: 48px;
-      background: linear-gradient(135deg, #10b981, #059669);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      border-radius: 14px;
-      color: #fff;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.45);
-      transition: all 0.25s ease;
-      margin-top: 18px;
+    /* Sandbox Code Hint */
+    .sandbox-hint {
+      background: #171717;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 16px;
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .btn-handoff:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 14px 30px -5px rgba(16, 185, 129, 0.6);
-    }
-
-    .btn-close-tab {
-      width: 100%;
-      height: 42px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      color: var(--text-muted);
-      font-size: 13.5px;
-      font-weight: 500;
-      cursor: pointer;
-      margin-top: 10px;
-      transition: all 0.2s ease;
-    }
-
-    .btn-close-tab:hover {
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
+      justify-content: space-between;
     }
 
     .resend-row {
@@ -550,7 +291,7 @@
     }
 
     .resend-link {
-      color: var(--accent-cyan);
+      color: var(--accent-green);
       cursor: pointer;
       text-decoration: none;
       font-weight: 600;
@@ -562,27 +303,76 @@
       pointer-events: none;
     }
 
-    /* Apple Duo Closing Simulation */
+    /* View Transitions */
+    .step-view {
+      display: none;
+    }
+    .step-view.active {
+      display: block;
+    }
+
+    /* Success View */
+    .success-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: rgba(16, 163, 127, 0.15);
+      color: var(--accent-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin: 0 auto 16px auto;
+    }
+
+    .btn-handoff {
+      width: 100%;
+      height: 44px;
+      background: var(--accent-green);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-close-tab {
+      width: 100%;
+      height: 40px;
+      background: transparent;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .btn-close-tab:hover {
+      background: #2a2a2a;
+      color: #fff;
+    }
+
+    /* Simple, Smooth Closing Physics */
     .closing-physics {
-      animation: duoCloseTab 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+      animation: duoCloseTab 0.5s ease forwards;
     }
 
     @keyframes duoCloseTab {
-      0% { transform: scale(1) rotateY(0); opacity: 1; filter: blur(0); }
-      50% { transform: scale(0.96) rotateY(-15deg); opacity: 0.8; filter: blur(2px); }
-      100% { transform: scale(0.85) rotateY(-85deg); opacity: 0; filter: blur(14px); }
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(0.94); opacity: 0; }
     }
   </style>
 </head>
 <body>
-  <!-- Ambient Lights -->
-  <div class="aurora-bg">
-    <div class="aurora-orb orb-1"></div>
-    <div class="aurora-orb orb-2"></div>
-    <div class="aurora-orb orb-3"></div>
-  </div>
 
-  <!-- Apple Dynamic Island -->
+  <!-- Dynamic Island -->
   <div class="dynamic-island">
     <div class="island-dot"></div>
     <span>REPO_PULSE_CLOUD • AUTH_GATEWAY</span>
@@ -591,125 +381,122 @@
   <div class="auth-wrapper">
     <div class="auth-card" id="auth-card">
       
-      <!-- Brand Header with 3D Holographic Gyroscope Core -->
+      <!-- Brand Header (Simple, Clean, Minimalist) -->
       <div class="brand-header">
-        <div class="gyro-wrapper" style="position: relative; width: 130px; height: 130px; margin: 0 auto 14px auto; display: flex; align-items: center; justify-content: center;">
-          <canvas id="gyro-3d-canvas" width="260" height="260" style="width: 130px; height: 130px; filter: drop-shadow(0 0 25px rgba(99,102,241,0.6)); cursor: grab;"></canvas>
-          <div style="position: absolute; width: 55px; height: 55px; border-radius: 50%; background: radial-gradient(circle, rgba(99,102,241,0.4), transparent 70%); pointer-events: none; filter: blur(10px);"></div>
+        <div class="brand-logo-simple">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
         </div>
         <h1 class="brand-title">RepoPulse Studio</h1>
-        <p class="brand-subtitle" id="header-desc">Sign in or create your maintainer account to link with the native desktop shell.</p>
+        <p class="brand-subtitle" id="brand-sub">Sign in or create your maintainer account to link with the native desktop shell.</p>
       </div>
 
-      <div class="error-box" id="error-box"></div>
+      <!-- Error Notification Banner -->
+      <div class="error-banner" id="error-banner"></div>
 
-      <!-- ================= STEP 1: CREDENTIALS (SIGN UP / SIGN IN) ================= -->
+      <!-- STEP 1: CREDENTIALS (REGISTER / LOGIN) -->
       <div class="step-view active" id="view-credentials">
         <div class="tab-pills">
-          <button class="tab-pill active" id="tab-signup" onclick="switchAuthMode('signup')">Create Account</button>
-          <button class="tab-pill" id="tab-signin" onclick="switchAuthMode('signin')">Sign In</button>
+          <div class="tab-pill active" id="tab-register" onclick="switchAuthTab('register')">Create Account</div>
+          <div class="tab-pill" id="tab-login" onclick="switchAuthTab('login')">Sign In</div>
         </div>
 
-        <form id="auth-form" onsubmit="handleCredentialsSubmit(event)">
-          <div class="form-group" id="group-username">
+        <!-- Register Form -->
+        <form id="form-register" onsubmit="handleRegister(event)">
+          <div class="form-group">
             <label class="form-label">Username</label>
-            <input type="text" class="input-box" id="field-username" placeholder="e.g. miriyaladhanwinn" autocomplete="username" />
+            <input type="text" class="form-input" id="reg-username" placeholder="e.g. miriyaladhanwinn" required autocomplete="username">
           </div>
-
           <div class="form-group">
             <label class="form-label">Email Address</label>
-            <input type="email" class="input-box" id="field-email" placeholder="name@domain.com" required autocomplete="email" />
+            <input type="email" class="form-input" id="reg-email" placeholder="name@domain.com" required autocomplete="email">
           </div>
-
           <div class="form-group">
             <label class="form-label">Password</label>
             <div class="password-wrap">
-              <input type="password" class="input-box" id="field-password" placeholder="At least 6 characters" required autocomplete="current-password" />
-              <button type="button" class="password-toggle" onclick="togglePasswordVisibility()">Show</button>
+              <input type="password" class="form-input" id="reg-password" placeholder="At least 6 characters" required autocomplete="new-password">
+              <button type="button" class="pwd-toggle" onclick="togglePasswordVisibility('reg-password', this)">Show</button>
             </div>
           </div>
-
-          <button type="submit" class="btn-submit" id="btn-submit-creds">
+          <button type="submit" class="btn-primary" id="btn-register">
             <span>Continue & Get Verification Code</span>
-            <span style="font-size: 16px;">→</span>
+            <span>→</span>
           </button>
         </form>
-      </div>
 
-      <!-- ================= STEP 2: 6-DIGIT EMAIL OTP VERIFICATION ================= -->
-      <div class="step-view" id="view-otp">
-        <div class="sandbox-toast" id="sandbox-toast">
-          <span style="font-size: 20px; line-height: 1;">📬</span>
-          <div style="flex: 1;">
-            <div>Verification code sent to <b id="otp-target-email">user@domain.com</b></div>
-            <div style="margin-top: 6px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-              <span>Sandbox Inbox Code: <b id="sandbox-code-preview" style="letter-spacing: 1.5px; font-size: 14px;">------</b></span>
-              <div style="display: flex; gap: 6px;">
-                <button type="button" class="btn-micro" onclick="copySandboxCode()">📋 Copy</button>
-                <button type="button" class="btn-micro" onclick="fillSandboxCode()">⚡ Auto-Fill</button>
-              </div>
+        <!-- Login Form -->
+        <form id="form-login" style="display: none;" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label class="form-label">Username or Email</label>
+            <input type="text" class="form-input" id="login-identifier" placeholder="miriyaladhanwinn or name@domain.com" required autocomplete="username">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <div class="password-wrap">
+              <input type="password" class="form-input" id="login-password" placeholder="Your password" required autocomplete="current-password">
+              <button type="button" class="pwd-toggle" onclick="togglePasswordVisibility('login-password', this)">Show</button>
             </div>
           </div>
-        </div>
-
-        <p style="font-size: 13.5px; color: var(--text-muted); text-align: center; margin-bottom: 18px;">
-          Enter the 6-digit verification code sent to your email.
-        </p>
-
-        <form onsubmit="handleOtpSubmit(event)">
-          <div class="otp-container">
-            <input type="text" maxlength="1" class="otp-digit" id="otp-0" autofocus />
-            <input type="text" maxlength="1" class="otp-digit" id="otp-1" />
-            <input type="text" maxlength="1" class="otp-digit" id="otp-2" />
-            <input type="text" maxlength="1" class="otp-digit" id="otp-3" />
-            <input type="text" maxlength="1" class="otp-digit" id="otp-4" />
-            <input type="text" maxlength="1" class="otp-digit" id="otp-5" />
-          </div>
-
-          <button type="submit" class="btn-submit" id="btn-verify-otp">
-            <span>Verify & Link Account</span>
-            <span style="font-size: 16px;">✓</span>
+          <button type="submit" class="btn-primary" id="btn-login">
+            <span>Sign In to Studio</span>
+            <span>→</span>
           </button>
         </form>
-
-        <div class="resend-row">
-          <span>Didn't receive the code?</span>
-          <a class="resend-link" id="resend-btn" onclick="resendOtpCode()">Resend Code</a>
-        </div>
       </div>
 
-      <!-- ================= STEP 3: SUCCESS & DESKTOP HANDOFF ================= -->
-      <div class="step-view" id="view-success">
-        <div class="success-hero">
-          <div class="success-checkmark">✓</div>
-          <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 8px;">Account Created & Verified!</h2>
-          <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.6;">
-            Welcome, <b id="success-username" style="color:#fff;">developer</b>! Your identity is authenticated and granted <b style="color:var(--accent-cyan);">Titan PRO Tier</b> access.
+      <!-- STEP 2: 6-DIGIT EMAIL OTP VERIFICATION -->
+      <div class="step-view" id="view-otp">
+        <div style="text-align: center; margin-bottom: 18px;">
+          <h2 style="font-size: 18px; font-weight: 700; color: #fff;">Verify Your Email</h2>
+          <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
+            Enter the 6-digit code dispatched to <br><b id="display-otp-email" style="color: #fff;"></b>
           </p>
         </div>
 
-        <div style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 16px; text-align: left; font-size: 12.5px; color: var(--text-muted);">
-          <div style="display:flex; justify-content:space-between; margin-bottom: 6px;">
-            <span>Handoff Status:</span>
-            <span style="color:var(--accent-emerald); font-weight:600;">● Connected</span>
-          </div>
-          <div style="display:flex; justify-content:space-between; margin-bottom: 6px;">
-            <span>Target Shell:</span>
-            <span style="color:#fff;">RepoPulse Desktop</span>
-          </div>
-          <div style="display:flex; justify-content:space-between;">
-            <span>Action Required:</span>
-            <span style="color:#cbd5e1;">Close tab to continue in app</span>
-          </div>
+        <!-- 6-digit OTP Inputs -->
+        <div class="otp-container">
+          <input type="text" class="otp-input" id="otp-0" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code">
+          <input type="text" class="otp-input" id="otp-1" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+          <input type="text" class="otp-input" id="otp-2" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+          <input type="text" class="otp-input" id="otp-3" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+          <input type="text" class="otp-input" id="otp-4" maxlength="1" inputmode="numeric" pattern="[0-9]*">
+          <input type="text" class="otp-input" id="otp-5" maxlength="1" inputmode="numeric" pattern="[0-9]*">
         </div>
 
-        <button class="btn-handoff" onclick="returnToDesktopApp()">
-          <span>Launch RepoPulse Desktop Shell</span>
+        <button class="btn-primary" id="btn-verify" onclick="submitOtpCode()">
+          <span>Verify & Link Account</span>
+          <span>✓</span>
+        </button>
+
+        <div class="resend-row">
+          <span>Didn't receive a code?</span>
+          <span class="resend-link" id="resend-btn" onclick="resendOtpCode()">Resend Code</span>
+        </div>
+
+        <div class="sandbox-hint" id="sandbox-hint-box" onclick="copySandboxCode()" style="cursor: pointer;" title="Click to auto-fill code">
+          <span>Mail Sandbox Code (Click to paste):</span>
+          <code id="sandbox-code-preview" style="color: var(--accent-green); font-weight: 700;">------</code>
+        </div>
+      </div>
+
+      <!-- STEP 3: SUCCESS & HANDOFF TO DESKTOP -->
+      <div class="step-view" id="view-success">
+        <div style="text-align: center;">
+          <div class="success-icon">✓</div>
+          <h2 style="font-size: 19px; font-weight: 700; color: #fff;">Account Verified</h2>
+          <p style="font-size: 13px; color: var(--text-muted); margin-top: 6px;">
+            Welcome, <b id="success-username" style="color: #fff;">Maintainer</b>! Your account has been provisioned with <b>Titan PRO Tier</b>.
+          </p>
+        </div>
+
+        <button class="btn-handoff" id="btn-launch-desktop" onclick="returnToDesktopApp()">
+          <span>Open RepoPulse Studio</span>
           <span>↗</span>
         </button>
 
         <button class="btn-close-tab" onclick="closeAuthTab()">
-          Close This Tab & Return to App
+          Close This Tab
         </button>
       </div>
 
@@ -717,235 +504,200 @@
   </div>
 
   <script>
-    let authMode = 'signup'; // 'signup' | 'signin'
+    let currentAuthMode = 'register';
     let currentEmail = '';
     let currentUsername = '';
     let authToken = '';
     let resendCountdown = 60;
     let resendTimer = null;
 
-    function switchAuthMode(mode) {
-      authMode = mode;
-      hideError();
-      const tabSignup = document.getElementById('tab-signup');
-      const tabSignin = document.getElementById('tab-signin');
-      const groupUsername = document.getElementById('group-username');
-      const btnSubmit = document.getElementById('btn-submit-creds');
-      const headerDesc = document.getElementById('header-desc');
-
-      if (mode === 'signup') {
-        tabSignup.classList.add('active');
-        tabSignin.classList.remove('active');
-        groupUsername.style.display = 'block';
-        btnSubmit.querySelector('span').innerText = 'Continue & Get Verification Code';
-        headerDesc.innerText = 'Create your maintainer account to link with the native desktop shell.';
-      } else {
-        tabSignin.classList.add('active');
-        tabSignup.classList.remove('active');
-        groupUsername.style.display = 'none';
-        btnSubmit.querySelector('span').innerText = 'Sign In to RepoPulse';
-        headerDesc.innerText = 'Sign in to access 540+ models, PR intelligence, and cloud telemetry.';
+    function copySandboxCode() {
+      const code = document.getElementById('sandbox-code-preview').innerText.trim();
+      if (code && code !== '------') {
+        const inputs = document.querySelectorAll('.otp-input');
+        code.split('').forEach((char, idx) => {
+          if (inputs[idx]) inputs[idx].value = char;
+        });
+        if (inputs[5]) inputs[5].focus();
       }
     }
 
-    function togglePasswordVisibility() {
-      const passField = document.getElementById('field-password');
-      const btn = event.target;
-      if (passField.type === 'password') {
-        passField.type = 'text';
+    function triggerWrongCodeUI() {
+      const inputs = document.querySelectorAll('.otp-input');
+      inputs.forEach(i => i.classList.add('error'));
+    }
+
+    function switchAuthTab(mode) {
+      currentAuthMode = mode;
+      document.getElementById('tab-register').classList.toggle('active', mode === 'register');
+      document.getElementById('tab-login').classList.toggle('active', mode === 'login');
+      document.getElementById('form-register').style.display = mode === 'register' ? 'block' : 'none';
+      document.getElementById('form-login').style.display = mode === 'login' ? 'block' : 'none';
+      hideError();
+    }
+
+    function togglePasswordVisibility(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (input.type === 'password') {
+        input.type = 'text';
         btn.innerText = 'Hide';
       } else {
-        passField.type = 'password';
+        input.type = 'password';
         btn.innerText = 'Show';
       }
     }
 
     function showError(msg) {
-      const el = document.getElementById('error-box');
-      el.innerText = msg;
-      el.style.display = 'block';
+      const banner = document.getElementById('error-banner');
+      banner.innerText = msg;
+      banner.style.display = 'block';
     }
 
     function hideError() {
-      const el = document.getElementById('error-box');
-      el.innerText = '';
-      el.style.display = 'none';
+      const banner = document.getElementById('error-banner');
+      banner.style.display = 'none';
     }
 
     function showStep(stepId) {
-      document.querySelectorAll('.step-view').forEach(el => el.classList.remove('active'));
-      const target = document.getElementById(stepId);
-      if (target) target.classList.add('active');
+      document.querySelectorAll('.step-view').forEach(v => v.classList.remove('active'));
+      document.getElementById(stepId).classList.add('active');
+      hideError();
     }
 
-    // Step 1: Submit Credentials
-    async function handleCredentialsSubmit(e) {
+    async function handleRegister(e) {
       e.preventDefault();
       hideError();
+      const username = document.getElementById('reg-username').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const password = document.getElementById('reg-password').value;
 
-      const email = document.getElementById('field-email').value.trim();
-      const password = document.getElementById('field-password').value;
-      const username = document.getElementById('field-username').value.trim() || email.split('@')[0];
+      const btn = document.getElementById('btn-register');
+      btn.disabled = true;
+      btn.innerText = 'Generating 6-digit code...';
 
-      if (!email) {
-        showError('Please enter a valid email.');
-        return;
-      }
-
-      currentEmail = email;
-      currentUsername = username;
-
-      if (authMode === 'signup') {
-        try {
-          const res = await fetch('/api/auth/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, email, password })
-          });
-          const data = await res.json();
-          if (!res.ok || !data.success) {
-            showError(data.error || 'Registration failed.');
-            return;
-          }
-
-          // Show Step 2: OTP
-          document.getElementById('otp-target-email').innerText = email;
-          document.getElementById('sandbox-code-preview').innerText = data.code || 'Check Email';
-          showStep('view-otp');
-          setupOtpInputs();
-          startResendCountdown();
-        } catch (err) {
-          showError(err.message);
-        }
-      } else {
-        // Sign In Flow
-        try {
-          const res = await fetch('/api/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ identifier: email, password })
-          });
-          const data = await res.json();
-          if (!res.ok || !data.success) {
-            showError(data.error || 'Invalid credentials.');
-            return;
-          }
-
-          handleSuccessfulAuth(data);
-        } catch (err) {
-          showError(err.message);
-        }
-      }
-    }
-
-    function copySandboxCode() {
-      const code = document.getElementById('sandbox-code-preview').innerText.trim();
-      if (code && code !== '------') {
-        navigator.clipboard.writeText(code).then(() => {
-          showToastNotification('📋 Verification code copied to clipboard!');
-        }).catch(() => {
-          showToastNotification('📋 Code: ' + code);
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, email, password })
         });
-      }
-    }
-
-    function fillSandboxCode() {
-      const code = document.getElementById('sandbox-code-preview').innerText.trim();
-      if (code && code !== '------' && code.length === 6) {
-        clearOtpErrors();
-        hideError();
-        for (let i = 0; i < 6; i++) {
-          const box = document.getElementById(`otp-${i}`);
-          if (box) box.value = code[i];
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          throw new Error(data.error || 'Registration failed');
         }
-        document.getElementById('otp-5')?.focus();
-        if (window.triggerGyroPulse) window.triggerGyroPulse();
-        showToastNotification('⚡ Exact verification code auto-filled for testing!');
-      }
-    }
 
-    function showToastNotification(msg) {
-      const toast = document.getElementById('sandbox-toast');
-      const origBorder = toast.style.borderColor;
-      toast.style.borderColor = 'var(--accent-cyan)';
-      toast.style.boxShadow = '0 0 16px rgba(6, 182, 212, 0.4)';
-      setTimeout(() => {
-        toast.style.borderColor = origBorder;
-        toast.style.boxShadow = '';
-      }, 1500);
-    }
-
-    function clearOtpErrors() {
-      const container = document.querySelector('.otp-container');
-      if (container) container.classList.remove('has-error');
-      for (let i = 0; i < 6; i++) {
-        const box = document.getElementById(`otp-${i}`);
-        if (box) {
-          box.classList.remove('error-state');
-          box.classList.remove('success-state');
+        currentEmail = email;
+        currentUsername = username;
+        document.getElementById('display-otp-email').innerText = email;
+        if (data.code) {
+          document.getElementById('sandbox-code-preview').innerText = data.code;
         }
+
+        showStep('view-otp');
+        startResendCountdown();
+        setupOtpInputs();
+      } catch (err) {
+        showError(err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>Continue & Get Verification Code</span><span>→</span>';
       }
-      const resendBtn = document.getElementById('resend-btn');
-      if (resendBtn) resendBtn.classList.remove('highlight-resend');
     }
 
-    // Step 2: OTP Input Handling
+    async function handleLogin(e) {
+      e.preventDefault();
+      hideError();
+      const identifier = document.getElementById('login-identifier').value.trim();
+      const password = document.getElementById('login-password').value;
+
+      const btn = document.getElementById('btn-login');
+      btn.disabled = true;
+      btn.innerText = 'Signing in...';
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ identifier, password })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          throw new Error(data.error || 'Invalid credentials');
+        }
+
+        handleSuccessfulAuth(data);
+      } catch (err) {
+        showError(err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>Sign In to Studio</span><span>→</span>';
+      }
+    }
+
     function setupOtpInputs() {
-      clearOtpErrors();
-      const inputs = document.querySelectorAll('.otp-digit');
-      inputs.forEach((input, idx) => {
+      const inputs = document.querySelectorAll('.otp-input');
+      inputs.forEach((input, index) => {
         input.value = '';
-        input.addEventListener('input', (e) => {
-          clearOtpErrors();
-          hideError();
-          if (window.triggerGyroPulse) window.triggerGyroPulse();
-          if (input.value.length === 1 && idx < inputs.length - 1) {
-            inputs[idx + 1].focus();
-          }
-        });
+        input.classList.remove('error');
 
-        input.addEventListener('keydown', (e) => {
-          if (e.key === 'Backspace' && !input.value && idx > 0) {
-            inputs[idx - 1].focus();
+        input.oninput = (e) => {
+          const val = e.target.value.replace(/\D/g, '');
+          e.target.value = val ? val[0] : '';
+          if (val && index < 5) {
+            inputs[index + 1].focus();
           }
-        });
+          checkAutoSubmitOtp();
+        };
 
-        input.addEventListener('paste', (e) => {
+        input.onkeydown = (e) => {
+          if (e.key === 'Backspace' && !input.value && index > 0) {
+            inputs[index - 1].focus();
+          }
+        };
+
+        input.onpaste = (e) => {
           e.preventDefault();
-          const pasteData = (e.clipboardData || window.clipboardData).getData('text').trim();
-          if (/^\d{6}$/.test(pasteData)) {
-            clearOtpErrors();
-            hideError();
-            if (window.triggerGyroPulse) window.triggerGyroPulse();
-            pasteData.split('').forEach((char, i) => {
-              if (inputs[i]) inputs[i].value = char;
+          const paste = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '').slice(0, 6);
+          if (paste) {
+            paste.split('').forEach((char, idx) => {
+              if (inputs[idx]) inputs[idx].value = char;
             });
-            inputs[5].focus();
+            if (paste.length === 6) {
+              inputs[5].focus();
+              submitOtpCode();
+            } else if (inputs[paste.length]) {
+              inputs[paste.length].focus();
+            }
           }
-        });
+        };
       });
-      setTimeout(() => inputs[0]?.focus(), 50);
+
+      inputs[0]?.focus();
     }
 
-    async function handleOtpSubmit(e) {
-      e.preventDefault();
-      hideError();
-      clearOtpErrors();
-
-      let code = '';
-      for (let i = 0; i < 6; i++) {
-        code += (document.getElementById(`otp-${i}`)?.value || '').trim();
+    function checkAutoSubmitOtp() {
+      const inputs = document.querySelectorAll('.otp-input');
+      let fullCode = '';
+      inputs.forEach(i => fullCode += i.value);
+      if (fullCode.length === 6) {
+        submitOtpCode();
       }
+    }
 
-      if (code.length !== 6 || !/^\d{6}$/.test(code)) {
-        triggerWrongCodeUI('Please enter all 6 numeric digits of your verification code.');
+    async function submitOtpCode() {
+      const inputs = document.querySelectorAll('.otp-input');
+      let code = '';
+      inputs.forEach(i => code += i.value);
+
+      if (code.length !== 6) {
+        showError('Please enter all 6 digits of your verification code.');
         return;
       }
 
-      const verifyBtn = document.getElementById('btn-verify-otp');
-      const originalText = verifyBtn.innerHTML;
-      verifyBtn.disabled = true;
-      verifyBtn.innerHTML = '<span>Verifying Code...</span>';
+      hideError();
+      const btn = document.getElementById('btn-verify');
+      btn.disabled = true;
+      btn.innerText = 'Verifying...';
 
       try {
         const res = await fetch('/api/auth/verify', {
@@ -954,54 +706,18 @@
           body: JSON.stringify({ email: currentEmail, code })
         });
         const data = await res.json();
-        verifyBtn.disabled = false;
-        verifyBtn.innerHTML = originalText;
-
         if (!res.ok || !data.success) {
-          triggerWrongCodeUI(data.error || 'Wrong verification code. Please check your email or click Resend Code.');
-          return;
+          inputs.forEach(i => i.classList.add('error'));
+          throw new Error(data.error || 'Invalid verification code');
         }
 
-        // Exact match verified!
-        for (let i = 0; i < 6; i++) {
-          const box = document.getElementById(`otp-${i}`);
-          if (box) box.classList.add('success-state');
-        }
-        if (window.triggerGyroPulse) window.triggerGyroPulse();
-
-        setTimeout(() => {
-          handleSuccessfulAuth(data);
-        }, 350);
+        handleSuccessfulAuth(data);
       } catch (err) {
-        verifyBtn.disabled = false;
-        verifyBtn.innerHTML = originalText;
-        triggerWrongCodeUI(err.message || 'Verification connection error. Please try again.');
+        showError(err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>Verify & Link Account</span><span>✓</span>';
       }
-    }
-
-    function triggerWrongCodeUI(errorMessage) {
-      showError(errorMessage);
-      
-      const container = document.querySelector('.otp-container');
-      if (container) {
-        container.classList.remove('has-error');
-        void container.offsetWidth; // Restart shake animation
-        container.classList.add('has-error');
-      }
-
-      // Mark all digits as erroneous
-      for (let i = 0; i < 6; i++) {
-        const box = document.getElementById(`otp-${i}`);
-        if (box) box.classList.add('error-state');
-      }
-
-      // Highlight the Resend link so user sees alternative
-      const resendBtn = document.getElementById('resend-btn');
-      if (resendBtn) resendBtn.classList.add('highlight-resend');
-
-      // Focus on first box for easy re-typing
-      document.getElementById('otp-0')?.focus();
-      document.getElementById('otp-0')?.select();
     }
 
     function startResendCountdown() {
@@ -1025,15 +741,10 @@
 
     async function resendOtpCode() {
       try {
-        clearOtpErrors();
         hideError();
-
-        // Clear input boxes
-        for (let i = 0; i < 6; i++) {
-          const box = document.getElementById(`otp-${i}`);
-          if (box) box.value = '';
-        }
-        document.getElementById('otp-0')?.focus();
+        const inputs = document.querySelectorAll('.otp-input');
+        inputs.forEach(i => { i.value = ''; i.classList.remove('error'); });
+        inputs[0]?.focus();
 
         const res = await fetch('/api/auth/resend-code', {
           method: 'POST',
@@ -1045,32 +756,26 @@
           document.getElementById('sandbox-code-preview').innerText = data.code;
         }
         startResendCountdown();
-        showToastNotification('📩 Brand new 6-digit code dispatched! The old code is now expired.');
       } catch (err) {
-        showError('Failed to resend verification code. Please try again.');
+        showError('Failed to resend code.');
       }
     }
 
-    // Step 3: Success & Handoff
     function handleSuccessfulAuth(authData) {
       authToken = authData.token;
       currentUsername = authData.user.username;
 
-      // Persist to local storage
       localStorage.setItem('repopulse_token', authData.token);
       localStorage.setItem('repopulse_user', JSON.stringify(authData.user));
 
-      // Broadcast authentication to any other open tabs or Electron webview
       try {
         const channel = new BroadcastChannel('repopulse_auth');
         channel.postMessage({ type: 'AUTHENTICATED', token: authData.token, user: authData.user });
       } catch (_) {}
 
-      // Update success view
       document.getElementById('success-username').innerText = authData.user.username;
       showStep('view-success');
 
-      // Attempt deep-link back to Electron desktop shell
       setTimeout(() => {
         try {
           window.location.href = `repopulse://auth?token=${encodeURIComponent(authData.token)}&user=${encodeURIComponent(authData.user.username)}`;
@@ -1087,181 +792,15 @@
       card.classList.add('closing-physics');
       setTimeout(() => {
         window.close();
-        // If window.close() blocked by browser:
         document.body.innerHTML = `
-          <div style="text-align:center; padding: 40px; color:#94a3b8;">
-            <div style="font-size:48px; margin-bottom:12px;">✓</div>
+          <div style="text-align:center; padding: 40px; color:#b4b4b4;">
+            <div style="font-size:42px; margin-bottom:12px; color:#10a37f;">✓</div>
             <h2 style="color:#fff; margin-bottom:8px;">Authentication Linked</h2>
-            <p>You can now safely close this browser window and continue inside <b>RepoPulse Studio</b>.</p>
+            <p>You can now close this tab and return to <b>RepoPulse Studio</b>.</p>
           </div>
         `;
-      }, 700);
+      }, 500);
     }
-
-    // Check if user is already authenticated
-    window.addEventListener('DOMContentLoaded', () => {
-      const existingToken = localStorage.getItem('repopulse_token');
-      const existingUser = localStorage.getItem('repopulse_user');
-      if (existingToken && existingUser) {
-        try {
-          const user = JSON.parse(existingUser);
-          document.getElementById('success-username').innerText = user.username;
-          // Optionally let them re-verify or continue
-        } catch (_) {}
-      }
-    });
-
-    // ================= 3D HOLOGRAPHIC GYROSCOPE ENGINE =================
-    (function init3DGyroscope() {
-      const canvas = document.getElementById('gyro-3d-canvas');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      let angleX = 0.4, angleY = 0.6, angleZ = 0.2;
-      let targetRotX = 0, targetRotY = 0;
-      let pulseMagnitude = 0;
-      const cx = 130, cy = 130;
-
-      window.addEventListener('mousemove', (e) => {
-        const xNorm = (e.clientX / window.innerWidth) * 2 - 1;
-        const yNorm = (e.clientY / window.innerHeight) * 2 - 1;
-        targetRotY = xNorm * 0.75;
-        targetRotX = -yNorm * 0.75;
-      });
-
-      window.triggerGyroPulse = function() {
-        pulseMagnitude = 1.0;
-      };
-
-      function render3DRing(radius, numSegments, color, rotSpeedX, rotSpeedY, rotSpeedZ, width) {
-        const pts = [];
-        for (let i = 0; i <= numSegments; i++) {
-          const theta = (i / numSegments) * Math.PI * 2;
-          let x = Math.cos(theta) * radius;
-          let y = Math.sin(theta) * radius;
-          let z = 0;
-
-          const radX = angleX * rotSpeedX + targetRotX;
-          const radY = angleY * rotSpeedY + targetRotY;
-          const radZ = angleZ * rotSpeedZ;
-
-          let x1 = x * Math.cos(radY) + z * Math.sin(radY);
-          let z1 = -x * Math.sin(radY) + z * Math.cos(radY);
-
-          let y2 = y * Math.cos(radX) - z1 * Math.sin(radX);
-          let z2 = y * Math.sin(radX) + z1 * Math.cos(radX);
-
-          let x3 = x1 * Math.cos(radZ) - y2 * Math.sin(radZ);
-          let y3 = x1 * Math.sin(radZ) + y2 * Math.cos(radZ);
-
-          const fov = 350;
-          const scale = fov / (fov + z2 + 80);
-          pts.push({ x: cx + x3 * scale, y: cy + y3 * scale, z: z2 });
-        }
-
-        for (let i = 0; i < pts.length - 1; i++) {
-          const p1 = pts[i];
-          const p2 = pts[i + 1];
-          const depthAlpha = Math.max(0.2, (p1.z + 100) / 200);
-          ctx.beginPath();
-          ctx.moveTo(p1.x, p1.y);
-          ctx.lineTo(p2.x, p2.y);
-          ctx.strokeStyle = color.replace('ALPHA', (depthAlpha * (0.8 + pulseMagnitude * 0.5)).toFixed(2));
-          ctx.lineWidth = width * (0.8 + pulseMagnitude * 0.4);
-          ctx.stroke();
-
-          if (i % 6 === 0) {
-            ctx.beginPath();
-            ctx.arc(p1.x, p1.y, 2.5 * (0.8 + pulseMagnitude * 0.5), 0, Math.PI * 2);
-            ctx.fillStyle = '#fff';
-            ctx.fill();
-          }
-        }
-      }
-
-      function renderCrystalCore() {
-        const s = 18 * (1 + pulseMagnitude * 0.6);
-        const vertices = [
-          { x: 0, y: -s, z: 0 },
-          { x: 0, y: s, z: 0 },
-          { x: -s, y: 0, z: 0 },
-          { x: s, y: 0, z: 0 },
-          { x: 0, y: 0, z: -s },
-          { x: 0, y: 0, z: s }
-        ];
-
-        const edges = [
-          [0,2],[0,3],[0,4],[0,5],
-          [1,2],[1,3],[1,4],[1,5],
-          [2,4],[4,3],[3,5],[5,2]
-        ];
-
-        const radX = angleX * 1.5;
-        const radY = angleY * 1.8;
-        const projected = vertices.map(v => {
-          let x1 = v.x * Math.cos(radY) + v.z * Math.sin(radY);
-          let z1 = -v.x * Math.sin(radY) + v.z * Math.cos(radY);
-          let y2 = v.y * Math.cos(radX) - z1 * Math.sin(radX);
-          let z2 = v.y * Math.sin(radX) + z1 * Math.cos(radX);
-          const fov = 350;
-          const scale = fov / (fov + z2 + 80);
-          return { x: cx + x1 * scale, y: cy + y2 * scale, z: z2 };
-        });
-
-        edges.forEach(([i, j]) => {
-          ctx.beginPath();
-          ctx.moveTo(projected[i].x, projected[i].y);
-          ctx.lineTo(projected[j].x, projected[j].y);
-          ctx.strokeStyle = `rgba(6, 182, 212, ${0.7 + pulseMagnitude * 0.3})`;
-          ctx.lineWidth = 1.8;
-          ctx.stroke();
-        });
-
-        ctx.beginPath();
-        ctx.arc(cx, cy, 5 * (1 + pulseMagnitude), 0, Math.PI * 2);
-        ctx.fillStyle = '#fff';
-        ctx.shadowColor = '#6366f1';
-        ctx.shadowBlur = 15;
-        ctx.fill();
-        ctx.shadowBlur = 0;
-      }
-
-      function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        angleX += 0.015;
-        angleY += 0.02;
-        angleZ += 0.008;
-        if (pulseMagnitude > 0) pulseMagnitude = Math.max(0, pulseMagnitude - 0.03);
-
-        render3DRing(78, 48, 'rgba(99, 102, 241, ALPHA)', 1.0, 1.2, 0.8, 2.2);
-        render3DRing(58, 36, 'rgba(6, 182, 212, ALPHA)', -1.2, 0.9, 1.4, 2.0);
-        render3DRing(38, 28, 'rgba(168, 85, 247, ALPHA)', 1.4, -1.3, 0.6, 1.8);
-        renderCrystalCore();
-
-        requestAnimationFrame(animate);
-      }
-      animate();
-    })();
-
-    // 3D Parallax Tilt on Auth Card
-    (function initAuthCardTilt() {
-      const card = document.getElementById('auth-card');
-      if (!card) return;
-      card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        const rotateX = ((y - centerY) / centerY) * -6.5;
-        const rotateY = ((x - centerX) / centerX) * 6.5;
-        card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(1.015, 1.015, 1.015)`;
-        card.style.setProperty('--mouse-x', `${x}px`);
-        card.style.setProperty('--mouse-y', `${y}px`);
-      });
-      card.addEventListener('mouseleave', () => {
-        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
-      });
-    })();
   </script>
 </body>
 </html>
