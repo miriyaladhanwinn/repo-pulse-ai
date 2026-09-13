@@ -1,0 +1,44 @@
+{
+  "name": "repo-pulse-ai",
+  "version": "1.0.0",
+  "description": "Autonomous AI Maintainer Harness & PR Intelligence Engine for GitHub with Model Context Protocol (MCP)",
+  "main": "dist/index.js",
+  "bin": {
+    "repo-pulse": "dist/cli/index.js"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/cli/index.js",
+    "test": "node --test dist/tests/**/*.test.js",
+    "pretest": "npm run build",
+    "lint": "tsc --noEmit",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "openai",
+    "codex",
+    "mcp",
+    "model-context-protocol",
+    "pull-request",
+    "code-review",
+    "ai-agent",
+    "open-source",
+    "github-action",
+    "maintainer-tool"
+  ],
+  "author": "MRLDHANWINN <dhanwinn15@gmail.com>",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MRLDHANWINN/repo-pulse-ai.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MRLDHANWINN/repo-pulse-ai/issues"
+  },
+  "homepage": "https://github.com/MRLDHANWINN/repo-pulse-ai#readme",
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0"
+  }
+}
