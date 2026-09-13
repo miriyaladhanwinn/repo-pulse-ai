@@ -61,7 +61,7 @@ describe('AuthService Core Security & OTP Unit Tests', () => {
     }, /Password incorrect/);
   });
 
-  test('Resends verification code for pending registration', () => {
+  test('Resends verification code for pending registration and invalidates old code', () => {
     auth.register('bob_maintainer', 'bob@repopulse.io', 'PassBob2026!');
     const initialCode = auth.getPendingCode('bob@repopulse.io');
     assert.ok(initialCode);
@@ -69,7 +69,29 @@ describe('AuthService Core Security & OTP Unit Tests', () => {
     const resend = auth.resendCode('bob@repopulse.io');
     assert.equal(resend.success, true);
     assert.match(resend.code, /^\d{6}$/);
-    assert.equal(auth.getPendingCode('bob@repopulse.io'), resend.code);
+    assert.notEqual(resend.code, '');
+
+    // Attempting old code must fail
+    if (initialCode !== resend.code) {
+      assert.throws(() => {
+        auth.verifyCode('bob@repopulse.io', initialCode);
+      }, /Invalid verification code/);
+    }
+
+    // Attempting non-6-digit code must fail
+    assert.throws(() => {
+      auth.verifyCode('bob@repopulse.io', '123');
+    }, /Verification code must be exactly 6 numeric digits/);
+
+    // Attempting exact new code succeeds
+    const verified = auth.verifyCode('bob@repopulse.io', resend.code);
+    assert.equal(verified.success, true);
+    assert.ok(verified.token);
+
+    // Attempting to verify again after already verified fails
+    assert.throws(() => {
+      auth.verifyCode('bob@repopulse.io', resend.code);
+    }, /No pending registration found/);
   });
 });
 
@@ -94,6 +116,95 @@ describe('StudioServer Authentication HTTP Endpoints E2E', () => {
     assert.ok(html.includes('otp-container'), 'Includes 6-digit OTP container');
     assert.ok(html.includes('repopulse://auth'), 'Includes deep-link protocol handoff');
     assert.ok(html.includes('view-success'), 'Includes success verification step');
+  });
+
+  test('HTTP OTP: Rejects wrong code with 400 Bad Request and allows resend flow', async () => {
+    const email = `otp_test_${Date.now()}@repopulse.io`;
+
+    // 1. Register
+    const regRes = await fetch(`http://localhost:${port}/api/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: 'security_lead',
+        email,
+        password: 'PassPhrase2026!'
+      })
+    });
+    assert.equal(regRes.status, 200);
+    const regData = await regRes.json() as any;
+    const initialCode = regData.code;
+    assert.ok(initialCode);
+
+    // 2. Submit wrong code (e.g. 000000)
+    const wrongCodeRes = await fetch(`http://localhost:${port}/api/auth/verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        code: '000000'
+      })
+    });
+    assert.equal(wrongCodeRes.status, 400);
+    const wrongCodeData = await wrongCodeRes.json() as any;
+    assert.equal(wrongCodeData.success, false);
+    assert.ok(wrongCodeData.error.includes('Invalid verification code'));
+
+    // 3. Submit invalid format code (e.g. '123')
+    const shortCodeRes = await fetch(`http://localhost:${port}/api/auth/verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        code: '123'
+      })
+    });
+    assert.equal(shortCodeRes.status, 400);
+    const shortCodeData = await shortCodeRes.json() as any;
+    assert.equal(shortCodeData.success, false);
+    assert.ok(shortCodeData.error.includes('6 numeric digits'));
+
+    // 4. Resend code
+    const resendRes = await fetch(`http://localhost:${port}/api/auth/resend-code`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    assert.equal(resendRes.status, 200);
+    const resendData = await resendRes.json() as any;
+    assert.equal(resendData.success, true);
+    assert.ok(resendData.code);
+    const newCode = resendData.code;
+
+    // 5. Submit old code after resend -> fails
+    if (initialCode !== newCode) {
+      const oldCodeRes = await fetch(`http://localhost:${port}/api/auth/verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code: initialCode })
+      });
+      assert.equal(oldCodeRes.status, 400);
+    }
+
+    // 6. Submit EXACT new code -> succeeds
+    const exactVerifyRes = await fetch(`http://localhost:${port}/api/auth/verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, code: newCode })
+    });
+    assert.equal(exactVerifyRes.status, 200);
+    const exactVerifyData = await exactVerifyRes.json() as any;
+    assert.equal(exactVerifyData.success, true);
+    assert.ok(exactVerifyData.token);
+    assert.equal(exactVerifyData.user.tier, 'PRO');
+
+    // 7. Submit same code again -> fails
+    const reVerifyRes = await fetch(`http://localhost:${port}/api/auth/verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, code: newCode })
+    });
+    assert.equal(reVerifyRes.status, 400);
   });
 
   test('Complete E2E: Register -> Verify -> Session lifecycle over HTTP', async () => {

@@ -103,41 +103,61 @@ export class StudioServer {
 
           // Auth: Register (Step 1: Credentials -> 6-digit OTP)
           if (req.method === 'POST' && url.pathname === '/api/auth/register') {
-            const body = await this.readBody(req);
-            const { username, email, password } = JSON.parse(body || '{}');
-            const result = this.authService.register(username, email, password);
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify(result));
+            try {
+              const body = await this.readBody(req);
+              const { username, email, password } = JSON.parse(body || '{}');
+              const result = this.authService.register(username, email, password);
+              res.writeHead(200, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify(result));
+            } catch (err: any) {
+              res.writeHead(400, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ success: false, error: err.message || 'Registration failed' }));
+            }
             return;
           }
 
           // Auth: Verify Code (Step 2: 6-digit OTP -> Activated User Session)
           if (req.method === 'POST' && url.pathname === '/api/auth/verify') {
-            const body = await this.readBody(req);
-            const { email, code } = JSON.parse(body || '{}');
-            const result = this.authService.verifyCode(email, code);
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify(result));
+            try {
+              const body = await this.readBody(req);
+              const { email, code } = JSON.parse(body || '{}');
+              const result = this.authService.verifyCode(email, code);
+              res.writeHead(200, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify(result));
+            } catch (err: any) {
+              res.writeHead(400, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ success: false, error: err.message || 'Verification failed' }));
+            }
             return;
           }
 
           // Auth: Login (Email/Username + Password)
           if (req.method === 'POST' && url.pathname === '/api/auth/login') {
-            const body = await this.readBody(req);
-            const { identifier, password } = JSON.parse(body || '{}');
-            const result = this.authService.login(identifier, password);
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify(result));
+            try {
+              const body = await this.readBody(req);
+              const { identifier, password } = JSON.parse(body || '{}');
+              const result = this.authService.login(identifier, password);
+              res.writeHead(200, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify(result));
+            } catch (err: any) {
+              res.writeHead(401, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ success: false, error: err.message || 'Invalid credentials' }));
+            }
             return;
           }
 
           // Auth: Resend OTP Code
           if (req.method === 'POST' && url.pathname === '/api/auth/resend-code') {
-            const body = await this.readBody(req);
-            const { email } = JSON.parse(body || '{}');
-            const result = this.authService.resendCode(email);
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify(result));
+            try {
+              const body = await this.readBody(req);
+              const { email } = JSON.parse(body || '{}');
+              const result = this.authService.resendCode(email);
+              res.writeHead(200, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify(result));
+            } catch (err: any) {
+              res.writeHead(400, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ success: false, error: err.message || 'Failed to resend code' }));
+            }
             return;
           }
 

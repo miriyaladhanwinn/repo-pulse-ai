@@ -140,8 +140,12 @@ export class AuthService {
     token: string;
     user: { id: string; username: string; email: string; tier: string };
   } {
-    const cleanEmail = email.trim().toLowerCase();
-    const cleanCode = code.trim();
+    const cleanEmail = (email || '').trim().toLowerCase();
+    const cleanCode = (code || '').trim();
+
+    if (!cleanCode || cleanCode.length !== 6 || !/^\d{6}$/.test(cleanCode)) {
+      throw new Error('Verification code must be exactly 6 numeric digits.');
+    }
 
     const pending = this.pendingCodes.get(cleanEmail);
     if (!pending) {
@@ -154,7 +158,7 @@ export class AuthService {
     }
 
     if (pending.code !== cleanCode) {
-      throw new Error('Invalid verification code. Please check your email and try again.');
+      throw new Error('Invalid verification code. Please enter the exact code sent to your email, or click Resend Code.');
     }
 
     // Code matches: create permanent verified user
@@ -210,6 +214,12 @@ export class AuthService {
     }
 
     if (!user) {
+      // Check if registration is pending email verification
+      for (const pending of this.pendingCodes.values()) {
+        if (pending.email.toLowerCase() === cleanId || pending.username.toLowerCase() === cleanId) {
+          throw new Error('Email not verified. Please complete email verification first.');
+        }
+      }
       throw new Error('Invalid credentials. Account not found.');
     }
 

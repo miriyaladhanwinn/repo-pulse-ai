@@ -365,6 +365,60 @@
       transform: translateY(-2px);
     }
 
+    .otp-container.has-error {
+      animation: shakeOtp 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes shakeOtp {
+      10%, 90% { transform: translate3d(-3px, 0, 0); }
+      20%, 80% { transform: translate3d(5px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-7px, 0, 0); }
+      40%, 60% { transform: translate3d(7px, 0, 0); }
+    }
+
+    .otp-digit.error-state {
+      border-color: #ef4444 !important;
+      background: rgba(239, 68, 68, 0.18) !important;
+      color: #fca5a5 !important;
+      box-shadow: 0 0 14px rgba(239, 68, 68, 0.4) !important;
+    }
+
+    .otp-digit.success-state {
+      border-color: #10b981 !important;
+      background: rgba(16, 185, 129, 0.18) !important;
+      color: #6ee7b7 !important;
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.4) !important;
+    }
+
+    .resend-link.highlight-resend {
+      color: #f59e0b !important;
+      font-weight: 700;
+      text-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
+      animation: pulseGlow 1s infinite alternate;
+    }
+
+    @keyframes pulseGlow {
+      from { opacity: 0.7; transform: scale(1); }
+      to { opacity: 1; transform: scale(1.06); }
+    }
+
+    .btn-micro {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 7px;
+      color: #cbd5e1;
+      padding: 3px 8px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-micro:hover {
+      background: rgba(255, 255, 255, 0.22);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
     /* Notification Sandbox Badge */
     .sandbox-toast {
       background: rgba(99, 102, 241, 0.12);
@@ -378,6 +432,7 @@
       display: flex;
       align-items: flex-start;
       gap: 10px;
+      transition: all 0.3s ease;
     }
 
     .sandbox-toast b {
@@ -397,6 +452,7 @@
       font-size: 12.5px;
       color: #fca5a5;
       display: none;
+      animation: fadeInStep 0.3s ease;
     }
 
     /* Steps Containers */
@@ -583,10 +639,16 @@
       <!-- ================= STEP 2: 6-DIGIT EMAIL OTP VERIFICATION ================= -->
       <div class="step-view" id="view-otp">
         <div class="sandbox-toast" id="sandbox-toast">
-          <span>📬</span>
-          <div>
+          <span style="font-size: 20px; line-height: 1;">📬</span>
+          <div style="flex: 1;">
             <div>Verification code sent to <b id="otp-target-email">user@domain.com</b></div>
-            <div style="margin-top: 4px;">Sandbox Simulated Inbox Code: <b id="sandbox-code-preview">------</b></div>
+            <div style="margin-top: 6px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+              <span>Sandbox Inbox Code: <b id="sandbox-code-preview" style="letter-spacing: 1.5px; font-size: 14px;">------</b></span>
+              <div style="display: flex; gap: 6px;">
+                <button type="button" class="btn-micro" onclick="copySandboxCode()">📋 Copy</button>
+                <button type="button" class="btn-micro" onclick="fillSandboxCode()">⚡ Auto-Fill</button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -752,16 +814,6 @@
           showStep('view-otp');
           setupOtpInputs();
           startResendCountdown();
-
-          // Auto-fill OTP in sandbox/dev mode after 1s for seamless user UX
-          if (data.code) {
-            setTimeout(() => {
-              for (let i = 0; i < 6; i++) {
-                const box = document.getElementById(`otp-${i}`);
-                if (box) box.value = data.code[i];
-              }
-            }, 800);
-          }
         } catch (err) {
           showError(err.message);
         }
@@ -786,12 +838,66 @@
       }
     }
 
+    function copySandboxCode() {
+      const code = document.getElementById('sandbox-code-preview').innerText.trim();
+      if (code && code !== '------') {
+        navigator.clipboard.writeText(code).then(() => {
+          showToastNotification('📋 Verification code copied to clipboard!');
+        }).catch(() => {
+          showToastNotification('📋 Code: ' + code);
+        });
+      }
+    }
+
+    function fillSandboxCode() {
+      const code = document.getElementById('sandbox-code-preview').innerText.trim();
+      if (code && code !== '------' && code.length === 6) {
+        clearOtpErrors();
+        hideError();
+        for (let i = 0; i < 6; i++) {
+          const box = document.getElementById(`otp-${i}`);
+          if (box) box.value = code[i];
+        }
+        document.getElementById('otp-5')?.focus();
+        if (window.triggerGyroPulse) window.triggerGyroPulse();
+        showToastNotification('⚡ Exact verification code auto-filled for testing!');
+      }
+    }
+
+    function showToastNotification(msg) {
+      const toast = document.getElementById('sandbox-toast');
+      const origBorder = toast.style.borderColor;
+      toast.style.borderColor = 'var(--accent-cyan)';
+      toast.style.boxShadow = '0 0 16px rgba(6, 182, 212, 0.4)';
+      setTimeout(() => {
+        toast.style.borderColor = origBorder;
+        toast.style.boxShadow = '';
+      }, 1500);
+    }
+
+    function clearOtpErrors() {
+      const container = document.querySelector('.otp-container');
+      if (container) container.classList.remove('has-error');
+      for (let i = 0; i < 6; i++) {
+        const box = document.getElementById(`otp-${i}`);
+        if (box) {
+          box.classList.remove('error-state');
+          box.classList.remove('success-state');
+        }
+      }
+      const resendBtn = document.getElementById('resend-btn');
+      if (resendBtn) resendBtn.classList.remove('highlight-resend');
+    }
+
     // Step 2: OTP Input Handling
     function setupOtpInputs() {
+      clearOtpErrors();
       const inputs = document.querySelectorAll('.otp-digit');
       inputs.forEach((input, idx) => {
         input.value = '';
         input.addEventListener('input', (e) => {
+          clearOtpErrors();
+          hideError();
           if (window.triggerGyroPulse) window.triggerGyroPulse();
           if (input.value.length === 1 && idx < inputs.length - 1) {
             inputs[idx + 1].focus();
@@ -808,6 +914,8 @@
           e.preventDefault();
           const pasteData = (e.clipboardData || window.clipboardData).getData('text').trim();
           if (/^\d{6}$/.test(pasteData)) {
+            clearOtpErrors();
+            hideError();
             if (window.triggerGyroPulse) window.triggerGyroPulse();
             pasteData.split('').forEach((char, i) => {
               if (inputs[i]) inputs[i].value = char;
@@ -816,22 +924,28 @@
           }
         });
       });
-      inputs[0]?.focus();
+      setTimeout(() => inputs[0]?.focus(), 50);
     }
 
     async function handleOtpSubmit(e) {
       e.preventDefault();
       hideError();
+      clearOtpErrors();
 
       let code = '';
       for (let i = 0; i < 6; i++) {
-        code += (document.getElementById(`otp-${i}`)?.value || '');
+        code += (document.getElementById(`otp-${i}`)?.value || '').trim();
       }
 
-      if (code.length !== 6) {
-        showError('Please enter all 6 digits of the verification code.');
+      if (code.length !== 6 || !/^\d{6}$/.test(code)) {
+        triggerWrongCodeUI('Please enter all 6 numeric digits of your verification code.');
         return;
       }
+
+      const verifyBtn = document.getElementById('btn-verify-otp');
+      const originalText = verifyBtn.innerHTML;
+      verifyBtn.disabled = true;
+      verifyBtn.innerHTML = '<span>Verifying Code...</span>';
 
       try {
         const res = await fetch('/api/auth/verify', {
@@ -840,15 +954,54 @@
           body: JSON.stringify({ email: currentEmail, code })
         });
         const data = await res.json();
+        verifyBtn.disabled = false;
+        verifyBtn.innerHTML = originalText;
+
         if (!res.ok || !data.success) {
-          showError(data.error || 'Invalid or expired verification code.');
+          triggerWrongCodeUI(data.error || 'Wrong verification code. Please check your email or click Resend Code.');
           return;
         }
 
-        handleSuccessfulAuth(data);
+        // Exact match verified!
+        for (let i = 0; i < 6; i++) {
+          const box = document.getElementById(`otp-${i}`);
+          if (box) box.classList.add('success-state');
+        }
+        if (window.triggerGyroPulse) window.triggerGyroPulse();
+
+        setTimeout(() => {
+          handleSuccessfulAuth(data);
+        }, 350);
       } catch (err) {
-        showError(err.message);
+        verifyBtn.disabled = false;
+        verifyBtn.innerHTML = originalText;
+        triggerWrongCodeUI(err.message || 'Verification connection error. Please try again.');
       }
+    }
+
+    function triggerWrongCodeUI(errorMessage) {
+      showError(errorMessage);
+      
+      const container = document.querySelector('.otp-container');
+      if (container) {
+        container.classList.remove('has-error');
+        void container.offsetWidth; // Restart shake animation
+        container.classList.add('has-error');
+      }
+
+      // Mark all digits as erroneous
+      for (let i = 0; i < 6; i++) {
+        const box = document.getElementById(`otp-${i}`);
+        if (box) box.classList.add('error-state');
+      }
+
+      // Highlight the Resend link so user sees alternative
+      const resendBtn = document.getElementById('resend-btn');
+      if (resendBtn) resendBtn.classList.add('highlight-resend');
+
+      // Focus on first box for easy re-typing
+      document.getElementById('otp-0')?.focus();
+      document.getElementById('otp-0')?.select();
     }
 
     function startResendCountdown() {
@@ -872,6 +1025,16 @@
 
     async function resendOtpCode() {
       try {
+        clearOtpErrors();
+        hideError();
+
+        // Clear input boxes
+        for (let i = 0; i < 6; i++) {
+          const box = document.getElementById(`otp-${i}`);
+          if (box) box.value = '';
+        }
+        document.getElementById('otp-0')?.focus();
+
         const res = await fetch('/api/auth/resend-code', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -882,8 +1045,9 @@
           document.getElementById('sandbox-code-preview').innerText = data.code;
         }
         startResendCountdown();
+        showToastNotification('📩 Brand new 6-digit code dispatched! The old code is now expired.');
       } catch (err) {
-        showError('Failed to resend verification code.');
+        showError('Failed to resend verification code. Please try again.');
       }
     }
 
