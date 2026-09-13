@@ -1,6 +1,6 @@
 /**
  * RepoPulse Knowledge Vault Unit Tests
- * Verifies document indexing, keyword ranking, token estimation, and lifecycle management.
+ * Verifies document indexing, BM25 ranking, JSON backup, and lifecycle management.
  * Copyright (c) 2026 MRLDHANWINN. Apache-2.0 Licensed.
  */
 
@@ -30,7 +30,7 @@ describe('KnowledgeVault Semantic Snippet Engine', () => {
     assert.equal(vault.getAll().length, 1);
   });
 
-  test('ranks search results by title and body keyword relevance', () => {
+  test('ranks search results by title and body keyword relevance with BM25', () => {
     vault.indexDocument({
       title: 'AST Transformation Guidelines',
       path: 'src/core/ast.ts',
@@ -52,12 +52,43 @@ describe('KnowledgeVault Semantic Snippet Engine', () => {
       content: 'Welcome to RepoPulse documentation.'
     });
 
-    // Query for "AST" should rank AST Transformation Guidelines highest because title matches (+10)
+    // Query for "AST" should rank AST Transformation Guidelines highest because title matches
     const results = vault.search('AST');
     assert.equal(results.length, 2);
     assert.equal(results[0].doc.title, 'AST Transformation Guidelines');
     assert.ok(results[0].score >= 10);
     assert.ok(results[0].matchedSnippet.includes('AST'));
+  });
+
+  test('matches documents by custom tags', () => {
+    vault.indexDocument({
+      title: 'Database Pool Config',
+      path: 'db.ts',
+      category: 'config',
+      tags: ['postgres', 'connection-pooling'],
+      content: 'Max client connections set to 20 with 5000ms idle timeout.'
+    });
+
+    const results = vault.search('postgres');
+    assert.equal(results.length, 1);
+    assert.equal(results[0].doc.title, 'Database Pool Config');
+  });
+
+  test('exports and imports vault documents via JSON', () => {
+    vault.indexDocument({
+      title: 'ADR-001',
+      path: 'docs/adr-1.md',
+      category: 'doc',
+      content: 'Decision to use native node:test instead of external jest harness.'
+    });
+
+    const json = vault.exportJson();
+    assert.ok(json.includes('ADR-001'));
+
+    const newVault = new KnowledgeVault();
+    const importedCount = newVault.importJson(json);
+    assert.equal(importedCount, 1);
+    assert.equal(newVault.getAll()[0].title, 'ADR-001');
   });
 
   test('returns empty array when query is whitespace or single characters', () => {

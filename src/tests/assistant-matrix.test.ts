@@ -11,7 +11,7 @@ import { AssistantMatrix, ASSISTANT_REGISTRY } from '../core/assistant-matrix.js
 describe('AssistantMatrix Persona Registry', () => {
   test('returns all registered frontier maintainer personas', () => {
     const assistants = AssistantMatrix.getAll();
-    assert.ok(assistants.length >= 6);
+    assert.ok(assistants.length >= 12);
     assert.deepEqual(assistants, ASSISTANT_REGISTRY);
   });
 

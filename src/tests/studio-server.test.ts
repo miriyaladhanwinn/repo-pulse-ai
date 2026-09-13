@@ -56,7 +56,7 @@ describe('StudioServer E2E Verification', () => {
     assert.equal(res.status, 200);
     const data = await res.json() as any;
     assert.ok(Array.isArray(data.models));
-    assert.ok(data.models.length >= 6);
+    assert.ok(data.models.length >= 10);
   });
 
   test('GET /api/assistants returns assistant matrix personas', async () => {
@@ -64,7 +64,7 @@ describe('StudioServer E2E Verification', () => {
     assert.equal(res.status, 200);
     const data = await res.json() as any;
     assert.ok(Array.isArray(data.assistants));
-    assert.ok(data.assistants.length >= 6);
+    assert.ok(data.assistants.length >= 12);
   });
 
   test('POST /api/chat completes universal chat request', async () => {
@@ -84,7 +84,7 @@ describe('StudioServer E2E Verification', () => {
     assert.ok(data.content.length > 0);
   });
 
-  test('GET and POST /api/knowledge manages indexed documents', async () => {
+  test('GET, SEARCH, and DELETE /api/knowledge manages indexed documents', async () => {
     const postRes = await fetch(`http://localhost:${port}/api/knowledge`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -92,18 +92,26 @@ describe('StudioServer E2E Verification', () => {
         title: 'Security Invariants',
         path: 'security.md',
         content: 'No arbitrary code execution allowed.',
-        category: 'doc'
+        category: 'doc',
+        tags: ['security', 'compliance']
       })
     });
     assert.equal(postRes.status, 200);
     const postData = await postRes.json() as any;
     assert.ok(postData.doc.id);
 
-    const getRes = await fetch(`http://localhost:${port}/api/knowledge`);
-    assert.equal(getRes.status, 200);
-    const getData = await getRes.json() as any;
-    assert.ok(Array.isArray(getData.documents));
-    assert.ok(getData.documents.length >= 2);
+    const searchRes = await fetch(`http://localhost:${port}/api/knowledge/search?q=Invariants`);
+    assert.equal(searchRes.status, 200);
+    const searchData = await searchRes.json() as any;
+    assert.ok(Array.isArray(searchData.results));
+    assert.ok(searchData.results.length >= 1);
+
+    const delRes = await fetch(`http://localhost:${port}/api/knowledge/${postData.doc.id}`, {
+      method: 'DELETE'
+    });
+    assert.equal(delRes.status, 200);
+    const delData = await delRes.json() as any;
+    assert.equal(delData.deleted, true);
   });
 
   test('GET /api/health reports system status and Titan metrics', async () => {
@@ -112,8 +120,8 @@ describe('StudioServer E2E Verification', () => {
     const data = await res.json() as any;
     assert.equal(data.status, 'operational');
     assert.ok(data.toolsCount >= 3);
-    assert.ok(data.modelsAvailable >= 6);
-    assert.ok(data.assistantsAvailable >= 6);
+    assert.ok(data.modelsAvailable >= 10);
+    assert.ok(data.assistantsAvailable >= 12);
     assert.ok(data.knowledgeDocsCount >= 1);
   });
 });

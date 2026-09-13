@@ -13,7 +13,10 @@
 [![Claude 3.7](https://img.shields.io/badge/Anthropic-Claude%203.7%20Sonnet-d97706.svg)](https://anthropic.com/)
 [![Gemini 2.5 Pro](https://img.shields.io/badge/Google-Gemini%202.5%20Pro-4285F4.svg)](https://deepmind.google/technologies/gemini/)
 [![DeepSeek R1](https://img.shields.io/badge/DeepSeek-R1%20Reasoning-10b981.svg)](https://deepseek.com/)
-[![Tests](https://img.shields.io/badge/tests-44%2F44%20passing-brightgreen.svg)]()
+[![Groq](https://img.shields.io/badge/Groq-Llama%203.3%2070B-f97316.svg)](https://groq.com/)
+[![Mistral](https://img.shields.io/badge/Mistral-Codestral%202501-ff7000.svg)](https://mistral.ai/)
+[![OpenRouter](https://img.shields.io/badge/OpenRouter-Multi--Provider-6366f1.svg)](https://openrouter.ai/)
+[![Tests](https://img.shields.io/badge/tests-46%2F46%20passing-brightgreen.svg)]()
 
 <p align="center">
   <a href="#-key-features">Key Features</a> •
@@ -39,9 +42,10 @@ Whether through its Apple Developer-grade **Liquid Glass 3D Web Studio**, its au
 
 ## 🚀 Key Features
 
-- **🌐 Multi-Model Universal Gateway**: Seamless routing across **OpenAI GPT-5.4 Codex / GPT-4o**, **Anthropic Claude 3.7 Sonnet**, **Google Gemini 2.5 Pro**, **DeepSeek R1 Reasoning**, and **Local Ollama (Qwen 2.5 Coder)** with zero-downtime deterministic fallback.
-- **👥 Assistant Matrix (6 Maintainer Personas)**: Specialized prompt architecture designed for real-world development workflows (Maintainer Lead, CVE Vulnerability Auditor, AST Refactorer, Runtime SRE, MCP Dispatcher, Bug Synthesizer).
-- **📚 Semantic Knowledge Vault**: Context-pinning engine indexing architectural invariants, repository rules, and critical code snippets to prime LLM context windows without token bloat.
+- **🌐 Multi-Model Universal Gateway**: Seamless routing across **OpenAI GPT-5.4 Codex / GPT-4o**, **Anthropic Claude 3.7 Sonnet**, **Google Gemini 2.5 Pro**, **DeepSeek R1 Reasoning**, **Groq Llama 3.3 70B**, **Mistral Codestral**, **OpenRouter**, **Local Ollama**, and **Custom OpenAI-Compatible Endpoints** with zero-downtime deterministic fallback.
+- **👥 Assistant Matrix (12 Maintainer Personas)**: Specialized prompt architecture designed for real-world development workflows (Maintainer Lead, CVE Vulnerability Auditor, AST Refactorer, Runtime SRE, Database Architect, Distributed Systems SRE, CI/CD Specialist, Crypto Guard, RFC Author, UI Artisan).
+- **📚 Hybrid BM25 Knowledge Vault**: Context-pinning engine with BM25 term saturation and tag indexing to prime LLM context windows without token bloat.
+- **🔬 AST Code Sandbox**: Real-time syntax tree parsing, cyclomatic complexity estimation, and dynamic evaluation hazard detection.
 - **🖥️ Apple-Grade 3D Liquid Glass Studio**: Web-based desktop-caliber workspace on `http://localhost:3000` with 3D kinetic background canvas, live multi-model chat, visual AST diff analyzer, MCP tool runner, and provider settings.
 - **🔍 AST-Bounded Diff Decomposition**: Slices massive multi-file pull requests into isolated syntactic chunks (classes, functions, interfaces), isolating breaking changes and security-critical paths.
 - **🛡️ Zero-Trust Security Auditor**: Scans diffs and snippets for dynamic code execution (`eval`, Function constructor), prototype pollution, hardcoded tokens, and ReDoS patterns.
@@ -52,7 +56,7 @@ Whether through its Apple Developer-grade **Liquid Glass 3D Web Studio**, its au
 
 ## 👥 Assistant Matrix
 
-RepoPulse ships with pre-configured, production-hardened maintainer personas:
+RepoPulse ships with 12 pre-configured, production-hardened maintainer personas:
 
 | Persona | Role | Focus | Preferred Model |
 | :--- | :--- | :--- | :--- |
@@ -62,6 +66,12 @@ RepoPulse ships with pre-configured, production-hardened maintainer personas:
 | **🏎️ Runtime & Memory SRE** | Systems Performance | Event-loop latency, V8 de-optimizations, GC pressure, worker pool leaks | `gpt-5.4-codex` |
 | **🔌 MCP Tool Orchestrator** | Protocol Dispatcher | JSON-RPC 2.0 chaining, tool schema validation, external agent workflows | `gemini-2.5-pro` |
 | **🧪 Bug Synthesizer** | Test Synthesis Engineer | Turns unstructured bug reports into minimal runnable `node:test` reproducers | `deepseek-r1` |
+| **🗄️ Database Optimizer** | SQL & Storage Lead | PostgreSQL query plans, EXPLAIN ANALYZE, WAL checkpoints, locking | `codestral-2501` |
+| **🌐 Distributed Architect** | Cloud & Consensus SRE | Idempotency tokens, circuit breakers, monotonic ordering, partition tolerance | `claude-3-7-sonnet` |
+| **📦 CI/CD Specialist** | Supply Chain Architect | Hardened GitHub Actions, immutable commit SHAs, OIDC minting | `llama-3.3-70b` |
+| **🔐 Cryptography Guard** | Applied Crypto Auditor | Constant-time comparisons (`timingSafeEqual`), CSPRNG entropy, HKDF | `gpt-5.4-codex` |
+| **📝 RFC & Spec Author** | Standards & Governance | RFC 2119 precision, Architectural Decision Records (ADRs), SemVer planning | `claude-3-7-sonnet` |
+| **🎨 Apple Design Artisan** | UI/UX & Canvas Engineer | Layered glassmorphism (`blur(35px)`), GPU-accelerated canvas particles, typography | `gpt-5.4-codex` |
 
 ---
 
@@ -72,12 +82,14 @@ Configure your own API keys or leverage RepoPulse's offline deterministic heuris
 ```mermaid
 flowchart LR
     A[RepoPulse Client / Studio] --> B[MultiModelRouter]
-    B --> C[OpenAI GPT-5.4 Codex]
+    B --> C[OpenAI GPT-5.4 / 4o]
     B --> D[Anthropic Claude 3.7]
     B --> E[Google Gemini 2.5 Pro]
-    B --> F[DeepSeek R1]
-    B --> G[Local Ollama Qwen 2.5]
-    B --> H[Deterministic Safe Fallback]
+    B --> F[DeepSeek R1 Reasoning]
+    B --> G[Groq Llama 3.3 70B]
+    B --> H[Mistral Codestral]
+    B --> I[OpenRouter / Custom API]
+    B --> J[Deterministic Safe Fallback]
 ```
 
 ---

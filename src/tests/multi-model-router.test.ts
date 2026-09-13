@@ -9,9 +9,9 @@ import assert from 'node:assert/strict';
 import { MultiModelRouter, SUPPORTED_MODELS } from '../providers/multi-model-router.js';
 
 describe('MultiModelRouter Frontier Gateway', () => {
-  test('enumerates all supported frontier and local models', () => {
+  test('enumerates all supported frontier, fast, and local models', () => {
     const models = MultiModelRouter.getModels();
-    assert.ok(models.length >= 6);
+    assert.ok(models.length >= 10);
     assert.deepEqual(models, SUPPORTED_MODELS);
 
     const providers = new Set(models.map(m => m.provider));
@@ -19,7 +19,11 @@ describe('MultiModelRouter Frontier Gateway', () => {
     assert.ok(providers.has('anthropic'));
     assert.ok(providers.has('google'));
     assert.ok(providers.has('deepseek'));
+    assert.ok(providers.has('groq'));
+    assert.ok(providers.has('mistral'));
+    assert.ok(providers.has('openrouter'));
     assert.ok(providers.has('ollama'));
+    assert.ok(providers.has('custom'));
   });
 
   test('retrieves model descriptor by ID', () => {
@@ -29,10 +33,19 @@ describe('MultiModelRouter Frontier Gateway', () => {
     assert.equal(codex.reasoningSupport, true);
     assert.equal(codex.tier, 'frontier');
 
-    const claude = MultiModelRouter.getModelById('claude-3-7-sonnet');
-    assert.ok(claude);
-    assert.equal(claude.provider, 'anthropic');
-    assert.equal(claude.contextWindow, 200000);
+    const groq = MultiModelRouter.getModelById('llama-3.3-70b-versatile');
+    assert.ok(groq);
+    assert.equal(groq.provider, 'groq');
+    assert.equal(groq.tier, 'fast');
+
+    const mistral = MultiModelRouter.getModelById('codestral-2501');
+    assert.ok(mistral);
+    assert.equal(mistral.provider, 'mistral');
+    assert.equal(mistral.contextWindow, 256000);
+
+    const custom = MultiModelRouter.getModelById('custom-endpoint');
+    assert.ok(custom);
+    assert.equal(custom.provider, 'custom');
   });
 
   test('returns undefined for non-existent model ID', () => {

@@ -95,7 +95,7 @@ export class StudioServer {
           // 3. Multi-Model Universal Chat Endpoint
           if (req.method === 'POST' && url.pathname === '/api/chat') {
             const body = await this.readBody(req);
-            const { messages, modelId, assistantId, apiKeys, temperature } = JSON.parse(body || '{}');
+            const { messages, modelId, assistantId, apiKeys, customEndpoint, temperature } = JSON.parse(body || '{}');
 
             const fullMessages = [...(messages || [])];
             if (assistantId) {
@@ -108,6 +108,7 @@ export class StudioServer {
             const result = await MultiModelRouter.complete(fullMessages, {
               modelId,
               apiKeys,
+              customEndpoint,
               temperature
             });
 
@@ -132,11 +133,11 @@ export class StudioServer {
             const body = await this.readBody(req);
             const { id, title, body: issueBody } = JSON.parse(body || '{}');
             const issue = {
-              id: id || '1',
-              title: title || 'Bug report',
+              id: id || `iss-${Date.now()}`,
+              title: title || 'Untitled Issue',
               body: issueBody || '',
-              author: 'maintainer',
               labels: [],
+              author: 'community-reporter',
               createdAt: new Date().toISOString()
             };
             const triage = IssueClassifier.triage(issue);
@@ -153,14 +154,31 @@ export class StudioServer {
             return;
           }
 
+          if (req.method === 'GET' && url.pathname === '/api/knowledge/search') {
+            const query = url.searchParams.get('q') || '';
+            const results = this.knowledgeVault.search(query);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ results }));
+            return;
+          }
+
+          if (req.method === 'DELETE' && url.pathname.startsWith('/api/knowledge/')) {
+            const docId = decodeURIComponent(url.pathname.replace('/api/knowledge/', ''));
+            const deleted = this.knowledgeVault.delete(docId);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ deleted }));
+            return;
+          }
+
           if (req.method === 'POST' && url.pathname === '/api/knowledge') {
             const body = await this.readBody(req);
-            const { title, path: docPath, content, category } = JSON.parse(body || '{}');
+            const { title, path: docPath, content, category, tags } = JSON.parse(body || '{}');
             const doc = this.knowledgeVault.indexDocument({
               title: title || 'Untitled Note',
               path: docPath || 'snippet.ts',
               content: content || '',
-              category: category || 'code'
+              category: category || 'code',
+              tags: tags || []
             });
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ doc }));

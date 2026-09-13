@@ -1,13 +1,13 @@
 /**
  * Universal Multi-Model Provider Router
- * Routes prompt requests across OpenAI, Anthropic, Gemini, DeepSeek, and Local Ollama.
+ * Routes prompt requests across OpenAI, Anthropic, Gemini, DeepSeek, Groq, Mistral, OpenRouter, and Local Ollama.
  * Copyright (c) 2026 MRLDHANWINN. Apache-2.0 Licensed.
  */
 
 export interface ModelDescriptor {
   id: string;
   name: string;
-  provider: 'openai' | 'anthropic' | 'google' | 'deepseek' | 'ollama';
+  provider: 'openai' | 'anthropic' | 'google' | 'deepseek' | 'groq' | 'mistral' | 'openrouter' | 'ollama' | 'custom';
   contextWindow: number;
   reasoningSupport: boolean;
   tier: 'frontier' | 'fast' | 'local';
@@ -31,7 +31,12 @@ export interface ChatCompletionOptions {
     anthropic?: string;
     google?: string;
     deepseek?: string;
+    groq?: string;
+    mistral?: string;
+    openrouter?: string;
+    custom?: string;
   };
+  customEndpoint?: string;
   ollamaEndpoint?: string;
 }
 
@@ -98,7 +103,37 @@ export const SUPPORTED_MODELS: ModelDescriptor[] = [
     tier: 'frontier',
     description: 'Open-weight frontier reasoning model with explicit chain-of-thought tokens.'
   },
-  // Local
+  // Groq
+  {
+    id: 'llama-3.3-70b-versatile',
+    name: 'Groq Llama 3.3 70B (Ultra-Fast)',
+    provider: 'groq',
+    contextWindow: 128000,
+    reasoningSupport: false,
+    tier: 'fast',
+    description: 'Ultra-low latency inference engine running Llama 3.3 at 300+ tokens per second.'
+  },
+  // Mistral
+  {
+    id: 'codestral-2501',
+    name: 'Mistral Codestral 2501',
+    provider: 'mistral',
+    contextWindow: 256000,
+    reasoningSupport: true,
+    tier: 'frontier',
+    description: 'State-of-the-art coding and FIM (Fill-in-the-Middle) synthesis model from Mistral AI.'
+  },
+  // OpenRouter
+  {
+    id: 'openrouter/auto',
+    name: 'OpenRouter Auto Gateway',
+    provider: 'openrouter',
+    contextWindow: 128000,
+    reasoningSupport: true,
+    tier: 'frontier',
+    description: 'Dynamic price-performance routing across 200+ global foundation models.'
+  },
+  // Local Ollama
   {
     id: 'qwen2.5-coder:7b',
     name: 'Qwen 2.5 Coder 7B (Local Ollama)',
@@ -107,6 +142,16 @@ export const SUPPORTED_MODELS: ModelDescriptor[] = [
     reasoningSupport: false,
     tier: 'local',
     description: 'Low-latency, privacy-first local coding model running on your GPU/CPU.'
+  },
+  // Custom API
+  {
+    id: 'custom-endpoint',
+    name: 'Custom OpenAI-Compatible API',
+    provider: 'custom',
+    contextWindow: 128000,
+    reasoningSupport: false,
+    tier: 'local',
+    description: 'Connect any private LLM endpoint, vLLM, LMStudio, or internal enterprise inference gateway.'
   }
 ];
 
@@ -134,6 +179,10 @@ export class MultiModelRouter {
     const openaiKey = options.apiKeys?.openai || process.env.OPENAI_API_KEY;
     const anthropicKey = options.apiKeys?.anthropic || process.env.ANTHROPIC_API_KEY;
     const deepseekKey = options.apiKeys?.deepseek || process.env.DEEPSEEK_API_KEY;
+    const groqKey = options.apiKeys?.groq || process.env.GROQ_API_KEY;
+    const mistralKey = options.apiKeys?.mistral || process.env.MISTRAL_API_KEY;
+    const openrouterKey = options.apiKeys?.openrouter || process.env.OPENROUTER_API_KEY;
+    const customKey = options.apiKeys?.custom || process.env.CUSTOM_API_KEY;
 
     // 1. OpenAI dispatch
     if (model.provider === 'openai' && openaiKey) {
@@ -168,7 +217,7 @@ export class MultiModelRouter {
           };
         }
       } catch {
-        // Cascade to heuristic fallback
+        // Fallback
       }
     }
 
@@ -212,7 +261,7 @@ export class MultiModelRouter {
           };
         }
       } catch {
-        // Cascade to heuristic fallback
+        // Fallback
       }
     }
 
@@ -249,11 +298,158 @@ export class MultiModelRouter {
           };
         }
       } catch {
-        // Cascade to heuristic fallback
+        // Fallback
       }
     }
 
-    // 4. Local Ollama dispatch (if endpoint reachable)
+    // 4. Groq dispatch (ultra-fast)
+    if (model.provider === 'groq' && groqKey) {
+      try {
+        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${groqKey}`
+          },
+          body: JSON.stringify({
+            model: 'llama-3.3-70b-versatile',
+            messages: messages.map(m => ({ role: m.role, content: m.content })),
+            temperature: options.temperature ?? 0.2
+          })
+        });
+
+        if (res.ok) {
+          const json = await res.json() as any;
+          const choice = json.choices?.[0];
+          return {
+            modelId: model.id,
+            provider: 'Groq',
+            content: choice?.message?.content || '',
+            usage: {
+              promptTokens: json.usage?.prompt_tokens || 0,
+              completionTokens: json.usage?.completion_tokens || 0,
+              totalTokens: json.usage?.total_tokens || 0
+            },
+            latencyMs: Date.now() - startTime
+          };
+        }
+      } catch {
+        // Fallback
+      }
+    }
+
+    // 5. Mistral dispatch
+    if (model.provider === 'mistral' && mistralKey) {
+      try {
+        const res = await fetch('https://api.mistral.ai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${mistralKey}`
+          },
+          body: JSON.stringify({
+            model: 'codestral-2501',
+            messages: messages.map(m => ({ role: m.role, content: m.content })),
+            temperature: options.temperature ?? 0.2
+          })
+        });
+
+        if (res.ok) {
+          const json = await res.json() as any;
+          const choice = json.choices?.[0];
+          return {
+            modelId: model.id,
+            provider: 'Mistral',
+            content: choice?.message?.content || '',
+            usage: {
+              promptTokens: json.usage?.prompt_tokens || 0,
+              completionTokens: json.usage?.completion_tokens || 0,
+              totalTokens: json.usage?.total_tokens || 0
+            },
+            latencyMs: Date.now() - startTime
+          };
+        }
+      } catch {
+        // Fallback
+      }
+    }
+
+    // 6. OpenRouter dispatch
+    if (model.provider === 'openrouter' && openrouterKey) {
+      try {
+        const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${openrouterKey}`,
+            'HTTP-Referer': 'https://github.com/miriyaladhanwinn/repo-pulse-ai',
+            'X-Title': 'RepoPulse Studio'
+          },
+          body: JSON.stringify({
+            model: 'auto',
+            messages: messages.map(m => ({ role: m.role, content: m.content })),
+            temperature: options.temperature ?? 0.2
+          })
+        });
+
+        if (res.ok) {
+          const json = await res.json() as any;
+          const choice = json.choices?.[0];
+          return {
+            modelId: model.id,
+            provider: 'OpenRouter',
+            content: choice?.message?.content || '',
+            usage: {
+              promptTokens: json.usage?.prompt_tokens || 0,
+              completionTokens: json.usage?.completion_tokens || 0,
+              totalTokens: json.usage?.total_tokens || 0
+            },
+            latencyMs: Date.now() - startTime
+          };
+        }
+      } catch {
+        // Fallback
+      }
+    }
+
+    // 7. Custom OpenAI-compatible API endpoint
+    if (model.provider === 'custom' && (options.customEndpoint || process.env.CUSTOM_API_ENDPOINT)) {
+      const endpoint = (options.customEndpoint || process.env.CUSTOM_API_ENDPOINT || 'http://localhost:8000/v1').replace(/\/+$/, '');
+      try {
+        const res = await fetch(`${endpoint}/chat/completions`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${customKey || 'default'}`
+          },
+          body: JSON.stringify({
+            model: 'default',
+            messages: messages.map(m => ({ role: m.role, content: m.content })),
+            temperature: options.temperature ?? 0.2
+          })
+        });
+
+        if (res.ok) {
+          const json = await res.json() as any;
+          const choice = json.choices?.[0];
+          return {
+            modelId: model.id,
+            provider: 'Custom API',
+            content: choice?.message?.content || '',
+            usage: {
+              promptTokens: json.usage?.prompt_tokens || 0,
+              completionTokens: json.usage?.completion_tokens || 0,
+              totalTokens: json.usage?.total_tokens || 0
+            },
+            latencyMs: Date.now() - startTime
+          };
+        }
+      } catch {
+        // Fallback
+      }
+    }
+
+    // 8. Local Ollama dispatch (if endpoint reachable)
     const ollamaUrl = options.ollamaEndpoint || 'http://127.0.0.1:11434';
     try {
       const res = await fetch(`${ollamaUrl}/api/chat`, {
@@ -284,7 +480,7 @@ export class MultiModelRouter {
       // Local Ollama offline
     }
 
-    // 5. Native Deterministic Studio Engine (Offline Heuristic Mode)
+    // 9. Native Deterministic Studio Engine (Offline Heuristic Mode)
     // Ensures zero-failure experience even when offline or without external API keys
     const lastUserMessage = [...messages].reverse().find(m => m.role === 'user')?.content || '';
     const heuristicResponse = this.generateDeterministicResponse(lastUserMessage, model);
@@ -303,8 +499,6 @@ export class MultiModelRouter {
   }
 
   private static generateDeterministicResponse(prompt: string, model: ModelDescriptor): string {
-    const lower = prompt.toLowerCase();
-
     if (/\b(diff|review|pr|pull\s+request|changeset)\b/i.test(prompt)) {
       return `### ⚡ RepoPulse AST Intelligence Analysis
 **Model Target**: \`${model.name}\`

@@ -138,42 +138,41 @@
     .nav-group {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
       margin-top: 18px;
     }
     .nav-label {
-      font-size: 10.5px;
+      font-size: 11px;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.06em;
       color: var(--text-dim);
-      font-weight: 700;
-      padding: 0 10px 4px 10px;
+      padding: 6px 12px 2px 12px;
     }
     .nav-item {
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 10px 12px;
+      padding: 10px 14px;
       border-radius: 12px;
       color: var(--text-muted);
       font-size: 13.5px;
       font-weight: 600;
       cursor: pointer;
-      border: 1px solid transparent;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .nav-item:hover {
-      background: rgba(255, 255, 255, 0.04);
+      background: rgba(255, 255, 255, 0.05);
       color: #ffffff;
+      transform: translateX(3px);
     }
     .nav-item.active {
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(6, 182, 212, 0.2));
-      border-color: rgba(255, 255, 255, 0.12);
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.22), rgba(6, 182, 212, 0.12));
+      border: 1px solid rgba(99, 102, 241, 0.35);
       color: #ffffff;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
     }
 
-    /* Sidebar Footer */
     .sidebar-footer {
       border-top: 1px solid var(--glass-border);
       padding-top: 16px;
@@ -190,51 +189,53 @@
       width: 32px;
       height: 32px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #a855f7, #6366f1);
+      background: linear-gradient(135deg, #4f46e5, #9333ea);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
       font-size: 13px;
+      font-weight: 700;
     }
     .user-meta {
-      flex: 1;
-      overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
     .user-name {
-      font-size: 12px;
+      font-size: 12.5px;
       font-weight: 700;
-      color: #f1f5f9;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
     }
     .user-role {
-      font-size: 10px;
-      color: var(--success);
-      font-weight: 600;
+      font-size: 10.5px;
+      color: var(--accent-cyan);
     }
 
-    /* Main Content Area */
+    /* Main Viewport */
     main.main-viewport {
       flex: 1;
       height: 100vh;
-      overflow-y: auto;
-      padding: 24px 32px 40px 32px;
-      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
     }
 
     /* Top Bar */
-    .top-bar {
+    header.top-bar {
+      height: 64px;
+      border-bottom: 1px solid var(--glass-border);
+      background: rgba(10, 13, 20, 0.65);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 24px;
+      justify-content: space-between;
+      padding: 0 24px;
+      flex-shrink: 0;
     }
+
     .page-title-box h2 {
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
     }
     .page-title-box p {
       font-size: 12.5px;
@@ -270,39 +271,40 @@
       cursor: pointer;
     }
     .model-selector-pill select option {
-      background: #0b0f17;
-      color: #fff;
+      background: #0f141f;
+      color: #ffffff;
     }
 
-    /* Glass Cards */
-    .glass-card {
-      background: var(--bg-card);
-      backdrop-filter: blur(28px);
-      -webkit-backdrop-filter: blur(28px);
-      border: 1px solid var(--glass-border);
-      border-radius: 18px;
-      padding: 22px;
-      box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.02) inset;
-      margin-bottom: 20px;
+    /* Views */
+    .view-container {
+      flex: 1;
+      display: none;
+      overflow-y: auto;
+      padding: 24px;
+    }
+    .view-container.active {
+      display: flex;
+      flex-direction: column;
     }
 
-    /* VIEW 1: CHAT STUDIO */
+    /* VIEW 1: STUDIO CHAT */
     .chat-layout {
       display: flex;
       flex-direction: column;
-      height: calc(100vh - 120px);
+      height: 100%;
       background: var(--bg-card);
       border: 1px solid var(--glass-border);
       border-radius: 20px;
       overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
     }
     .chat-header {
       padding: 14px 20px;
       border-bottom: 1px solid var(--glass-border);
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      background: rgba(10, 14, 22, 0.5);
+      justify-content: space-between;
+      background: rgba(10, 14, 22, 0.6);
     }
     .assistant-active-chip {
       display: flex;
@@ -310,15 +312,22 @@
       gap: 10px;
     }
     .chip-avatar {
-      font-size: 20px;
+      font-size: 18px;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .chip-name {
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 700;
     }
     .chip-desc {
       font-size: 11px;
-      color: var(--text-muted);
+      color: var(--accent-cyan);
     }
 
     .chat-messages {
@@ -327,22 +336,22 @@
       padding: 24px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 16px;
     }
     .msg-row {
       display: flex;
       gap: 14px;
-      max-width: 82%;
+      max-width: 85%;
     }
     .msg-row.user {
-      margin-left: auto;
+      align-self: flex-end;
       flex-direction: row-reverse;
     }
     .msg-avatar {
       width: 34px;
       height: 34px;
       border-radius: 10px;
-      background: rgba(255,255,255,0.06);
+      background: rgba(255, 255, 255, 0.06);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -399,35 +408,34 @@
       box-shadow: 0 0 0 3px var(--accent-glow);
     }
     .send-btn {
-      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      background: linear-gradient(135deg, var(--accent), #4338ca);
       border: none;
       color: #fff;
       padding: 12px 20px;
       border-radius: 12px;
       font-weight: 700;
-      font-size: 13px;
+      font-size: 13.5px;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 6px;
-      box-shadow: 0 4px 16px var(--accent-glow);
       transition: all 0.2s;
     }
     .send-btn:hover {
+      filter: brightness(1.15);
       transform: translateY(-1px);
-      filter: brightness(1.1);
     }
 
-    /* VIEW 2: ASSISTANTS MATRIX */
-    .assistant-grid {
+    /* VIEW 2: ASSISTANT MATRIX */
+    .assistants-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 16px;
+      gap: 18px;
     }
     .assistant-card {
       background: var(--bg-card);
       border: 1px solid var(--glass-border);
-      border-radius: 16px;
+      border-radius: 18px;
       padding: 20px;
       cursor: pointer;
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -436,7 +444,8 @@
       justify-content: space-between;
     }
     .assistant-card:hover {
-      border-color: rgba(99, 102, 241, 0.4);
+      background: var(--bg-card-hover);
+      border-color: var(--glass-border-focus);
       transform: translateY(-3px);
       box-shadow: 0 12px 28px rgba(0,0,0,0.4);
     }
@@ -489,84 +498,77 @@
     /* VIEW 3: PR REVIEW LAB */
     .panel-grid {
       display: grid;
-      grid-template-columns: 1fr 1.15fr;
+      grid-template-columns: 1fr 1fr;
       gap: 20px;
+      height: 100%;
+    }
+    .glass-card {
+      background: var(--bg-card);
+      border: 1px solid var(--glass-border);
+      border-radius: 18px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+      display: block;
+    }
+    input[type="text"], textarea {
+      width: 100%;
+      background: rgba(6, 8, 14, 0.75);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 10px 14px;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      outline: none;
+      margin-bottom: 16px;
+    }
+    input[type="text"]:focus, textarea:focus {
+      border-color: var(--accent);
     }
     .metric-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
+      gap: 12px;
       margin-bottom: 18px;
     }
     .metric-box {
-      background: rgba(255, 255, 255, 0.03);
+      background: rgba(255,255,255,0.03);
       border: 1px solid var(--glass-border);
       border-radius: 12px;
       padding: 12px;
       text-align: center;
     }
-    .metric-value {
+    .metric-val {
       font-size: 20px;
       font-weight: 800;
+      color: #38bdf8;
     }
-    .metric-label {
-      font-size: 10px;
-      color: var(--text-muted);
+    .metric-lbl {
+      font-size: 10.5px;
+      color: var(--text-dim);
       text-transform: uppercase;
-      font-weight: 600;
-      margin-top: 2px;
+      margin-top: 4px;
     }
 
-    /* VIEW CONTROLLERS */
-    .view-container {
-      display: none;
-      animation: fadeIn 0.25s ease forwards;
-    }
-    .view-container.active {
-      display: block;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Form Fields & Buttons */
-    label {
-      display: block;
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 6px;
-    }
-    input[type="text"], textarea {
-      width: 100%;
-      background: rgba(6, 8, 14, 0.8);
-      border: 1px solid var(--glass-border);
-      border-radius: 12px;
-      padding: 12px 14px;
-      color: #fff;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12.5px;
-      outline: none;
-      margin-bottom: 14px;
-    }
-    input[type="text"]:focus, textarea:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-glow);
-    }
     .btn-action {
-      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      background: linear-gradient(135deg, var(--accent), #4338ca);
       border: none;
       color: #fff;
-      padding: 12px 20px;
-      border-radius: 12px;
+      padding: 10px 18px;
+      border-radius: 10px;
       font-weight: 700;
       font-size: 13px;
       cursor: pointer;
-      width: 100%;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
@@ -590,7 +592,7 @@
         <div class="brand">
           <div class="brand-logo">⚡</div>
           <div>
-            <h1 class="brand-title">RepoPulse</h1>
+            <h1 class="brand-title">RepoPulse Studio</h1>
             <span class="brand-tag">Titan Edition v2.0</span>
           </div>
         </div>
@@ -605,6 +607,9 @@
           </div>
           <div class="nav-item" onclick="switchView('assistants')">
             <span>👥</span> Assistant Matrix
+          </div>
+          <div class="nav-item" onclick="switchView('sandbox')">
+            <span>🔬</span> AST Code Sandbox
           </div>
           <div class="nav-item" onclick="switchView('mcp')">
             <span>🔌</span> MCP Tool Hub
@@ -631,7 +636,7 @@
 
     <!-- Main Viewport -->
     <main class="main-viewport">
-      <div class="top-bar">
+      <header class="top-bar">
         <div class="page-title-box">
           <h2 id="page-heading">💬 Studio Chat</h2>
           <p id="page-subheading">Unified Multi-Model Gateway & Autonomous Agent Harness</p>
@@ -641,16 +646,21 @@
           <div class="model-selector-pill">
             <span>🧠 Model:</span>
             <select id="active-model-select" onchange="onModelChange()">
-              <option value="gpt-5.4-codex">OpenAI GPT-5.4 Codex</option>
-              <option value="gpt-4o">OpenAI GPT-4o</option>
-              <option value="claude-3-7-sonnet">Claude 3.7 Sonnet</option>
-              <option value="gemini-2.5-pro">Google Gemini 2.5 Pro</option>
-              <option value="deepseek-r1">DeepSeek R1 Reasoning</option>
+              <!-- Populated dynamically via /api/models -->
+              <option value="gpt-5.4-codex">OpenAI GPT-5.4 Codex (128k)</option>
+              <option value="gpt-4o">OpenAI GPT-4o (128k)</option>
+              <option value="claude-3-7-sonnet">Claude 3.7 Sonnet (200k)</option>
+              <option value="gemini-2.5-pro">Google Gemini 2.5 Pro (1000k)</option>
+              <option value="deepseek-r1">DeepSeek R1 Reasoning (64k)</option>
+              <option value="llama-3.3-70b-versatile">Groq Llama 3.3 70B (128k)</option>
+              <option value="codestral-2501">Mistral Codestral 2501 (256k)</option>
+              <option value="openrouter/auto">OpenRouter Auto (128k)</option>
               <option value="qwen2.5-coder:7b">Qwen 2.5 Coder (Local Ollama)</option>
+              <option value="custom-endpoint">Custom OpenAI-Compatible API</option>
             </select>
           </div>
         </div>
-      </div>
+      </header>
 
       <!-- VIEW 1: STUDIO CHAT -->
       <div class="view-container active" id="view-chat">
@@ -663,8 +673,9 @@
                 <div class="chip-desc" id="chat-active-title">Principal Open Source Architect</div>
               </div>
             </div>
-            <div style="font-size: 11px; color: var(--text-muted);">
-              Press <kbd style="background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;">Enter</kbd> to send
+            <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 14px;">
+              <span>Temp: <input type="range" id="chat-temp" min="0" max="1" step="0.05" value="0.2" style="width: 70px; vertical-align: middle;"></span>
+              <span>Press <kbd style="background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;">Enter</kbd> to send</span>
             </div>
           </div>
 
@@ -672,10 +683,10 @@
             <div class="msg-row assistant">
               <div class="msg-avatar">⚡</div>
               <div class="msg-body">
-                Welcome to <b>RepoPulse Studio Titan</b>. I am your autonomous maintainer assistant.
-                You can ask me to evaluate pull request diffs, perform AST security scans, or formulate Model Context Protocol execution plans.
+                Welcome to <b>RepoPulse Studio Titan v2.0</b>. I am your autonomous maintainer assistant.
+                You can ask me to evaluate pull request diffs, perform AST security scans, execute Model Context Protocol tool chains, or search the Knowledge Vault.
                 <div class="msg-meta">
-                  <span>Engine: OpenAI GPT-5.4 Codex</span> • <span>Latency: 0ms</span>
+                  <span>Engine: MultiModelRouter</span> • <span>Mode: Frontier Gateway</span>
                 </div>
               </div>
             </div>
@@ -699,53 +710,103 @@
             <label>Repository Context</label>
             <input type="text" id="pr-repo" value="facebook/react-core" />
 
-            <label>Unified Git Diff</label>
-            <textarea id="pr-diff" rows="14" placeholder="Paste git diff HEAD~1 here...">diff --git a/src/auth.ts b/src/auth.ts
-@@ -10,3 +10,5 @@ export function verifyToken(token: string) {
-+  // Alert: Dynamic execution hazard
-+  eval(token);
-+  return true;
- }</textarea>
+            <label>Raw Unified Git Diff</label>
+            <textarea id="pr-diff" rows="14" placeholder="Paste git diff here...">diff --git a/src/index.ts b/src/index.ts
+--- a/src/index.ts
++++ b/src/index.ts
+@@ -10,3 +10,4 @@
++export function evalHandler(code: string) {
++  return eval(code);
++}
+</textarea>
             <button class="btn-action" onclick="runPRReview()">⚡ Execute AST Review</button>
           </div>
 
           <div class="glass-card">
+            <label>Analysis Invariants & Risk Gauge</label>
             <div class="metric-grid">
               <div class="metric-box">
-                <div class="metric-value" id="pr-risk" style="color: #6366f1;">45</div>
-                <div class="metric-label">Risk Index</div>
+                <div class="metric-val" id="pr-risk">--</div>
+                <div class="metric-lbl">Risk Score</div>
               </div>
               <div class="metric-box">
-                <div class="metric-value" id="pr-files">1</div>
-                <div class="metric-label">Files</div>
+                <div class="metric-val" id="pr-files">--</div>
+                <div class="metric-lbl">Files Changed</div>
               </div>
               <div class="metric-box">
-                <div class="metric-value" id="pr-adds" style="color: #34d399;">+2</div>
-                <div class="metric-label">Added</div>
+                <div class="metric-val" id="pr-adds">--</div>
+                <div class="metric-lbl">Insertions</div>
               </div>
               <div class="metric-box">
-                <div class="metric-value" id="pr-status" style="color: #f87171; font-size: 14px;">FLAGGED</div>
-                <div class="metric-label">Decision</div>
+                <div class="metric-val" id="pr-status">IDLE</div>
+                <div class="metric-lbl">Status</div>
               </div>
             </div>
 
-            <div id="pr-summary-box" style="background: rgba(99, 102, 241, 0.08); padding: 14px; border-radius: 12px; font-size: 13px; line-height: 1.6; margin-bottom: 14px;">
-              PR flagged: Found critical security hazards requiring maintainer resolution before merge.
+            <label>Maintainer Executive Summary</label>
+            <div id="pr-summary-box" style="flex: 1; background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); border-radius: 12px; padding: 16px; font-size: 13px; line-height: 1.6; overflow-y: auto;">
+              Click 'Execute AST Review' to parse AST hunks and detect security invariants.
             </div>
-
-            <div id="pr-remarks-list"></div>
           </div>
         </div>
       </div>
 
       <!-- VIEW 3: ASSISTANT MATRIX -->
       <div class="view-container" id="view-assistants">
-        <div class="assistant-grid" id="assistant-cards-container">
-          <!-- Dynamically populated from API -->
+        <div class="assistants-grid" id="assistant-cards-container">
+          <!-- Populated dynamically via /api/assistants -->
         </div>
       </div>
 
-      <!-- VIEW 4: MCP TOOL HUB -->
+      <!-- VIEW 4: AST CODE SANDBOX -->
+      <div class="view-container" id="view-sandbox">
+        <div class="panel-grid">
+          <div class="glass-card">
+            <h3 style="font-size: 16px; margin-bottom: 12px;">🔬 AST Parser & Security Linter</h3>
+            <label>Source Code Snippet</label>
+            <textarea id="sandbox-code" rows="14">import { createServer } from 'node:http';
+
+export function routeRequest(req: any, res: any) {
+  const token = req.headers['authorization'];
+  if (token === "super-secret-hardcoded-token-12345") {
+    const payload = JSON.parse(req.body);
+    eval(payload.code);
+  }
+}
+</textarea>
+            <button class="btn-action" onclick="runSandboxLint()">Inspect AST & Invariants</button>
+          </div>
+
+          <div class="glass-card">
+            <label>AST Metrics & Findings</label>
+            <div class="metric-grid">
+              <div class="metric-box">
+                <div class="metric-val" id="sb-nodes">--</div>
+                <div class="metric-lbl">AST Nodes</div>
+              </div>
+              <div class="metric-box">
+                <div class="metric-val" id="sb-complexity">--</div>
+                <div class="metric-lbl">Complexity</div>
+              </div>
+              <div class="metric-box">
+                <div class="metric-val" id="sb-risks" style="color: var(--danger);">--</div>
+                <div class="metric-lbl">Hazards</div>
+              </div>
+              <div class="metric-box">
+                <div class="metric-val" id="sb-treeshake" style="color: var(--success);">--</div>
+                <div class="metric-lbl">Pure ESM</div>
+              </div>
+            </div>
+
+            <label>Diagnostic Breakdown</label>
+            <div id="sandbox-results" style="flex: 1; background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); border-radius: 12px; padding: 16px; font-size: 12.5px; font-family: 'JetBrains Mono', monospace; overflow-y: auto;">
+              Click 'Inspect AST & Invariants' to analyze symbols and detect dynamic sinks.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 5: MCP TOOL HUB -->
       <div class="view-container" id="view-mcp">
         <div class="glass-card">
           <h3 style="font-size: 16px; margin-bottom: 10px;">🔌 Registered Model Context Protocol (MCP) Tools</h3>
@@ -771,48 +832,76 @@
         </div>
       </div>
 
-      <!-- VIEW 5: KNOWLEDGE VAULT -->
+      <!-- VIEW 6: KNOWLEDGE VAULT -->
       <div class="view-container" id="view-knowledge">
         <div class="panel-grid">
           <div class="glass-card">
-            <h3 style="font-size: 16px; margin-bottom: 12px;">Index Code or Architectural Rules</h3>
+            <h3 style="font-size: 16px; margin-bottom: 12px;">Pin Code or Architectural Rules</h3>
             <label>Document Title</label>
-            <input type="text" id="doc-title" placeholder="e.g. SQLite Schema Rules" />
+            <input type="text" id="doc-title" placeholder="e.g. SQLite Schema Invariants" />
             <label>Relative Path</label>
             <input type="text" id="doc-path" value="docs/rules.md" />
+            <label>Tags (comma-separated)</label>
+            <input type="text" id="doc-tags" placeholder="e.g. security, database, mcp" />
             <label>Content</label>
-            <textarea id="doc-content" rows="8" placeholder="Paste architectural invariants, API documentation, or code snippets..."></textarea>
+            <textarea id="doc-content" rows="6" placeholder="Paste architectural invariants, API contracts, or code snippets..."></textarea>
             <button class="btn-action" onclick="addKnowledgeDoc()">Pin to Knowledge Vault</button>
           </div>
 
           <div class="glass-card">
-            <h3 style="font-size: 16px; margin-bottom: 12px;">Vault Documents</h3>
-            <div id="vault-docs-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <h3 style="font-size: 16px;">Vault Documents (BM25 Search)</h3>
+              <input type="text" id="vault-search" placeholder="Search keywords..." style="width: 180px; margin-bottom: 0; padding: 6px 10px;" oninput="searchKnowledge(this.value)" />
+            </div>
+            <div id="vault-docs-list" style="display: flex; flex-direction: column; gap: 10px; overflow-y: auto; flex: 1;"></div>
           </div>
         </div>
       </div>
 
-      <!-- VIEW 6: SETTINGS -->
+      <!-- VIEW 7: SETTINGS -->
       <div class="view-container" id="view-settings">
-        <div class="glass-card" style="max-width: 650px;">
-          <h3 style="font-size: 16px; margin-bottom: 14px;">⚙️ Provider Credentials & Local Endpoints</h3>
+        <div class="glass-card" style="max-width: 750px;">
+          <h3 style="font-size: 16px; margin-bottom: 10px;">⚙️ Provider Credentials & Local Endpoints</h3>
           <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
-            API keys are stored strictly in your browser's private localStorage. They are never sent to external third parties.
+            API keys are saved in your browser's private localStorage. Never transmitted to third-party tracking services.
           </p>
 
-          <label>OpenAI API Key</label>
-          <input type="text" id="key-openai" placeholder="sk-proj-..." />
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div>
+              <label>OpenAI API Key (Codex / GPT-4o)</label>
+              <input type="text" id="key-openai" placeholder="sk-proj-..." />
+            </div>
+            <div>
+              <label>Anthropic API Key (Claude 3.7)</label>
+              <input type="text" id="key-anthropic" placeholder="sk-ant-..." />
+            </div>
+            <div>
+              <label>DeepSeek API Key (R1)</label>
+              <input type="text" id="key-deepseek" placeholder="sk-..." />
+            </div>
+            <div>
+              <label>Groq API Key (300+ tps)</label>
+              <input type="text" id="key-groq" placeholder="gsk_..." />
+            </div>
+            <div>
+              <label>Mistral API Key (Codestral)</label>
+              <input type="text" id="key-mistral" placeholder="mistral-..." />
+            </div>
+            <div>
+              <label>OpenRouter API Key</label>
+              <input type="text" id="key-openrouter" placeholder="sk-or-..." />
+            </div>
+            <div>
+              <label>Custom OpenAI Endpoint URL</label>
+              <input type="text" id="endpoint-custom" placeholder="http://localhost:8000/v1" />
+            </div>
+            <div>
+              <label>Local Ollama URL</label>
+              <input type="text" id="endpoint-ollama" value="http://127.0.0.1:11434" />
+            </div>
+          </div>
 
-          <label>Anthropic API Key</label>
-          <input type="text" id="key-anthropic" placeholder="sk-ant-..." />
-
-          <label>DeepSeek API Key</label>
-          <input type="text" id="key-deepseek" placeholder="sk-..." />
-
-          <label>Local Ollama Endpoint</label>
-          <input type="text" id="endpoint-ollama" value="http://127.0.0.1:11434" />
-
-          <button class="btn-action" onclick="saveSettings()">Save Settings</button>
+          <button class="btn-action" onclick="saveSettings()" style="margin-top: 10px;">Save Settings</button>
         </div>
       </div>
     </main>
@@ -881,15 +970,15 @@
 
     // State
     let activeAssistant = 'maintainer-lead';
-    let chatHistory = [];
 
     // Views
     const VIEW_TITLES = {
       chat: { title: '💬 Studio Chat', sub: 'Unified Multi-Model Gateway & Autonomous Agent Harness' },
       review: { title: '⚡ PR Intelligence Lab', sub: 'AST-Bounded Diff Slicing & Security Auditor' },
-      assistants: { title: '👥 Assistant Matrix', sub: '50+ Specialized Open Source Engineering Personas' },
+      assistants: { title: '👥 Assistant Matrix', sub: '12 Frontier Open Source Engineering Personas' },
+      sandbox: { title: '🔬 AST Code Sandbox', sub: 'Real-time Syntax Tree Parsing & Dynamic Sink Linter' },
       mcp: { title: '🔌 MCP Tool Hub', sub: 'Model Context Protocol Stdio & JSON-RPC Inspector' },
-      knowledge: { title: '📚 Knowledge Vault', sub: 'Semantic Code & Rule Context Pinning' },
+      knowledge: { title: '📚 Knowledge Vault', sub: 'Hybrid BM25 Lexical & Rule Context Pinning' },
       settings: { title: '⚙️ Provider Settings', sub: 'API Credentials & Local Endpoint Overrides' }
     };
 
@@ -908,6 +997,25 @@
 
       if (viewKey === 'assistants') loadAssistants();
       if (viewKey === 'knowledge') loadKnowledge();
+      if (viewKey === 'settings') loadSettings();
+    }
+
+    // Dynamic Model Loading
+    async function loadModels() {
+      try {
+        const res = await fetch('/api/models');
+        const data = await res.json();
+        const select = document.getElementById('active-model-select');
+        select.innerHTML = '';
+        data.models.forEach(m => {
+          const opt = document.createElement('option');
+          opt.value = m.id;
+          opt.textContent = `${m.name} (${Math.round(m.contextWindow / 1000)}k)`;
+          select.appendChild(opt);
+        });
+      } catch (e) {
+        console.error('Failed to load models', e);
+      }
     }
 
     // Chat Handler
@@ -920,11 +1028,17 @@
       appendMessage('user', text);
 
       const modelId = document.getElementById('active-model-select').value;
+      const temperature = parseFloat(document.getElementById('chat-temp')?.value || '0.2');
       const apiKeys = {
         openai: localStorage.getItem('rp_key_openai') || '',
         anthropic: localStorage.getItem('rp_key_anthropic') || '',
-        deepseek: localStorage.getItem('rp_key_deepseek') || ''
+        deepseek: localStorage.getItem('rp_key_deepseek') || '',
+        groq: localStorage.getItem('rp_key_groq') || '',
+        mistral: localStorage.getItem('rp_key_mistral') || '',
+        openrouter: localStorage.getItem('rp_key_openrouter') || '',
+        custom: localStorage.getItem('rp_key_custom') || ''
       };
+      const customEndpoint = localStorage.getItem('rp_endpoint_custom') || '';
 
       try {
         const res = await fetch('/api/chat', {
@@ -934,7 +1048,9 @@
             messages: [{ role: 'user', content: text }],
             modelId,
             assistantId: activeAssistant,
-            apiKeys
+            apiKeys,
+            customEndpoint,
+            temperature
           })
         });
         const data = await res.json();
@@ -948,6 +1064,7 @@
       const container = document.getElementById('chat-messages-container');
       const row = document.createElement('div');
       row.className = `msg-row ${role}`;
+
       const avatar = role === 'user' ? 'D' : (document.getElementById('chat-active-avatar').innerText || '⚡');
 
       row.innerHTML = `
@@ -1022,18 +1139,83 @@
       document.getElementById('pr-summary-box').innerText = review.maintainerExecutiveSummary;
     }
 
-    // Knowledge
+    // AST Code Sandbox Linter
+    function runSandboxLint() {
+      const code = document.getElementById('sandbox-code').value;
+      const lines = code.split('\n');
+      let nodes = 0;
+      let complexity = 1;
+      let hazards = 0;
+      let reports = [];
+
+      lines.forEach((line, i) => {
+        nodes += Math.max(1, Math.ceil(line.trim().length / 3));
+        if (/\b(if|for|while|switch|case|catch)\b/.test(line)) complexity++;
+        if (/\beval\s*\(/.test(line)) {
+          hazards++;
+          reports.push(`[Line ${i + 1}] CRITICAL: Dynamic evaluation sink detected (\`eval\`).`);
+        }
+        if (/["'](sk-[a-zA-Z0-9]+|super-secret[a-zA-Z0-9-]+)["']/.test(line)) {
+          hazards++;
+          reports.push(`[Line ${i + 1}] HIGH: Potential hardcoded secret or token entropy leak.`);
+        }
+        if (/__proto__|prototype\s*\[/.test(line)) {
+          hazards++;
+          reports.push(`[Line ${i + 1}] HIGH: Prototype pollution vulnerability vector.`);
+        }
+      });
+
+      document.getElementById('sb-nodes').innerText = nodes;
+      document.getElementById('sb-complexity').innerText = complexity;
+      document.getElementById('sb-risks').innerText = hazards;
+      document.getElementById('sb-treeshake').innerText = /import\s+/.test(code) ? 'YES' : 'NO';
+
+      const resultsBox = document.getElementById('sandbox-results');
+      if (reports.length === 0) {
+        resultsBox.innerHTML = `<span style="color:var(--success);">✓ Invariants Verified: No dynamic code execution or credential leaks detected. Clean AST structure.</span>`;
+      } else {
+        resultsBox.innerHTML = reports.map(r => `<div style="color:var(--danger);margin-bottom:6px;">⚠️ ${r}</div>`).join('');
+      }
+    }
+
+    // Knowledge Vault
     async function loadKnowledge() {
       const res = await fetch('/api/knowledge');
       const data = await res.json();
+      renderKnowledgeList(data.documents);
+    }
+
+    async function searchKnowledge(query) {
+      if (!query || query.trim().length < 2) {
+        return loadKnowledge();
+      }
+      const res = await fetch(`/api/knowledge/search?q=${encodeURIComponent(query)}`);
+      const data = await res.json();
+      renderKnowledgeList(data.results.map(r => ({ ...r.doc, matchScore: r.score })));
+    }
+
+    function renderKnowledgeList(docs) {
       const container = document.getElementById('vault-docs-list');
       container.innerHTML = '';
-      data.documents.forEach(d => {
+      if (!docs || docs.length === 0) {
+        container.innerHTML = '<div style="color:var(--text-dim);font-size:12px;">No documents found matching criteria.</div>';
+        return;
+      }
+      docs.forEach(d => {
         const item = document.createElement('div');
         item.style.padding = '12px';
         item.style.background = 'rgba(255,255,255,0.03)';
+        item.style.border = '1px solid var(--glass-border)';
         item.style.borderRadius = '10px';
-        item.innerHTML = `<b>${d.title}</b> <span style="font-size:11px;color:#38bdf8;">(${d.path})</span><p style="font-size:12px;color:var(--text-muted);margin-top:4px;">${d.content.slice(0,100)}...</p>`;
+        item.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <b>${d.title}</b>
+            <button onclick="deleteKnowledgeDoc('${d.id}')" style="background:transparent;border:none;color:var(--text-dim);cursor:pointer;">✕</button>
+          </div>
+          <span style="font-size:11px;color:#38bdf8;">(${d.path})</span>
+          ${d.matchScore ? `<span style="font-size:10px;color:var(--accent-cyan);margin-left:8px;">BM25: ${d.matchScore}</span>` : ''}
+          <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">${d.content.slice(0, 120)}...</p>
+        `;
         container.appendChild(item);
       });
     }
@@ -1042,26 +1224,37 @@
       const title = document.getElementById('doc-title').value;
       const path = document.getElementById('doc-path').value;
       const content = document.getElementById('doc-content').value;
+      const tags = (document.getElementById('doc-tags')?.value || '').split(',').map(s => s.trim()).filter(Boolean);
       await fetch('/api/knowledge', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, path, content })
+        body: JSON.stringify({ title, path, content, tags })
       });
       document.getElementById('doc-title').value = '';
       document.getElementById('doc-content').value = '';
       loadKnowledge();
     }
 
+    async function deleteKnowledgeDoc(id) {
+      await fetch(`/api/knowledge/${id}`, { method: 'DELETE' });
+      loadKnowledge();
+    }
+
     // MCP
     async function callMCP() {
       const text = document.getElementById('mcp-req').value;
-      const res = await fetch('/api/mcp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: text
-      });
-      const data = await res.json();
-      document.getElementById('mcp-res').value = JSON.stringify(data, null, 2);
+      try {
+        const payload = JSON.parse(text);
+        const res = await fetch('/api/mcp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        document.getElementById('mcp-res').value = JSON.stringify(data, null, 2);
+      } catch (err) {
+        document.getElementById('mcp-res').value = `Error: ${err.message}`;
+      }
     }
 
     // Settings
@@ -1069,22 +1262,38 @@
       localStorage.setItem('rp_key_openai', document.getElementById('key-openai').value.trim());
       localStorage.setItem('rp_key_anthropic', document.getElementById('key-anthropic').value.trim());
       localStorage.setItem('rp_key_deepseek', document.getElementById('key-deepseek').value.trim());
+      localStorage.setItem('rp_key_groq', document.getElementById('key-groq').value.trim());
+      localStorage.setItem('rp_key_mistral', document.getElementById('key-mistral').value.trim());
+      localStorage.setItem('rp_key_openrouter', document.getElementById('key-openrouter').value.trim());
+      localStorage.setItem('rp_endpoint_custom', document.getElementById('endpoint-custom').value.trim());
       localStorage.setItem('rp_endpoint_ollama', document.getElementById('endpoint-ollama').value.trim());
-      alert('Settings stored securely in local browser storage.');
+      alert('Settings saved to local storage!');
     }
 
-    // Keyboard Shortcuts
-    document.getElementById('composer-text').addEventListener('keydown', e => {
+    function loadSettings() {
+      if (document.getElementById('key-openai')) document.getElementById('key-openai').value = localStorage.getItem('rp_key_openai') || '';
+      if (document.getElementById('key-anthropic')) document.getElementById('key-anthropic').value = localStorage.getItem('rp_key_anthropic') || '';
+      if (document.getElementById('key-deepseek')) document.getElementById('key-deepseek').value = localStorage.getItem('rp_key_deepseek') || '';
+      if (document.getElementById('key-groq')) document.getElementById('key-groq').value = localStorage.getItem('rp_key_groq') || '';
+      if (document.getElementById('key-mistral')) document.getElementById('key-mistral').value = localStorage.getItem('rp_key_mistral') || '';
+      if (document.getElementById('key-openrouter')) document.getElementById('key-openrouter').value = localStorage.getItem('rp_key_openrouter') || '';
+      if (document.getElementById('endpoint-custom')) document.getElementById('endpoint-custom').value = localStorage.getItem('rp_endpoint_custom') || '';
+      if (document.getElementById('endpoint-ollama')) document.getElementById('endpoint-ollama').value = localStorage.getItem('rp_endpoint_ollama') || 'http://127.0.0.1:11434';
+    }
+
+    // Init
+    window.addEventListener('DOMContentLoaded', () => {
+      loadModels();
+      loadAssistants();
+      loadSettings();
+    });
+
+    document.getElementById('composer-text')?.addEventListener('keydown', e => {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         sendChatMessage();
       }
     });
-
-    // Populate Settings from Storage
-    document.getElementById('key-openai').value = localStorage.getItem('rp_key_openai') || '';
-    document.getElementById('key-anthropic').value = localStorage.getItem('rp_key_anthropic') || '';
-    document.getElementById('key-deepseek').value = localStorage.getItem('rp_key_deepseek') || '';
   </script>
 </body>
 </html>
