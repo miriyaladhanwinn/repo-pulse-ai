@@ -1,0 +1,68 @@
+name: Codex Autonomous Review Bot
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  codex-review:
+    name: Run OpenAI Codex Semantic Review
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Base & Head
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install RepoPulse
+        run: |
+          npm install
+          npm run build
+
+      - name: Extract PR Diff
+        run: |
+          git diff origin/${{ github.base_ref }}...HEAD > pr_changes.diff
+
+      - name: Execute RepoPulse Codex Review
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          node dist/cli/index.js review --diff pr_changes.diff --repo ${{ github.repository }} --json > review_output.json
+
+      - name: Post PR Review Comment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const review = JSON.parse(fs.readFileSync('review_output.json', 'utf-8'));
+            
+            let body = `### ⚡ RepoPulse AI - Maintainer Review\n\n`;
+            body += `**Decision:** \`${review.status}\` | **Risk Score:** \`${review.riskScore}/100\`\n\n`;
+            body += `> ${review.maintainerExecutiveSummary}\n\n`;
+            
+            if (review.remarks && review.remarks.length > 0) {
+              body += `#### Detected Remarks (${review.remarks.length})\n`;
+              review.remarks.forEach(r => {
+                body += `- **[${r.severity.toUpperCase()}]** \`${r.file}:${r.line}\`: **${r.title}** - ${r.message}\n`;
+                if (r.suggestion) body += `  - *Suggestion:* \`${r.suggestion}\`\n`;
+              });
+            }
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: body
+            });

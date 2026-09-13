@@ -1,0 +1,34 @@
+name: Bug Report
+description: Report a reproducible bug or defect in RepoPulse AI
+title: "[BUG]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to report an issue!
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Minimal steps or sample git diff to reproduce the behavior.
+      placeholder: |
+        1. Run 'repo-pulse review --diff sample.diff'
+        2. Encounter error...
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Node version, OS, Model provider used.
+      value: |
+        - OS: [e.g. Ubuntu 22.04, Windows 11, macOS]
+        - Node Version: [e.g. 20.10.0]
+        - Model Provider: [OpenAI Codex / Local Ollama]
