@@ -16,7 +16,9 @@
 [![Groq](https://img.shields.io/badge/Groq-Llama%203.3%2070B-f97316.svg)](https://groq.com/)
 [![Mistral](https://img.shields.io/badge/Mistral-Codestral%202501-ff7000.svg)](https://mistral.ai/)
 [![OpenRouter](https://img.shields.io/badge/OpenRouter-Multi--Provider-6366f1.svg)](https://openrouter.ai/)
-[![Tests](https://img.shields.io/badge/tests-46%2F46%20passing-brightgreen.svg)]()
+[![Models Catalog](https://img.shields.io/badge/AI%20Models-540%2B%20Verified-blue.svg)](https://github.com/miriyaladhanwinn/repo-pulse-ai)
+[![Assistants](https://img.shields.io/badge/Assistants-54%20Personas-purple.svg)](https://github.com/miriyaladhanwinn/repo-pulse-ai)
+[![Tests](https://img.shields.io/badge/tests-52%2F52%20passing-brightgreen.svg)]()
 
 <p align="center">
   <a href="#-key-features">Key Features</a> •
@@ -34,20 +36,21 @@
 
 ## 📖 Overview
 
-**RepoPulse AI (Titan Edition)** is a high-performance open-source maintainer harness engineered to eliminate open-source triage debt. Combining **AST-bounded diff decomposition**, **token budget scheduling**, a **universal frontier model router**, and native **Model Context Protocol (MCP)** tool servers, RepoPulse provides an end-to-end intelligence platform for software maintainers.
+**RepoPulse AI (Titan Edition)** is a high-performance open-source maintainer harness engineered to eliminate open-source triage debt. Combining **AST-bounded diff decomposition**, **token budget scheduling**, a **universal frontier model router supporting 540+ AI models**, a **54-persona maintainer matrix**, and native **Model Context Protocol (MCP)** tool servers, RepoPulse provides an end-to-end intelligence platform for software maintainers.
 
-Whether through its Apple Developer-grade **Liquid Glass 3D Web Studio**, its autonomous **GitHub Actions Bot**, or via standard input/output as an **MCP Server** for ChatGPT Pro, Claude Code, Cursor, and Cherry Studio, RepoPulse converts chaotic pull requests and vague issue reports into structured, verifiable maintainer decisions.
+Whether through its Apple Developer-grade **Liquid Glass 3D Web Studio** (featuring a `Cmd+K` Spotlight model switcher), its autonomous **GitHub Actions Bot**, or via standard input/output as an **MCP Server** for ChatGPT Pro, Claude Code, Cursor, and Cherry Studio, RepoPulse converts chaotic pull requests and vague issue reports into structured, verifiable maintainer decisions.
 
 ---
 
 ## 🚀 Key Features
 
-- **🌐 Multi-Model Universal Gateway**: Seamless routing across **OpenAI GPT-5.4 Codex / GPT-4o**, **Anthropic Claude 3.7 Sonnet**, **Google Gemini 2.5 Pro**, **DeepSeek R1 Reasoning**, **Groq Llama 3.3 70B**, **Mistral Codestral**, **OpenRouter**, **Local Ollama**, and **Custom OpenAI-Compatible Endpoints** with zero-downtime deterministic fallback.
-- **👥 Assistant Matrix (12 Maintainer Personas)**: Specialized prompt architecture designed for real-world development workflows (Maintainer Lead, CVE Vulnerability Auditor, AST Refactorer, Runtime SRE, Database Architect, Distributed Systems SRE, CI/CD Specialist, Crypto Guard, RFC Author, UI Artisan).
+- **🌐 Multi-Model Universal Gateway (540+ Models)**: Seamless routing across **OpenAI GPT-5.4 Codex / GPT-4o / o3 / o1**, **Anthropic Claude 3.7 Sonnet / 3.5 Haiku**, **Google Gemini 2.5 Pro / Flash**, **DeepSeek R1 Reasoning / V3**, **Groq Llama 3.3 70B**, **Mistral Codestral**, **xAI Grok-2**, **Qwen 2.5 Coder**, **Perplexity Sonar**, **Cohere Command R+**, **Meta Llama 3.1**, **OpenRouter**, **Local Ollama**, and **Custom Endpoints** with zero-downtime fallback.
+- **👥 Assistant Matrix (54 Maintainer Personas across 8 Categories)**: Full spectrum maintainer coverage spanning `Code Review`, `Security`, `Architecture`, `Performance`, `DevOps`, `Testing`, `Languages`, and `Design`.
+- **🔍 Apple Spotlight Model Switcher (`Cmd+K`)**: Rapid floating switcher with fuzzy searching, provider filtering, context window badges, and keyboard navigation across all 540+ models.
+- **💬 Multi-Session Chat & Markdown Export**: Concurrent conversational threads with one-click export to GitHub-flavored Markdown.
 - **📚 Hybrid BM25 Knowledge Vault**: Context-pinning engine with BM25 term saturation and tag indexing to prime LLM context windows without token bloat.
 - **🔬 AST Code Sandbox**: Real-time syntax tree parsing, cyclomatic complexity estimation, and dynamic evaluation hazard detection.
-- **🖥️ Apple-Grade 3D Liquid Glass Studio**: Web-based desktop-caliber workspace on `http://localhost:3000` with 3D kinetic background canvas, live multi-model chat, visual AST diff analyzer, MCP tool runner, and provider settings.
-- **🔍 AST-Bounded Diff Decomposition**: Slices massive multi-file pull requests into isolated syntactic chunks (classes, functions, interfaces), isolating breaking changes and security-critical paths.
+- **🖥️ Apple-Grade 3D Liquid Glass Studio**: Web-based desktop-caliber workspace on `http://localhost:3000` with 3D kinetic background canvas, visual AST diff analyzer, MCP tool runner, and provider settings.
 - **🛡️ Zero-Trust Security Auditor**: Scans diffs and snippets for dynamic code execution (`eval`, Function constructor), prototype pollution, hardcoded tokens, and ReDoS patterns.
 - **🔌 Native Model Context Protocol (MCP)**: JSON-RPC 2.0 stdio server enabling frontier AI tools to run diff reviews, AST slicing, and issue triage as autonomous tool calls.
 - **⚡ Token Budget Optimizer**: Deterministically partitions massive patches into bounded prompt windows, preventing token truncation and context degradation.

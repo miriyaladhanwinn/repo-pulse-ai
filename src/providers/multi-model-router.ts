@@ -4,15 +4,10 @@
  * Copyright (c) 2026 MRLDHANWINN. Apache-2.0 Licensed.
  */
 
-export interface ModelDescriptor {
-  id: string;
-  name: string;
-  provider: 'openai' | 'anthropic' | 'google' | 'deepseek' | 'groq' | 'mistral' | 'openrouter' | 'ollama' | 'custom';
-  contextWindow: number;
-  reasoningSupport: boolean;
-  tier: 'frontier' | 'fast' | 'local';
-  description: string;
-}
+import { ModelCatalog, ModelDescriptor, MODEL_REGISTRY } from './models-catalog.js';
+
+export { ModelDescriptor, MODEL_REGISTRY };
+export const SUPPORTED_MODELS: ModelDescriptor[] = MODEL_REGISTRY;
 
 export interface ChatMessage {
   role: 'system' | 'user' | 'assistant' | 'tool';
@@ -53,115 +48,13 @@ export interface ChatCompletionResult {
   latencyMs: number;
 }
 
-export const SUPPORTED_MODELS: ModelDescriptor[] = [
-  // OpenAI
-  {
-    id: 'gpt-5.4-codex',
-    name: 'OpenAI GPT-5.4 Codex',
-    provider: 'openai',
-    contextWindow: 128000,
-    reasoningSupport: true,
-    tier: 'frontier',
-    description: 'Flagship reasoning and code orchestration model from OpenAI.'
-  },
-  {
-    id: 'gpt-4o',
-    name: 'OpenAI GPT-4o',
-    provider: 'openai',
-    contextWindow: 128000,
-    reasoningSupport: false,
-    tier: 'frontier',
-    description: 'High-speed multimodal intelligence for real-time coding assistance.'
-  },
-  // Anthropic
-  {
-    id: 'claude-3-7-sonnet',
-    name: 'Claude 3.7 Sonnet',
-    provider: 'anthropic',
-    contextWindow: 200000,
-    reasoningSupport: true,
-    tier: 'frontier',
-    description: 'Anthropic hybrid reasoning model for deep systems refactoring.'
-  },
-  // Google
-  {
-    id: 'gemini-2.5-pro',
-    name: 'Google Gemini 2.5 Pro',
-    provider: 'google',
-    contextWindow: 1000000,
-    reasoningSupport: true,
-    tier: 'frontier',
-    description: '1M+ token context window capable of ingesting entire codebases.'
-  },
-  // DeepSeek
-  {
-    id: 'deepseek-r1',
-    name: 'DeepSeek R1 Reasoning',
-    provider: 'deepseek',
-    contextWindow: 64000,
-    reasoningSupport: true,
-    tier: 'frontier',
-    description: 'Open-weight frontier reasoning model with explicit chain-of-thought tokens.'
-  },
-  // Groq
-  {
-    id: 'llama-3.3-70b-versatile',
-    name: 'Groq Llama 3.3 70B (Ultra-Fast)',
-    provider: 'groq',
-    contextWindow: 128000,
-    reasoningSupport: false,
-    tier: 'fast',
-    description: 'Ultra-low latency inference engine running Llama 3.3 at 300+ tokens per second.'
-  },
-  // Mistral
-  {
-    id: 'codestral-2501',
-    name: 'Mistral Codestral 2501',
-    provider: 'mistral',
-    contextWindow: 256000,
-    reasoningSupport: true,
-    tier: 'frontier',
-    description: 'State-of-the-art coding and FIM (Fill-in-the-Middle) synthesis model from Mistral AI.'
-  },
-  // OpenRouter
-  {
-    id: 'openrouter/auto',
-    name: 'OpenRouter Auto Gateway',
-    provider: 'openrouter',
-    contextWindow: 128000,
-    reasoningSupport: true,
-    tier: 'frontier',
-    description: 'Dynamic price-performance routing across 200+ global foundation models.'
-  },
-  // Local Ollama
-  {
-    id: 'qwen2.5-coder:7b',
-    name: 'Qwen 2.5 Coder 7B (Local Ollama)',
-    provider: 'ollama',
-    contextWindow: 32000,
-    reasoningSupport: false,
-    tier: 'local',
-    description: 'Low-latency, privacy-first local coding model running on your GPU/CPU.'
-  },
-  // Custom API
-  {
-    id: 'custom-endpoint',
-    name: 'Custom OpenAI-Compatible API',
-    provider: 'custom',
-    contextWindow: 128000,
-    reasoningSupport: false,
-    tier: 'local',
-    description: 'Connect any private LLM endpoint, vLLM, LMStudio, or internal enterprise inference gateway.'
-  }
-];
-
 export class MultiModelRouter {
   public static getModels(): ModelDescriptor[] {
-    return SUPPORTED_MODELS;
+    return ModelCatalog.getAll();
   }
 
   public static getModelById(id: string): ModelDescriptor | undefined {
-    return SUPPORTED_MODELS.find(m => m.id === id);
+    return ModelCatalog.getById(id);
   }
 
   /**

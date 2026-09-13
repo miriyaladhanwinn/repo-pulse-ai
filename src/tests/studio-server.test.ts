@@ -56,7 +56,7 @@ describe('StudioServer E2E Verification', () => {
     assert.equal(res.status, 200);
     const data = await res.json() as any;
     assert.ok(Array.isArray(data.models));
-    assert.ok(data.models.length >= 10);
+    assert.ok(data.models.length >= 500);
   });
 
   test('GET /api/assistants returns assistant matrix personas', async () => {
@@ -64,7 +64,7 @@ describe('StudioServer E2E Verification', () => {
     assert.equal(res.status, 200);
     const data = await res.json() as any;
     assert.ok(Array.isArray(data.assistants));
-    assert.ok(data.assistants.length >= 12);
+    assert.ok(data.assistants.length >= 50);
   });
 
   test('POST /api/chat completes universal chat request', async () => {
@@ -120,8 +120,8 @@ describe('StudioServer E2E Verification', () => {
     const data = await res.json() as any;
     assert.equal(data.status, 'operational');
     assert.ok(data.toolsCount >= 3);
-    assert.ok(data.modelsAvailable >= 10);
-    assert.ok(data.assistantsAvailable >= 12);
+    assert.ok(data.modelsAvailable >= 500);
+    assert.ok(data.assistantsAvailable >= 50);
     assert.ok(data.knowledgeDocsCount >= 1);
   });
 });

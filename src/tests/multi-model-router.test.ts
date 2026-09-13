@@ -11,7 +11,7 @@ import { MultiModelRouter, SUPPORTED_MODELS } from '../providers/multi-model-rou
 describe('MultiModelRouter Frontier Gateway', () => {
   test('enumerates all supported frontier, fast, and local models', () => {
     const models = MultiModelRouter.getModels();
-    assert.ok(models.length >= 10);
+    assert.ok(models.length >= 500, `Expected >= 500 models, found ${models.length}`);
     assert.deepEqual(models, SUPPORTED_MODELS);
 
     const providers = new Set(models.map(m => m.provider));
