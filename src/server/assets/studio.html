@@ -156,6 +156,31 @@
       color: #fff;
     }
 
+    /* 3D Waveform Audio Visualizer in Dynamic Island */
+    .island-waveform {
+      display: flex;
+      align-items: center;
+      gap: 2.5px;
+      height: 16px;
+      padding: 0 4px;
+    }
+    .wave-bar {
+      width: 2.5px;
+      height: 100%;
+      border-radius: 2px;
+      background: linear-gradient(180deg, var(--accent-cyan), var(--accent));
+      animation: wavePulse 1.2s ease-in-out infinite alternate;
+    }
+    .bar-1 { animation-delay: 0.1s; height: 35%; }
+    .bar-2 { animation-delay: 0.35s; height: 75%; }
+    .bar-3 { animation-delay: 0.15s; height: 100%; }
+    .bar-4 { animation-delay: 0.45s; height: 60%; }
+    .bar-5 { animation-delay: 0.25s; height: 40%; }
+    @keyframes wavePulse {
+      0% { transform: scaleY(0.3); opacity: 0.45; }
+      100% { transform: scaleY(1); opacity: 1; filter: drop-shadow(0 0 4px var(--accent-cyan)); }
+    }
+
     /* Siri Luminous Rainbow Border Flow */
     @keyframes siriBorderRotate {
       0% { background-position: 0% 50%; }
@@ -854,14 +879,35 @@
     }
     .glass-card {
       background: var(--bg-card);
-      backdrop-filter: blur(45px) saturate(200%);
-      -webkit-backdrop-filter: blur(45px) saturate(200%);
+      backdrop-filter: blur(50px) saturate(220%);
+      -webkit-backdrop-filter: blur(50px) saturate(220%);
       border: 1px solid var(--glass-border);
       border-radius: 24px;
       padding: 24px;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.5), var(--glass-specular);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.16), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+      overflow: hidden;
+    }
+    .glass-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(420px circle at var(--mouse-x, -500px) var(--mouse-y, -500px), rgba(255, 255, 255, 0.11), transparent 70%);
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      opacity: 0;
+      mix-blend-mode: overlay;
+    }
+    .glass-card:hover::after {
+      opacity: 1;
+    }
+    .glass-card:hover {
+      box-shadow: 0 28px 65px -10px rgba(0, 0, 0, 0.7), 0 0 35px -5px var(--accent-glow), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.25);
     }
     label {
       font-size: 12px;
@@ -897,12 +943,21 @@
       margin-bottom: 20px;
     }
     .metric-box {
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.04);
       border: 1px solid var(--glass-border);
-      border-radius: 16px;
-      padding: 14px;
+      border-radius: 18px;
+      padding: 16px;
       text-align: center;
-      box-shadow: var(--glass-specular);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .metric-box:hover {
+      transform: translateY(-3px) scale(1.02);
+      border-color: var(--accent);
+      box-shadow: 0 12px 28px -5px rgba(0, 0, 0, 0.6), 0 0 20px -3px var(--accent-glow), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+    }
     }
     .metric-val {
       font-size: 24px;
@@ -1164,6 +1219,13 @@
       <div class="island-dot"></div>
       <div class="island-text">
         <span>RepoPulse</span> • <b id="island-active-model" style="color: var(--accent-cyan);">OpenAI GPT-5.4 Codex</b>
+      </div>
+      <div class="island-waveform" title="Neural Activity Matrix">
+        <span class="wave-bar bar-1"></span>
+        <span class="wave-bar bar-2"></span>
+        <span class="wave-bar bar-3"></span>
+        <span class="wave-bar bar-4"></span>
+        <span class="wave-bar bar-5"></span>
       </div>
       <div class="island-badge">540+ MODELS</div>
     </div>
@@ -1592,65 +1654,292 @@ export function routeRequest(req: any, res: any) {
   </div>
 
   <script>
-    // 3D Kinetic Canvas Background with Smooth Inertia and Particle Ribbons
+    // ================= REALISTIC 3D QUANTUM NEURAL CORE & SPATIAL MESH =================
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
-    let width, height, particles = [];
+    let width, height;
     let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2, targetX: window.innerWidth / 2, targetY: window.innerHeight / 2 };
+    let rotX = 0.2, rotY = 0.4, rotZ = 0.1;
+    let shockwaveRadius = 0, shockwaveMax = 0, shockwaveAlpha = 0;
+
+    // 1. Geodesic Icosahedron Core Vertices (Golden Ratio Geometry)
+    const phi = (1 + Math.sqrt(5)) / 2;
+    const rawVertices = [
+      [-1,  phi,  0], [ 1,  phi,  0], [-1, -phi,  0], [ 1, -phi,  0],
+      [ 0, -1,  phi], [ 0,  1,  phi], [ 0, -1, -phi], [ 0,  1, -phi],
+      [ phi,  0, -1], [ phi,  0,  1], [-phi,  0, -1], [-phi,  0,  1]
+    ];
+    const coreRadius = 145;
+    const icosaVertices = rawVertices.map(([x, y, z]) => {
+      const len = Math.sqrt(x*x + y*y + z*z);
+      return { x: (x / len) * coreRadius, y: (y / len) * coreRadius, z: (z / len) * coreRadius };
+    });
+
+    const icosaEdges = [
+      [0,11],[0,5],[0,1],[0,7],[0,10],
+      [1,5],[5,11],[11,10],[10,7],[7,1],
+      [3,9],[3,4],[3,2],[3,6],[3,8],
+      [9,4],[4,2],[2,6],[6,8],[8,9],
+      [4,5],[5,9],[9,1],[1,8],[8,7],[7,6],[6,10],[10,2],[2,11],[11,4]
+    ];
+
+    // Inner Counter-Rotating Octahedron Crystal
+    const innerRadius = 72;
+    const innerVertices = [
+      { x: 0, y: -innerRadius, z: 0 },
+      { x: 0, y:  innerRadius, z: 0 },
+      { x: -innerRadius, y: 0, z: 0 },
+      { x:  innerRadius, y: 0, z: 0 },
+      { x: 0, y: 0, z: -innerRadius },
+      { x: 0, y: 0, z:  innerRadius }
+    ];
+    const innerEdges = [
+      [0,2],[0,3],[0,4],[0,5],
+      [1,2],[1,3],[1,4],[1,5],
+      [2,4],[4,3],[3,5],[5,2]
+    ];
+
+    // 2. Volumetric 3D Particle Cloud
+    let spatialParticles = [];
+    const NUM_PARTICLES = 120;
 
     function initCanvas() {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
-      particles = [];
-      const count = Math.floor((width * height) / 15000);
-      for (let i = 0; i < count; i++) {
-        particles.push({
-          x: Math.random() * width,
-          y: Math.random() * height,
-          vx: (Math.random() - 0.5) * 0.75,
-          vy: (Math.random() - 0.5) * 0.75,
-          radius: Math.random() * 2.4 + 1.2,
-          color: i % 4 === 0 ? '#8b5cf6' : i % 4 === 1 ? '#06b6d4' : i % 4 === 2 ? '#ec4899' : '#3b82f6'
+      spatialParticles = [];
+      for (let i = 0; i < NUM_PARTICLES; i++) {
+        spatialParticles.push({
+          x: (Math.random() - 0.5) * width * 1.3,
+          y: (Math.random() - 0.5) * height * 1.3,
+          z: (Math.random() - 0.5) * 800,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4,
+          vz: (Math.random() - 0.5) * 0.4,
+          baseRadius: Math.random() * 2.2 + 1.2,
+          colorTheme: i % 3 === 0 ? 'cyan' : i % 3 === 1 ? 'indigo' : 'purple'
         });
       }
     }
     window.addEventListener('resize', initCanvas);
-    window.addEventListener('mousemove', e => { mouse.targetX = e.clientX; mouse.targetY = e.clientY; });
+    window.addEventListener('mousemove', e => {
+      mouse.targetX = e.clientX;
+      mouse.targetY = e.clientY;
+    });
+
+    window.triggerQuantumPulse = function() {
+      shockwaveRadius = 10;
+      shockwaveMax = Math.max(width, height) * 0.85;
+      shockwaveAlpha = 1.0;
+    };
+
+    function project3D(x, y, z, cx, cy, fov = 480) {
+      const zEff = z + 500;
+      if (zEff <= 10) return null;
+      const scale = fov / zEff;
+      return {
+        x2d: cx + x * scale,
+        y2d: cy + y * scale,
+        scale,
+        z
+      };
+    }
+
+    function rotate3D(v, rx, ry, rz) {
+      let x1 = v.x * Math.cos(ry) + v.z * Math.sin(ry);
+      let z1 = -v.x * Math.sin(ry) + v.z * Math.cos(ry);
+      let y2 = v.y * Math.cos(rx) - z1 * Math.sin(rx);
+      let z2 = v.y * Math.sin(rx) + z1 * Math.cos(rx);
+      let x3 = x1 * Math.cos(rz) - y2 * Math.sin(rz);
+      let y3 = x1 * Math.sin(rz) + y2 * Math.cos(rz);
+      return { x: x3, y: y3, z: z2 };
+    }
 
     function render3D() {
-      mouse.x += (mouse.targetX - mouse.x) * 0.06;
-      mouse.y += (mouse.targetY - mouse.y) * 0.06;
+      mouse.x += (mouse.targetX - mouse.x) * 0.05;
+      mouse.y += (mouse.targetY - mouse.y) * 0.05;
       ctx.clearRect(0, 0, width, height);
 
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
-        p.x += p.vx; p.y += p.vy;
-        if (p.x < 0) p.x = width; if (p.x > width) p.x = 0;
-        if (p.y < 0) p.y = height; if (p.y > height) p.y = 0;
+      // Camera parallax
+      const camYaw = ((mouse.x - width / 2) / width) * 0.75;
+      const camPitch = -((mouse.y - height / 2) / height) * 0.75;
 
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.fill();
+      rotX += 0.0035;
+      rotY += 0.0055;
+      rotZ += 0.002;
 
-        for (let j = i + 1; j < particles.length; j++) {
-          const p2 = particles[j];
-          const dx = p.x - p2.x, dy = p.y - p2.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 115) {
+      const cx = width / 2;
+      const cy = height / 2;
+
+      // Render 3D Volumetric Particle Constellation
+      const projectedParticles = [];
+      for (let i = 0; i < spatialParticles.length; i++) {
+        const p = spatialParticles[i];
+        p.x += p.vx; p.y += p.vy; p.z += p.vz;
+        const boundX = width * 0.65, boundY = height * 0.65, boundZ = 400;
+        if (p.x < -boundX) p.x = boundX; if (p.x > boundX) p.x = -boundX;
+        if (p.y < -boundY) p.y = boundY; if (p.y > boundY) p.y = -boundY;
+        if (p.z < -boundZ) p.z = boundZ; if (p.z > boundZ) p.z = -boundZ;
+
+        // Interactive mouse gravity
+        const dx = (mouse.x - cx) - p.x;
+        const dy = (mouse.y - cy) - p.y;
+        const dist2d = Math.sqrt(dx * dx + dy * dy);
+        if (dist2d < 220) {
+          p.x += (dx / dist2d) * 0.35;
+          p.y += (dy / dist2d) * 0.35;
+        }
+
+        const rotated = rotate3D(p, camPitch, camYaw, 0);
+        const proj = project3D(rotated.x, rotated.y, rotated.z, cx, cy);
+        if (proj) {
+          projectedParticles.push({ ...proj, raw: p, origIdx: i });
+        }
+      }
+
+      // Draw spatial laser links
+      for (let i = 0; i < projectedParticles.length; i++) {
+        const p1 = projectedParticles[i];
+        for (let j = i + 1; j < projectedParticles.length; j++) {
+          const p2 = projectedParticles[j];
+          const dX = p1.raw.x - p2.raw.x;
+          const dY = p1.raw.y - p2.raw.y;
+          const dZ = p1.raw.z - p2.raw.z;
+          const dist3D = Math.sqrt(dX*dX + dY*dY + dZ*dZ);
+          if (dist3D < 135) {
+            const alpha = (1 - dist3D / 135) * 0.22 * Math.min(p1.scale, p2.scale);
             ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(168, 85, 247, ${0.18 * (1 - dist / 115)})`;
-            ctx.lineWidth = 0.65;
+            ctx.moveTo(p1.x2d, p1.y2d);
+            ctx.lineTo(p2.x2d, p2.y2d);
+            ctx.strokeStyle = `rgba(99, 102, 241, ${alpha.toFixed(3)})`;
+            ctx.lineWidth = 0.85 * p1.scale;
             ctx.stroke();
           }
         }
       }
+
+      // Draw particles with depth scaling
+      for (let i = 0; i < projectedParticles.length; i++) {
+        const p = projectedParticles[i];
+        const r = Math.max(0.6, p.raw.baseRadius * p.scale);
+        const alpha = Math.min(1, Math.max(0.15, (p.z + 400) / 750));
+        ctx.beginPath();
+        ctx.arc(p.x2d, p.y2d, r, 0, Math.PI * 2);
+        const col = p.raw.colorTheme === 'cyan' ? `rgba(6, 182, 212, ${alpha})` :
+                    p.raw.colorTheme === 'indigo' ? `rgba(99, 102, 241, ${alpha})` :
+                    `rgba(168, 85, 247, ${alpha})`;
+        ctx.fillStyle = col;
+        ctx.fill();
+      }
+
+      // Render 3D Geodesic Icosahedron Core
+      const curRotX = rotX + camPitch;
+      const curRotY = rotY + camYaw;
+
+      const projIcosa = icosaVertices.map(v => {
+        const rot = rotate3D(v, curRotX, curRotY, rotZ);
+        return project3D(rot.x, rot.y, rot.z, cx, cy, 480);
+      });
+
+      const projInner = innerVertices.map(v => {
+        const rot = rotate3D(v, -curRotX * 1.4, -curRotY * 1.4, -rotZ);
+        return project3D(rot.x, rot.y, rot.z, cx, cy, 480);
+      });
+
+      // Draw inner crystal edges
+      innerEdges.forEach(([a, b]) => {
+        const p1 = projInner[a];
+        const p2 = projInner[b];
+        if (p1 && p2) {
+          const avgZ = (p1.z + p2.z) / 2;
+          const depthAlpha = Math.max(0.15, (avgZ + 150) / 300);
+          ctx.beginPath();
+          ctx.moveTo(p1.x2d, p1.y2d);
+          ctx.lineTo(p2.x2d, p2.y2d);
+          ctx.strokeStyle = `rgba(6, 182, 212, ${(depthAlpha * 0.45).toFixed(2)})`;
+          ctx.lineWidth = 1.2 * p1.scale;
+          ctx.stroke();
+        }
+      });
+
+      // Draw outer icosahedron edges with 3D depth-sorting
+      icosaEdges.forEach(([a, b]) => {
+        const p1 = projIcosa[a];
+        const p2 = projIcosa[b];
+        if (p1 && p2) {
+          const avgZ = (p1.z + p2.z) / 2;
+          const depthAlpha = Math.max(0.12, (avgZ + coreRadius) / (coreRadius * 2));
+          ctx.beginPath();
+          ctx.moveTo(p1.x2d, p1.y2d);
+          ctx.lineTo(p2.x2d, p2.y2d);
+          ctx.strokeStyle = `rgba(139, 92, 246, ${(depthAlpha * 0.55).toFixed(2)})`;
+          ctx.lineWidth = Math.max(0.7, 1.8 * ((p1.scale + p2.scale) / 2));
+          ctx.stroke();
+        }
+      });
+
+      // Draw icosahedron vertices as luminous metallic spheres
+      projIcosa.forEach(p => {
+        if (!p) return;
+        const depthAlpha = Math.max(0.2, (p.z + coreRadius) / (coreRadius * 2));
+        const r = Math.max(1.5, 4.0 * p.scale);
+        ctx.beginPath();
+        ctx.arc(p.x2d, p.y2d, r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${(depthAlpha * 0.9).toFixed(2)})`;
+        ctx.shadowColor = '#6366f1';
+        ctx.shadowBlur = 12 * p.scale;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      });
+
+      // Shockwave Pulse Animation
+      if (shockwaveAlpha > 0.01) {
+        shockwaveRadius += (shockwaveMax - shockwaveRadius) * 0.08;
+        shockwaveAlpha -= 0.02;
+        ctx.beginPath();
+        ctx.arc(cx, cy, shockwaveRadius, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(6, 182, 212, ${shockwaveAlpha.toFixed(2)})`;
+        ctx.lineWidth = 3 * shockwaveAlpha;
+        ctx.shadowColor = '#06b6d4';
+        ctx.shadowBlur = 25;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+      }
+
       requestAnimationFrame(render3D);
     }
     initCanvas();
     render3D();
+
+    // 3D Parallax Tilt Engine for all Glass Cards
+    (function init3DCardTiltEngine() {
+      function bindTilt(el, maxTilt = 6) {
+        if (!el || el.__tiltBound) return;
+        el.__tiltBound = true;
+        el.addEventListener('mousemove', (e) => {
+          const rect = el.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const cx = rect.width / 2;
+          const cy = rect.height / 2;
+          const rotX = ((y - cy) / cy) * -maxTilt;
+          const rotY = ((x - cx) / cx) * maxTilt;
+          el.style.transform = `perspective(1000px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) scale3d(1.012, 1.012, 1.012)`;
+          el.style.setProperty('--mouse-x', `${x}px`);
+          el.style.setProperty('--mouse-y', `${y}px`);
+        });
+        el.addEventListener('mouseleave', () => {
+          el.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+        });
+      }
+
+      function refreshTilts() {
+        document.querySelectorAll('.glass-card, .user-card, .metric-box, .assistant-card, .spotlight-window').forEach(el => {
+          bindTilt(el, el.classList.contains('metric-box') ? 8 : 5);
+        });
+      }
+      setTimeout(refreshTilts, 400);
+      window.refreshCardTilts = refreshTilts;
+    })();
 
     // Application State
     let allModels = [];

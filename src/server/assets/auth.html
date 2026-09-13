@@ -134,21 +134,39 @@
       position: relative;
       z-index: 10;
       width: 100%;
-      max-width: 480px;
+      max-width: 490px;
       padding: 20px;
+      perspective: 1200px;
     }
 
     .auth-card {
       background: var(--card-bg);
-      backdrop-filter: blur(36px) saturate(180%);
-      -webkit-backdrop-filter: blur(36px) saturate(180%);
+      backdrop-filter: blur(40px) saturate(220%);
+      -webkit-backdrop-filter: blur(40px) saturate(220%);
       border: 1px solid var(--card-border);
-      border-radius: 28px;
+      border-radius: 30px;
       padding: 38px 34px;
-      box-shadow: var(--glass-shadow);
+      box-shadow: var(--glass-shadow), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
       position: relative;
       overflow: hidden;
-      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+      transform-style: preserve-3d;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+    }
+
+    .auth-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(420px circle at var(--mouse-x, -500px) var(--mouse-y, -500px), rgba(255, 255, 255, 0.12), transparent 70%);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      mix-blend-mode: overlay;
+    }
+
+    .auth-card:hover::after {
+      opacity: 1;
     }
 
     /* Siri Glow Perimeter */
@@ -156,7 +174,7 @@
       content: '';
       position: absolute;
       inset: -1px;
-      border-radius: 28px;
+      border-radius: 30px;
       padding: 1.5px;
       background: linear-gradient(135deg, rgba(99, 102, 241, 0.6), rgba(6, 182, 212, 0.2), rgba(168, 85, 247, 0.5), transparent 60%);
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -517,9 +535,12 @@
   <div class="auth-wrapper">
     <div class="auth-card" id="auth-card">
       
-      <!-- Brand Header -->
+      <!-- Brand Header with 3D Holographic Gyroscope Core -->
       <div class="brand-header">
-        <div class="brand-logo">⚡</div>
+        <div class="gyro-wrapper" style="position: relative; width: 130px; height: 130px; margin: 0 auto 14px auto; display: flex; align-items: center; justify-content: center;">
+          <canvas id="gyro-3d-canvas" width="260" height="260" style="width: 130px; height: 130px; filter: drop-shadow(0 0 25px rgba(99,102,241,0.6)); cursor: grab;"></canvas>
+          <div style="position: absolute; width: 55px; height: 55px; border-radius: 50%; background: radial-gradient(circle, rgba(99,102,241,0.4), transparent 70%); pointer-events: none; filter: blur(10px);"></div>
+        </div>
         <h1 class="brand-title">RepoPulse Studio</h1>
         <p class="brand-subtitle" id="header-desc">Sign in or create your maintainer account to link with the native desktop shell.</p>
       </div>
@@ -771,6 +792,7 @@
       inputs.forEach((input, idx) => {
         input.value = '';
         input.addEventListener('input', (e) => {
+          if (window.triggerGyroPulse) window.triggerGyroPulse();
           if (input.value.length === 1 && idx < inputs.length - 1) {
             inputs[idx + 1].focus();
           }
@@ -786,6 +808,7 @@
           e.preventDefault();
           const pasteData = (e.clipboardData || window.clipboardData).getData('text').trim();
           if (/^\d{6}$/.test(pasteData)) {
+            if (window.triggerGyroPulse) window.triggerGyroPulse();
             pasteData.split('').forEach((char, i) => {
               if (inputs[i]) inputs[i].value = char;
             });
@@ -923,6 +946,158 @@
         } catch (_) {}
       }
     });
+
+    // ================= 3D HOLOGRAPHIC GYROSCOPE ENGINE =================
+    (function init3DGyroscope() {
+      const canvas = document.getElementById('gyro-3d-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let angleX = 0.4, angleY = 0.6, angleZ = 0.2;
+      let targetRotX = 0, targetRotY = 0;
+      let pulseMagnitude = 0;
+      const cx = 130, cy = 130;
+
+      window.addEventListener('mousemove', (e) => {
+        const xNorm = (e.clientX / window.innerWidth) * 2 - 1;
+        const yNorm = (e.clientY / window.innerHeight) * 2 - 1;
+        targetRotY = xNorm * 0.75;
+        targetRotX = -yNorm * 0.75;
+      });
+
+      window.triggerGyroPulse = function() {
+        pulseMagnitude = 1.0;
+      };
+
+      function render3DRing(radius, numSegments, color, rotSpeedX, rotSpeedY, rotSpeedZ, width) {
+        const pts = [];
+        for (let i = 0; i <= numSegments; i++) {
+          const theta = (i / numSegments) * Math.PI * 2;
+          let x = Math.cos(theta) * radius;
+          let y = Math.sin(theta) * radius;
+          let z = 0;
+
+          const radX = angleX * rotSpeedX + targetRotX;
+          const radY = angleY * rotSpeedY + targetRotY;
+          const radZ = angleZ * rotSpeedZ;
+
+          let x1 = x * Math.cos(radY) + z * Math.sin(radY);
+          let z1 = -x * Math.sin(radY) + z * Math.cos(radY);
+
+          let y2 = y * Math.cos(radX) - z1 * Math.sin(radX);
+          let z2 = y * Math.sin(radX) + z1 * Math.cos(radX);
+
+          let x3 = x1 * Math.cos(radZ) - y2 * Math.sin(radZ);
+          let y3 = x1 * Math.sin(radZ) + y2 * Math.cos(radZ);
+
+          const fov = 350;
+          const scale = fov / (fov + z2 + 80);
+          pts.push({ x: cx + x3 * scale, y: cy + y3 * scale, z: z2 });
+        }
+
+        for (let i = 0; i < pts.length - 1; i++) {
+          const p1 = pts[i];
+          const p2 = pts[i + 1];
+          const depthAlpha = Math.max(0.2, (p1.z + 100) / 200);
+          ctx.beginPath();
+          ctx.moveTo(p1.x, p1.y);
+          ctx.lineTo(p2.x, p2.y);
+          ctx.strokeStyle = color.replace('ALPHA', (depthAlpha * (0.8 + pulseMagnitude * 0.5)).toFixed(2));
+          ctx.lineWidth = width * (0.8 + pulseMagnitude * 0.4);
+          ctx.stroke();
+
+          if (i % 6 === 0) {
+            ctx.beginPath();
+            ctx.arc(p1.x, p1.y, 2.5 * (0.8 + pulseMagnitude * 0.5), 0, Math.PI * 2);
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+          }
+        }
+      }
+
+      function renderCrystalCore() {
+        const s = 18 * (1 + pulseMagnitude * 0.6);
+        const vertices = [
+          { x: 0, y: -s, z: 0 },
+          { x: 0, y: s, z: 0 },
+          { x: -s, y: 0, z: 0 },
+          { x: s, y: 0, z: 0 },
+          { x: 0, y: 0, z: -s },
+          { x: 0, y: 0, z: s }
+        ];
+
+        const edges = [
+          [0,2],[0,3],[0,4],[0,5],
+          [1,2],[1,3],[1,4],[1,5],
+          [2,4],[4,3],[3,5],[5,2]
+        ];
+
+        const radX = angleX * 1.5;
+        const radY = angleY * 1.8;
+        const projected = vertices.map(v => {
+          let x1 = v.x * Math.cos(radY) + v.z * Math.sin(radY);
+          let z1 = -v.x * Math.sin(radY) + v.z * Math.cos(radY);
+          let y2 = v.y * Math.cos(radX) - z1 * Math.sin(radX);
+          let z2 = v.y * Math.sin(radX) + z1 * Math.cos(radX);
+          const fov = 350;
+          const scale = fov / (fov + z2 + 80);
+          return { x: cx + x1 * scale, y: cy + y2 * scale, z: z2 };
+        });
+
+        edges.forEach(([i, j]) => {
+          ctx.beginPath();
+          ctx.moveTo(projected[i].x, projected[i].y);
+          ctx.lineTo(projected[j].x, projected[j].y);
+          ctx.strokeStyle = `rgba(6, 182, 212, ${0.7 + pulseMagnitude * 0.3})`;
+          ctx.lineWidth = 1.8;
+          ctx.stroke();
+        });
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, 5 * (1 + pulseMagnitude), 0, Math.PI * 2);
+        ctx.fillStyle = '#fff';
+        ctx.shadowColor = '#6366f1';
+        ctx.shadowBlur = 15;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        angleX += 0.015;
+        angleY += 0.02;
+        angleZ += 0.008;
+        if (pulseMagnitude > 0) pulseMagnitude = Math.max(0, pulseMagnitude - 0.03);
+
+        render3DRing(78, 48, 'rgba(99, 102, 241, ALPHA)', 1.0, 1.2, 0.8, 2.2);
+        render3DRing(58, 36, 'rgba(6, 182, 212, ALPHA)', -1.2, 0.9, 1.4, 2.0);
+        render3DRing(38, 28, 'rgba(168, 85, 247, ALPHA)', 1.4, -1.3, 0.6, 1.8);
+        renderCrystalCore();
+
+        requestAnimationFrame(animate);
+      }
+      animate();
+    })();
+
+    // 3D Parallax Tilt on Auth Card
+    (function initAuthCardTilt() {
+      const card = document.getElementById('auth-card');
+      if (!card) return;
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = ((y - centerY) / centerY) * -6.5;
+        const rotateY = ((x - centerX) / centerX) * 6.5;
+        card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(1.015, 1.015, 1.015)`;
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+      });
+    })();
   </script>
 </body>
 </html>

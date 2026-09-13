@@ -1,7 +1,7 @@
 {
   "name": "repo-pulse-ai",
-  "version": "2.3.0",
-  "description": "Autonomous AI Maintainer Harness, Desktop Shell & Multi-Model Gateway with 540+ AI Models, Apple Duo Physics & Web Auth Portal",
+  "version": "2.3.1",
+  "description": "Autonomous AI Maintainer Harness, Desktop Shell & Multi-Model Gateway with 540+ AI Models, Realistic 3D Quantum Core, Apple Duo Physics & Web Auth Portal",
   "main": "dist/desktop/main.js",
   "bin": {
     "repo-pulse": "dist/cli/index.js"

@@ -3,10 +3,10 @@
 # ⚡ RepoPulse AI • Titan Desktop Edition
 
 ### Autonomous AI Maintainer Shell, PR Intelligence Lab & Multi-Model Gateway
-**540+ Production AI Models • Apple Duo Fluid Closing Animation • Dynamic Island • Native Electron Shell • AST-Bounded Review • MCP Server**
+**540+ Production AI Models • Realistic 3D Quantum Core • Apple Duo Fluid Physics • Dynamic Island Waveform • Native Electron Shell • AST-Bounded Review • MCP Server**
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Release](https://img.shields.io/badge/Release-v2.3.0-indigo.svg)](https://github.com/miriyaladhanwinn/repo-pulse-ai/releases)
+[![Release](https://img.shields.io/badge/Release-v2.3.1-indigo.svg)](https://github.com/miriyaladhanwinn/repo-pulse-ai/releases)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7+-blue.svg)](https://www.typescriptlang.org/)
 [![Electron](https://img.shields.io/badge/Electron-44.3+-2b2d42.svg)](https://www.electronjs.org/)
@@ -50,9 +50,11 @@ RepoPulse is engineered from the ground up to match the desktop elegance of Cher
 | Capability | Cherry Studio | RepoPulse AI (Titan Edition) |
 | :--- | :--- | :--- |
 | **Native Desktop App** | Electron | **Native Electron + Apple Liquid Glass + Windows Acrylic** |
+| **3D Visual Core** | Flat 2D Webview | **True 3D Spatial Quantum Geodesic Polyhedron Core + Holographic Gyroscope Core** |
+| **Card Physics** | Static CSS | **Physical 3D Card Parallax Tilt Engine with dynamic specular light sheen** |
 | **Auth & Verification** | Standard Web Login | **Apple Liquid Glass Portal + 6-Digit Email OTP + Auto-Close Tab + Deep-Link Handoff (`repopulse://`)** |
 | **Closing Animation** | Standard window dismiss | **Apple Duo Fluid Spring Closing Animation (`@keyframes appleDuoClosing`)** |
-| **Interactive Pill** | None | **Apple Dynamic Island with real-time model & AST status telemetry** |
+| **Interactive Pill** | None | **Apple Dynamic Island with 3D Audio Visualizer Waveform & telemetry** |
 | **Color Schemes** | Dark / Light | **5 Dynamic High-Contrast Themes (Siri Iridescent, Midnight, Cyberpunk, Obsidian, Emerald)** |
 | **AI Model Catalog** | ~300 Models | **540+ Production AI Models across 35 Global Providers** |
 | **Model Spotlight Switcher** | Basic dropdown | **Apple Spotlight Switcher (`Cmd+K`) with instant fuzzy provider search** |
@@ -67,12 +69,12 @@ RepoPulse is engineered from the ground up to match the desktop elegance of Cher
 
 ## 🖥️ Desktop & Studio Experience
 
-### 1. Apple Liquid Glass Framing & Duo Fluid Closing Animation
-Engineered with Apple Human Interface Guidelines:
-- **Frameless Windowing**: Borderless window with `titleBarStyle: 'hiddenInset'` on macOS and `titleBarOverlay` on Windows 11.
-- **Apple Duo Fluid Animation**: Smooth spring-damped dismiss and minimize transitions mimicking dual-display physics.
-- **Vibrancy & Acrylic**: Native GPU-rendered `under-window` vibrancy and `acrylic` backdrop material.
-- **Dynamic Island**: Ambient status pill broadcasting AST engine states, tokens consumed, and active LLM latency.
+### 1. Realistic 3D Spatial Geometry & FAANG-Grade Physics
+- **True 3D Quantum Geodesic Polyhedron Core**: Rotates an interactive 3D icosahedron and dual octahedron skeleton using golden ratio ($\phi$) coordinates, 3D perspective camera matrix projection ($X' = cx + X \cdot \frac{FOV}{FOV+Z}$), dynamic depth-of-field fog, and user shockwave pulses.
+- **Physical 3D Card Parallax Tilt**: Cards calculate cursor coordinates dynamically, applying 3D pitch/yaw tilts (`preserve-3d`, `rotateX`, `rotateY`) while reflecting physical specular glare highlights across glass borders.
+- **Holographic Gyroscope Auth Core**: Multi-axis gimbal rings rendering in true 3D perspective on the authentication portal.
+- **Dynamic Island 3D Audio Waveform**: Real-time oscillating audio waveform integrated inside the Dynamic Island status bar.
+- **Apple Duo Fluid Closing Animation**: Smooth spring-damped dismiss and minimize transitions mimicking dual-display physics.
 
 ### 2. Universal 540+ AI Model Matrix
 Explore, test, and route across every major foundation model in existence:
