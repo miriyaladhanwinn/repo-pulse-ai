@@ -59,7 +59,12 @@ async function handleReview(args: string[]) {
 
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--diff' && args[i + 1]) {
-      diffText = fs.readFileSync(path.resolve(args[i + 1]), 'utf-8');
+      const diffPath = path.resolve(args[i + 1]);
+      if (!fs.existsSync(diffPath)) {
+        console.error(`Error: Diff file not found at: ${diffPath}`);
+        process.exit(1);
+      }
+      diffText = fs.readFileSync(diffPath, 'utf-8');
       i++;
     } else if (args[i] === '--repo' && args[i + 1]) {
       repoContext = args[i + 1];
@@ -116,7 +121,12 @@ async function handleTriage(args: string[]) {
 
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--file' && args[i + 1]) {
-      const content = fs.readFileSync(path.resolve(args[i + 1]), 'utf-8');
+      const filePath = path.resolve(args[i + 1]);
+      if (!fs.existsSync(filePath)) {
+        console.error(`Error: Issue file not found at: ${filePath}`);
+        process.exit(1);
+      }
+      const content = fs.readFileSync(filePath, 'utf-8');
       const lines = content.split('\n');
       title = lines[0]?.replace(/^#*\s*/, '').trim() || 'Untitled Issue';
       body = lines.slice(1).join('\n').trim();

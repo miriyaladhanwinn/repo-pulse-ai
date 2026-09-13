@@ -49,6 +49,19 @@ describe('MCPServer Module', () => {
     assert.ok(parsedReview.criticalIssues >= 1);
   });
 
+  test('should handle standard MCP initialize handshake', async () => {
+    const res = await server.handleMessage({
+      jsonrpc: '2.0',
+      id: 'init-1',
+      method: 'initialize',
+      params: { protocolVersion: '2024-11-05' }
+    });
+
+    assert.equal(res.id, 'init-1');
+    assert.equal(res.result.serverInfo.name, 'repo-pulse-ai');
+    assert.equal(res.result.protocolVersion, '2024-11-05');
+  });
+
   test('should handle invalid tool gracefully', async () => {
     const res = await server.handleMessage({
       jsonrpc: '2.0',
@@ -59,5 +72,16 @@ describe('MCPServer Module', () => {
 
     assert.ok(res.error);
     assert.equal(res.error.code, -32601);
+  });
+
+  test('should handle notifications/initialized without error', async () => {
+    const res = await server.handleMessage({
+      jsonrpc: '2.0',
+      id: 'init-ack',
+      method: 'notifications/initialized'
+    });
+
+    assert.equal(res.id, 'init-ack');
+    assert.deepEqual(res.result, {});
   });
 });

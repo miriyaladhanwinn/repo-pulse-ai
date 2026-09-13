@@ -129,6 +129,11 @@ Output strict JSON matching the schema:
     const remarks: CodeRemark[] = [];
 
     for (const hunk of diff.hunks) {
+      // Documentation changes (markdown, text, docs/) should not trigger code execution invariants
+      if (hunk.categoryHint === 'documentation') {
+        continue;
+      }
+
       // Check for common security or hygiene issues in added lines
       for (let i = 0; i < hunk.lines.length; i++) {
         const line = hunk.lines[i];
