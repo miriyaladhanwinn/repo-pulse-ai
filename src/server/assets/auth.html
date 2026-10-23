@@ -380,6 +380,19 @@
 
   <div class="auth-wrapper">
     <div class="auth-card" id="auth-card">
+      <!-- 🚀 Amazon Judge Mode 1-Click Bypass Banner -->
+      <div style="background: linear-gradient(135deg, rgba(255, 153, 0, 0.16), rgba(255, 110, 0, 0.08)); border: 1.5px solid #FF9900; border-radius: 14px; padding: 14px 16px; margin-bottom: 22px; text-align: center;">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; font-weight: 800; color: #FF9900; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 4px;">
+          <span>🏆</span> Amazon Hackathon Judge Evaluation
+        </div>
+        <div style="font-size: 12px; color: #d4d4d4; margin-bottom: 12px; line-height: 1.4;">
+          Zero-auth instant evaluation for <strong>Alexa+, Bee Wearable, Fire TV, Ring & Bedrock</strong>. Skip OTP & credentials:
+        </div>
+        <button id="btn-judge-bypass" onclick="launchAmazonJudgeMode()" style="width: 100%; height: 42px; background: linear-gradient(90deg, #FF9900, #f59e0b); border: none; border-radius: 10px; color: #111; font-size: 13px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 14px rgba(255,153,0,0.35); transition: all 0.15s ease;">
+          <span>🚀</span>
+          <span>Launch Amazon Judge Mode (Zero-Auth Live Simulation)</span>
+        </button>
+      </div>
       
       <!-- Brand Header (Simple, Clean, Minimalist) -->
       <div class="brand-header">
@@ -800,6 +813,17 @@
           </div>
         `;
       }, 500);
+    }
+  
+    function launchAmazonJudgeMode() {
+      localStorage.setItem('repopulse_session_token', 'judge-amazon-session-token');
+      localStorage.setItem('repopulse_username', 'Amazon Hackathon Judge');
+      localStorage.setItem('repopulse_judge_mode', 'true');
+      window.location.href = '/?judge=amazon';
+    }
+
+    if (window.location.search.includes('judge=amazon') || window.location.search.includes('mode=judge')) {
+      launchAmazonJudgeMode();
     }
   </script>
 </body>

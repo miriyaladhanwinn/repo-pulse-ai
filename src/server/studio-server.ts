@@ -22,6 +22,9 @@ import { MultiModelRouter } from '../providers/multi-model-router.js';
 import { AssistantMatrix } from '../core/assistant-matrix.js';
 import { KnowledgeVault } from '../core/knowledge-vault.js';
 import { AuthService } from './auth-service.js';
+import { DEFAULT_AMAZON_JUDGE_SCENARIO, createJudgeSession, isAmazonJudgeMode } from '../amazon/judgeSimulationMode.js';
+import { evaluateRingDeploymentGate, reduceFireTvRemoteInput, createInitialFireTvState, FireTvRemoteKey } from '../amazon/multiDeviceOrchestrator.js';
+import { executeStrandsMaintenancePlan } from '../amazon/strandsAgentOrchestrator.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

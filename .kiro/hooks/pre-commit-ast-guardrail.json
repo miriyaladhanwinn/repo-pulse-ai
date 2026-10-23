@@ -1,0 +1,15 @@
+{
+  "name": "RepoPulse Pre-Commit AST & Bedrock Secret Guardrail",
+  "version": "1.0.0",
+  "description": "Kiro Hook: Validates git patches with Amazon Bedrock Guardrails before code leaves the local workstation",
+  "trigger": {
+    "event": "onFileSave",
+    "filePattern": "src/**/*.{ts,tsx,js}"
+  },
+  "action": {
+    "type": "mcpToolCall",
+    "server": "repopulse-ai-mcp-server",
+    "tool": "repopulse_sanitize_diff",
+    "blocking": true
+  }
+}

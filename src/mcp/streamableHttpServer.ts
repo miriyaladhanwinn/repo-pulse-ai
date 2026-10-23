@@ -3,6 +3,7 @@ import crypto from 'node:crypto';
 import { analyzePRWithBedrock, sanitizeDiffWithGuardrails } from '../amazon/bedrockGuardrailEngine.js';
 import { correlateBeeTranscriptsWithPR } from '../amazon/beeWearableBridge.js';
 import { verifyAndSynthesizePatch } from '../amazon/astSandboxVerifier.js';
+import { evaluateRingDeploymentGate, reduceFireTvRemoteInput, createInitialFireTvState, FireTvRemoteKey } from '../amazon/multiDeviceOrchestrator.js';
 
 export const MCP_PROTOCOL_VERSION = '2025-11-25';
 
@@ -94,6 +95,54 @@ export const REPOPULSE_MCP_TOOLS = [
         rawDiff: { type: 'string' },
       },
       required: ['rawDiff'],
+    },
+  },
+  {
+    name: 'repopulse_ring_deployment_gate',
+    description:
+      'Ring Physical Presence & Intercom Deployment Gate: Verifies on-call engineer physical presence before unlocking CRITICAL blast-radius PR merges.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        prNumber: { type: 'number', description: 'PR Number' },
+        blastRadiusScore: { type: 'number', description: 'AST Blast Radius score (0-100)' },
+        attestation: {
+          type: 'object',
+          properties: {
+            deviceId: { type: 'string' },
+            eventType: { type: 'string', enum: ['ding', 'motion', 'intercom_unlock', 'verified_presence'] },
+            operatorName: { type: 'string' },
+            verifiedSignature: { type: 'string' },
+          },
+        },
+      },
+      required: ['prNumber', 'blastRadiusScore'],
+    },
+  },
+  {
+    name: 'repopulse_firetv_remote_navigate',
+    description:
+      'Fire TV Living Room D-Pad Remote Navigation: Dispatches 10-foot UI remote commands to inspect 3D AST dependency nodes and Bedrock findings.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        key: {
+          type: 'string',
+          enum: ['DPAD_UP', 'DPAD_DOWN', 'DPAD_LEFT', 'DPAD_RIGHT', 'SELECT', 'PLAY_PAUSE', 'BACK'],
+        },
+        astNodes: { type: 'array', items: { type: 'string' } },
+        currentState: {
+          type: 'object',
+          properties: {
+            focusedAstNodeIndex: { type: 'number' },
+            totalNodes: { type: 'number' },
+            inspectingDiffModal: { type: 'boolean' },
+            autoRotate3DCore: { type: 'boolean' },
+            lastActionAnnouncement: { type: 'string' },
+          },
+        },
+      },
+      required: ['key'],
     },
   },
 ];
@@ -190,6 +239,35 @@ export async function handleMcpJsonRpc(request: JsonRpcRequest): Promise<Record<
         };
       }
 
+      if (toolName === 'repopulse_ring_deployment_gate') {
+        const gate = evaluateRingDeploymentGate(
+          Number(args.prNumber),
+          Number(args.blastRadiusScore),
+          args.attestation
+        );
+        return {
+          jsonrpc: '2.0',
+          id,
+          result: {
+            content: [{ type: 'text', text: JSON.stringify(gate, null, 2) }],
+            isError: false,
+          },
+        };
+      }
+
+      if (toolName === 'repopulse_firetv_remote_navigate') {
+        const state = (args.currentState as any) ?? createInitialFireTvState(args.astNodes?.length ?? 5);
+        const nextState = reduceFireTvRemoteInput(state, args.key as FireTvRemoteKey, args.astNodes ?? []);
+        return {
+          jsonrpc: '2.0',
+          id,
+          result: {
+            content: [{ type: 'text', text: JSON.stringify(nextState, null, 2) }],
+            isError: false,
+          },
+        };
+      }
+
       return {
         jsonrpc: '2.0',
         id,
@@ -228,7 +306,7 @@ export function createMcpStreamableHttpServer(): http.Server {
           status: 'ok',
           protocol: 'mcp-streamable-http',
           specVersion: MCP_PROTOCOL_VERSION,
-          tracks: ['Alexa+', 'Bee Wearable AI', 'AWS Builder', 'Open Source'],
+          tracks: ['Alexa+', 'Bee Wearable AI', 'Fire TV', 'Ring', 'AWS Builder', 'Open Source'],
         })
       );
       return;
@@ -276,4 +354,12 @@ export function createMcpStreamableHttpServer(): http.Server {
     res.writeHead(404, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ error: 'Not Found. Use POST /mcp or GET /health' }));
   });
+}
+
+export function startMcpStreamableHttpServer(port = 8787): http.Server {
+  const server = createMcpStreamableHttpServer();
+  server.listen(port, () => {
+    console.log(`[RepoPulse MCP] Alexa+ Streamable HTTP Server listening on port ${port} (/mcp)`);
+  });
+  return server;
 }

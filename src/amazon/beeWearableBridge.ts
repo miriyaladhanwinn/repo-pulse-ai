@@ -5,11 +5,15 @@ export interface BeeTranscriptEvent {
   transcript: string;
 }
 
+export type BeeVoiceTranscript = BeeTranscriptEvent;
+
 export interface PRDiffFile {
   filePath: string;
   changedSymbols: string[];
   rawPatch: string;
 }
+
+export type PRModifiedFile = PRDiffFile;
 
 export interface BeePRConstraintMatch {
   utteranceId: string;

@@ -15,7 +15,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7+-blue.svg)](https://www.typescriptlang.org/)
 [![Electron](https://img.shields.io/badge/Electron-44.3+-2b2d42.svg)](https://www.electronjs.org/)
-[![Tests](https://img.shields.io/badge/tests-100%2F100%20passing-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-104%2F104%20passing-brightgreen.svg)]()
 
 <p align="center">
   <a href="#-amazon-developer-hackathon-highlights">Hackathon Highlights</a> •
@@ -96,7 +96,7 @@ Powered natively by **Amazon Bedrock** and the **Amazon Nova** model family (Nov
 | **Cloud Security** | Automated AST scanning for wildcard IAM statements (`Action: "*"`), public S3 buckets, and open port 22 security groups. | **AWS Well-Architected & CIS Benchmarks** |
 | **Developer Workflow**| Standard Model Context Protocol (MCP) server over `stdio` and streamable HTTP for Amazon Q Developer CLI & IDEs. | **Amazon Q Developer, MCP Standard** |
 | **Cloud-Native Arch** | Turnkey 1-click AWS CDK v2 stack with API Gateway, Lambda PR review worker, DynamoDB audit cache, and EventBridge. | **AWS CDK, Lambda, API Gateway, DynamoDB** |
-| **Implementation Quality** | Zero runtime dependencies outside standard library; **100/100 automated tests passing in 541ms**. | **Node.js 20 ESM, TypeScript 5.7** |
+| **Implementation Quality** | Zero runtime dependencies outside standard library; **104/104 automated tests passing in 560ms**. | **Node.js 20 ESM, TypeScript 5.7** |
 
 ---
 
@@ -318,11 +318,11 @@ npm test
 
 ✔ AmazonHackathonSuite (Alexa+ • Bee • AST Sandbox • Bedrock Guardrails) (5 tests)
 
-ℹ tests 100
+ℹ tests 104
 ℹ suites 20
-ℹ pass 100
+ℹ pass 104
 ℹ fail 0
-ℹ duration_ms 541ms
+ℹ duration_ms 560ms
 ```
 
 ---

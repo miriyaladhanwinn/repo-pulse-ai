@@ -1,6 +1,6 @@
 /**
  * RepoPulse AI - Main Entry Point & SDK
- * Amazon Developer Hackathon Edition (Alexa+ • Bee • AWS Builder • Open Source)
+ * Amazon Developer Hackathon Edition (Alexa+ • Bee • Fire TV • Ring • AWS Builder • Open Source)
  * Copyright (c) 2026 MRLDHANWINN. Apache-2.0 Licensed.
  */
 
@@ -24,6 +24,9 @@ export * from './mcp/streamableHttpServer.js';
 export * from './amazon/bedrockGuardrailEngine.js';
 export * from './amazon/beeWearableBridge.js';
 export * from './amazon/astSandboxVerifier.js';
+export * from './amazon/judgeSimulationMode.js';
+export * from './amazon/multiDeviceOrchestrator.js';
+export * from './amazon/strandsAgentOrchestrator.js';
 export * from './triage/issue-classifier.js';
 export * from './triage/reproducer.js';
 export * from './core/assistant-matrix.js';

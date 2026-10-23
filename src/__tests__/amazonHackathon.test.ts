@@ -4,6 +4,9 @@ import { sanitizeDiffWithGuardrails, analyzePRWithBedrock } from '../amazon/bedr
 import { correlateBeeTranscriptsWithPR } from '../amazon/beeWearableBridge.js';
 import { verifyAndSynthesizePatch } from '../amazon/astSandboxVerifier.js';
 import { handleMcpJsonRpc, MCP_PROTOCOL_VERSION } from '../mcp/streamableHttpServer.js';
+import { evaluateRingDeploymentGate, reduceFireTvRemoteInput, createInitialFireTvState } from '../amazon/multiDeviceOrchestrator.js';
+import { isAmazonJudgeMode, createJudgeSession, DEFAULT_AMAZON_JUDGE_SCENARIO } from '../amazon/judgeSimulationMode.js';
+import { executeStrandsMaintenancePlan } from '../amazon/strandsAgentOrchestrator.js';
 
 test('Bedrock Guardrail Engine redacts leaked AWS keys and emails deterministically', () => {
   const dirtyDiff = `
@@ -87,5 +90,101 @@ test('MCP Streamable HTTP handler negotiates spec 2025-11-25 and executes tools'
     id: 2,
     method: 'tools/list',
   });
-  assert.equal(listRes.result.tools.length, 4);
+  assert.equal(listRes.result.tools.length, 6);
+
+  const ringGateRes = await handleMcpJsonRpc({
+    jsonrpc: '2.0',
+    id: 3,
+    method: 'tools/call',
+    params: {
+      name: 'repopulse_ring_deployment_gate',
+      arguments: {
+        prNumber: 104,
+        blastRadiusScore: 85,
+      },
+    },
+  });
+  assert.equal(ringGateRes.result.isError, false);
+  const gateData = JSON.parse(ringGateRes.result.content[0].text);
+  assert.equal(gateData.mergeLocked, true);
+  assert.equal(gateData.ringAttestationRequired, true);
+});
+
+test('Ring Deployment Gate locks merges on CRITICAL blast radius and unlocks with physical attestation', () => {
+  // 1. Critical blast radius without attestation -> LOCKED
+  const lockedGate = evaluateRingDeploymentGate(104, 88);
+  assert.equal(lockedGate.mergeLocked, true);
+  assert.equal(lockedGate.ringVerified, false);
+  assert.ok(lockedGate.statusMessage.includes('LOCKED'));
+
+  // 2. Valid physical presence attestation -> UNLOCKED
+  const unlockedGate = evaluateRingDeploymentGate(104, 88, {
+    deviceId: 'ring-cam-office-door',
+    eventType: 'intercom_unlock',
+    operatorName: 'Lead Architect',
+    timestamp: '2026-10-24T09:00:00Z',
+    verifiedSignature: 'sig_ring_biometric_valid',
+  });
+  assert.equal(unlockedGate.mergeLocked, false);
+  assert.equal(unlockedGate.ringVerified, true);
+  assert.ok(unlockedGate.statusMessage.includes('UNLOCKED'));
+
+  // 3. Low blast radius -> UNLOCKED by default
+  const lowRiskGate = evaluateRingDeploymentGate(105, 30);
+  assert.equal(lowRiskGate.mergeLocked, false);
+  assert.equal(lowRiskGate.ringAttestationRequired, false);
+});
+
+test('Fire TV Remote D-Pad Navigation updates focus, inspects diffs, and controls rotation', () => {
+  const astSymbols = ['verifyOtpToken', 'dispatchSessionDeepLink', 'chargeCustomerCard'];
+  let state = createInitialFireTvState(astSymbols.length);
+
+  assert.equal(state.focusedAstNodeIndex, 0);
+
+  // D-Pad Right -> moves to next node
+  state = reduceFireTvRemoteInput(state, 'DPAD_RIGHT', astSymbols);
+  assert.equal(state.focusedAstNodeIndex, 1);
+  assert.ok(state.lastActionAnnouncement.includes('dispatchSessionDeepLink'));
+
+  // Select -> toggles diff inspection
+  state = reduceFireTvRemoteInput(state, 'SELECT', astSymbols);
+  assert.equal(state.inspectingDiffModal, true);
+
+  // Play/Pause -> toggles 3D core rotation
+  state = reduceFireTvRemoteInput(state, 'PLAY_PAUSE', astSymbols);
+  assert.equal(state.autoRotate3DCore, false);
+});
+
+test('Judge Simulation Mode bypasses auth and provides pre-hydrated scenario', () => {
+  assert.equal(isAmazonJudgeMode('http://localhost:3000/?judge=amazon'), true);
+  assert.equal(isAmazonJudgeMode('http://localhost:3000/'), false);
+
+  const session = createJudgeSession();
+  assert.equal(session.token, 'judge-amazon-session-token');
+  assert.equal(session.user.role.includes('Principal Evaluator'), true);
+  assert.equal(DEFAULT_AMAZON_JUDGE_SCENARIO.tracksActivated.length, 5);
+});
+
+test('Strands Agents SDK coordinates Guardrail, Bee, Alexa+, Ring, and Sandbox agents', async () => {
+  const plan = await executeStrandsMaintenancePlan({
+    repo: DEFAULT_AMAZON_JUDGE_SCENARIO.targetPR.repo,
+    prNumber: DEFAULT_AMAZON_JUDGE_SCENARIO.targetPR.prNumber,
+    rawDiff: DEFAULT_AMAZON_JUDGE_SCENARIO.targetPR.rawDiff,
+    astSymbols: DEFAULT_AMAZON_JUDGE_SCENARIO.targetPR.astSymbolsChanged,
+    beeTranscripts: [
+      {
+        utteranceId: 'bee-01',
+        speaker: 'Architect',
+        timestamp: '10m ago',
+        transcript: 'Do not merge verifyOtpToken without validation.',
+      },
+    ],
+  });
+
+  assert.ok(plan.planId.startsWith('strands-plan-'));
+  assert.ok(plan.guardrailRedactions >= 2);
+  assert.ok(plan.blastRadiusScore > 0);
+  assert.equal(plan.gateStatus.ringAttestationRequired, true);
+  assert.equal(plan.suggestedPatchVerified, true);
+  assert.ok(plan.ssmlOutput.startsWith('<speak>'));
 });

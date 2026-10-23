@@ -1,0 +1,30 @@
+{
+  "name": "@repopulse/alexa-mcp-bedrock-guardrail",
+  "version": "1.0.0",
+  "description": "Zero-dependency Streamable HTTP Model Context Protocol (MCP 2025-11-25) server and Amazon Bedrock Guardrail engine for Alexa+ and AI PR reviewers",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "test": "node --test dist/**/*.test.js"
+  },
+  "keywords": [
+    "alexa-plus",
+    "mcp",
+    "model-context-protocol",
+    "streamable-http",
+    "amazon-bedrock",
+    "guardrails",
+    "secrets-redaction",
+    "aws",
+    "hackathon"
+  ],
+  "author": "MRLDHANWINN",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/miriyaladhanwinn/repo-pulse-ai.git",
+    "directory": "packages/alexa-mcp-bedrock-guardrail"
+  }
+}
