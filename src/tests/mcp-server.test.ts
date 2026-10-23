@@ -54,12 +54,12 @@ describe('MCPServer Module', () => {
       jsonrpc: '2.0',
       id: 'init-1',
       method: 'initialize',
-      params: { protocolVersion: '2024-11-05' }
+      params: { protocolVersion: '2025-11-25' }
     });
 
     assert.equal(res.id, 'init-1');
     assert.equal(res.result.serverInfo.name, 'repo-pulse-ai');
-    assert.equal(res.result.protocolVersion, '2024-11-05');
+    assert.equal(res.result.protocolVersion, '2025-11-25');
   });
 
   test('should handle invalid tool gracefully', async () => {

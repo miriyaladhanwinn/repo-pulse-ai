@@ -54,18 +54,18 @@ jobs:
             
             const body = `### ${statusEmoji} RepoPulse AI • Codex Maintainer Review
             
-**Decision:** \`${review.decision}\` | **Risk Score:** \`${review.riskScore}/100\` | **Files Inspected:** \`${review.filesInspected}\`
+            **Decision:** \`${review.decision}\` | **Risk Score:** \`${review.riskScore}/100\` | **Files Inspected:** \`${review.filesInspected}\`
 
-#### Summary
-${review.summary}
+                        #### Summary
+            ${review.summary}
 
-#### AST Invariant & Security Checks
-- **Zero Dynamic Eval Sinks:** ${review.criticalIssues === 0 ? '✅ Passed' : '❌ Issues Flagged'}
-- **Bounded Token Partition:** ✅ Verified
-- **SemVer Compliance:** ✅ Clean
+            #### AST Invariant & Security Checks
+            - **Zero Dynamic Eval Sinks:** ${review.criticalIssues === 0 ? '✅ Passed' : '❌ Issues Flagged'}
+            - **Bounded Token Partition:** ✅ Verified
+            - **SemVer Compliance:** ✅ Clean
 
----
-*Automated review dispatched by [RepoPulse AI](https://github.com/miriyaladhanwinn/repo-pulse-ai) powered by OpenAI Codex.*`;
+            ---
+            *Automated review dispatched by [RepoPulse AI](https://github.com/miriyaladhanwinn/repo-pulse-ai) powered by OpenAI Codex.*`;
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
