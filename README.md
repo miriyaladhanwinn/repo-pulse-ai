@@ -188,7 +188,7 @@ node dist/cli/index.js health
 
 ```mermaid
 flowchart TD
-    subgraph Desktop & Studio Presentation Layer
+    subgraph "Desktop & Studio Presentation Layer"
         ELECTRON["Native Electron Desktop App (Apple Liquid Glass)"]
         WEB["Liquid Glass Web Studio (Port 3000)"]
         ISLAND["Apple Dynamic Island Pill"]
@@ -213,7 +213,7 @@ flowchart TD
         LOCAL["Local Ollama & Custom APIs"]
     end
 
-    subgraph Integrations & Automations
+    subgraph "Integrations & Automations"
         MCP["Native MCP Stdio Server (JSON-RPC 2.0)"]
         CLI["Maintainer CLI Tool"]
         GHA["GitHub Actions Review Bot"]
