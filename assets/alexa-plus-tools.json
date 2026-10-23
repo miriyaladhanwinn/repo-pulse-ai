@@ -1,0 +1,64 @@
+{
+  "$schema": "https://modelcontextprotocol.io/schema/2025-11-25/manifest.json",
+  "name": "repopulse-alexa-plus",
+  "version": "2.4.0",
+  "title": "RepoPulse AI • Alexa+ Maintainer & Cloud FinOps Skill",
+  "description": "Voice-enabled open-source code maintainer, AWS Well-Architected security auditor, and cloud cost-delta estimator for Alexa+ conversational agents.",
+  "transport": {
+    "type": "streamable-http",
+    "endpoint": "http://localhost:8787/mcp",
+    "healthEndpoint": "http://localhost:8787/health"
+  },
+  "tools": [
+    {
+      "name": "review_pull_request_diff",
+      "displayName": "Review Pull Request Diff",
+      "description": "Reviews a git diff using Amazon Nova Pro reasoning, detecting AST regressions and breaking changes.",
+      "parameters": {
+        "diffText": { "type": "string", "required": true, "description": "Unified git diff text" },
+        "repoContext": { "type": "string", "required": false, "description": "Repository context or name" }
+      },
+      "voiceExamples": [
+        "Alexa, ask RepoPulse to review the latest pull request",
+        "Alexa, what does Amazon Nova think of our latest PR diff?"
+      ]
+    },
+    {
+      "name": "aws_audit_iac",
+      "displayName": "Audit AWS Infrastructure Code",
+      "description": "Scans AWS CDK, CloudFormation, or Terraform diffs for wildcard IAM policies, exposed security groups, and encryption gaps.",
+      "parameters": {
+        "diffText": { "type": "string", "required": false, "description": "Infrastructure git diff" },
+        "fileContent": { "type": "string", "required": false, "description": "Raw CDK or CloudFormation template content" }
+      },
+      "voiceExamples": [
+        "Alexa, ask RepoPulse: are there any security issues in my AWS CDK stack?",
+        "Alexa, run an AWS Well-Architected audit on my latest commit"
+      ]
+    },
+    {
+      "name": "estimate_aws_cost_delta",
+      "displayName": "Estimate AWS Cloud Cost Delta",
+      "description": "Calculates projected monthly and annual AWS spend impact for newly added or deleted infrastructure with Graviton optimization tips.",
+      "parameters": {
+        "diffText": { "type": "string", "required": true, "description": "Infrastructure diff to evaluate" }
+      },
+      "voiceExamples": [
+        "Alexa, ask RepoPulse: how much will this PR change our AWS bill?",
+        "Alexa, what is the estimated cloud cost delta for our staging infrastructure?"
+      ]
+    },
+    {
+      "name": "apply_bedrock_guardrail",
+      "displayName": "Evaluate Amazon Bedrock Guardrail",
+      "description": "Scans code, comments, or issues for leaked AWS access keys, credentials, PII, and adversarial prompt injections.",
+      "parameters": {
+        "text": { "type": "string", "required": true, "description": "Text or code to evaluate through guardrail policies" }
+      },
+      "voiceExamples": [
+        "Alexa, ask RepoPulse if there are any leaked AWS keys in the latest commit",
+        "Alexa, verify if this contributor PR passed Bedrock Guardrails"
+      ]
+    }
+  ]
+}
