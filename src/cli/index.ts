@@ -32,6 +32,7 @@ Commands:
   studio [--port <n>]  Launch the interactive 3D Web Studio (Apple Developer grade)
   desktop              Launch the native Electron desktop application (Apple Liquid Glass)
   serve-mcp            Start standard Model Context Protocol (MCP) stdio server
+  serve-mcp-http [--port <n>]  Start MCP server over Streamable HTTP (agent track)
   health               Verify provider configurations and credentials
   help                 Display this help reference
 
@@ -49,6 +50,7 @@ Examples:
   git diff HEAD~1 | npx repo-pulse review
   npx repo-pulse review --diff ./changes.patch --repo my-org/my-project
   npx repo-pulse serve-mcp
+  npx repo-pulse serve-mcp-http --port 8787
   `);
 }
 
@@ -188,6 +190,16 @@ async function main() {
       const server = new MCPServer();
       server.startStdioServer();
       break;
+    case 'serve-mcp-http': {
+      const { startMcpHttpServer } = await import('../mcp/mcp-http.js');
+      let httpPort = 8787;
+      const httpPortIdx = args.indexOf('--port');
+      if (httpPortIdx !== -1 && args[httpPortIdx + 1]) {
+        httpPort = parseInt(args[httpPortIdx + 1], 10);
+      }
+      startMcpHttpServer(httpPort);
+      break;
+    }
     case 'health':
       await handleHealth();
       break;
