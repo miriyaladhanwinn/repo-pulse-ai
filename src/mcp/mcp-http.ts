@@ -47,7 +47,7 @@ async function handleHttpRpc(req: IncomingMessage, res: ServerResponse): Promise
   try {
     raw = await readBody(req);
   } catch {
-    json(res, 413, { jsonrpc: '2.0', id: null, error: { code: -32700, message: 'Parse error: body too large' } } as JSONRPCResponse);
+    json(res, 413, { jsonrpc: '2.0', id: null, error: { code: -32700, message: 'Parse error: body too large' } });
     return;
   }
 
@@ -55,7 +55,7 @@ async function handleHttpRpc(req: IncomingMessage, res: ServerResponse): Promise
   try {
     msg = JSON.parse(raw);
   } catch {
-    json(res, 400, { jsonrpc: '2.0', id: null, error: { code: -32700, message: 'Parse error' } } as JSONRPCResponse);
+    json(res, 400, { jsonrpc: '2.0', id: null, error: { code: -32700, message: 'Parse error' } });
     return;
   }
 
