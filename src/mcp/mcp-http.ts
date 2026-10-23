@@ -110,6 +110,11 @@ export function startMcpHttpServer(port = 8787): void {
       return;
     }
 
+    if (req.method === 'GET' && url.pathname === '/') {
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      res.end(`<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RepoPulse AI - MCP Server</title><style>body{font-family:system-ui,-apple-system,sans-serif;max-width:640px;margin:40px auto;padding:0 20px;color:#1a1a1a}h1{font-size:24px}.ok{color:#16a34a;font-weight:bold}code{background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:14px}.card{border:1px solid #e5e7eb;border-radius:8px;padding:16px;margin:12px 0}</style></head><body><h1>RepoPulse AI - MCP Server</h1><p><span class="ok">● LIVE</span> - Streamable HTTP transport (MCP 2025-11-25)</p><div class="card"><b>Health check</b><br><code>GET /health</code></div><div class="card"><b>MCP endpoint</b><br><code>POST /mcp</code> with a JSON-RPC body, e.g. <code>{"jsonrpc":"2.0","id":1,"method":"tools/list"}</code><br><br>Tools: <code>review_pull_request_diff</code>, <code>triage_github_issue</code>, <code>slice_diff_hunks</code></div><p>Built for the Build, Ship, Shape: Amazon Developer Hackathon (Alexa+ track).</p></body></html>`);
+      return;
+    }
     res.writeHead(404, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ error: 'Not found' }));
   });
