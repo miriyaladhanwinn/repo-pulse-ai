@@ -27,6 +27,7 @@ export * from './amazon/astSandboxVerifier.js';
 export * from './amazon/judgeSimulationMode.js';
 export * from './amazon/multiDeviceOrchestrator.js';
 export * from './amazon/strandsAgentOrchestrator.js';
+export * from './amazonEntry.js';
 export * from './triage/issue-classifier.js';
 export * from './triage/reproducer.js';
 export * from './core/assistant-matrix.js';

@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import { BedrockRuntimeClient, ConverseCommand } from '@aws-sdk/client-bedrock-runtime';
 
 export interface SanitizedDiffResult {
   sanitizedDiff: string;
@@ -167,3 +168,69 @@ export async function analyzePRWithBedrock(req: BedrockReviewRequest): Promise<B
     guardrailReport,
   };
 }
+
+/**
+ * Invokes Amazon Bedrock Converse API (Amazon Nova Pro / Claude 3.7 Sonnet) when AWS credentials
+ * are configured, and automatically falls back to the deterministic AST engine in CI / Judge Mode.
+ */
+export async function invokeBedrockConverseOnDiff(req: BedrockReviewRequest): Promise<BedrockReviewResponse> {
+  const baseDeterministicReview = await analyzePRWithBedrock(req);
+
+  const shouldUseMock =
+    process.env.REPOPULSE_MOCK_LLM === 'true' ||
+    !process.env.AWS_ACCESS_KEY_ID ||
+    !process.env.AWS_SECRET_ACCESS_KEY;
+
+  if (shouldUseMock) {
+    return baseDeterministicReview;
+  }
+
+  const client = new BedrockRuntimeClient({
+    region: process.env.AWS_REGION || 'us-east-1',
+  });
+
+  const modelId = req.modelId ?? 'amazon.nova-pro-v1:0';
+
+  try {
+    const command = new ConverseCommand({
+      modelId,
+      system: [
+        {
+          text: 'You are RepoPulse AI, an autonomous AST-bounded code maintainer running on Amazon Bedrock. Return concise executive triage for Alexa+ voice synthesis.',
+        },
+      ],
+      messages: [
+        {
+          role: 'user',
+          content: [
+            {
+              text: [
+                `Repository: ${req.repo} (PR #${req.prNumber})`,
+                `Modified AST Symbols: ${req.astSymbolsChanged.join(', ') || 'none'}`,
+                `Sanitized Diff:\n${baseDeterministicReview.guardrailReport.sanitizedDiff.slice(0, 6000)}`,
+              ].join('\n\n'),
+            },
+          ],
+        },
+      ],
+      inferenceConfig: {
+        maxTokens: 350,
+        temperature: 0.1,
+      },
+    });
+
+    const response = await client.send(command);
+    const liveSummary =
+      response.output?.message?.content?.[0]?.text?.trim() || baseDeterministicReview.executiveSummary;
+
+    return {
+      ...baseDeterministicReview,
+      modelUsed: `${modelId} (live-bedrock-converse)`,
+      executiveSummary: liveSummary,
+    };
+  } catch {
+    // Graceful fallback if AWS credentials lack Bedrock model entitlement or hit rate limits
+    return baseDeterministicReview;
+  }
+}
+

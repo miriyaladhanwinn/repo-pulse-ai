@@ -16,7 +16,10 @@
     "test": "node -e \"const fs = require('fs'); const path = require('path'); const files = fs.readdirSync('dist/tests').filter(f => f.endsWith('.test.js')).map(f => path.join('dist/tests', f)); const { spawnSync } = require('child_process'); const res = spawnSync('node', ['--test', ...files], { stdio: 'inherit' }); process.exit(res.status);\"",
     "pretest": "npm run build",
     "lint": "tsc --noEmit",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "mcp:http": "node --import tsx src/amazonEntry.ts",
+    "judge:sim": "cross-env REPOPULSE_JUDGE_MODE=true node --import tsx src/amazonEntry.ts",
+    "test:amazon": "cross-env REPOPULSE_MOCK_LLM=true node --import tsx --test src/__tests__/amazonHackathon.test.ts"
   },
   "keywords": [
     "amazon-bedrock",
@@ -46,7 +49,12 @@
   "homepage": "https://github.com/miriyaladhanwinn/repo-pulse-ai#readme",
   "devDependencies": {
     "@types/node": "^22.10.0",
+    "cross-env": "^10.1.0",
     "electron": "^44.3.0",
+    "tsx": "^4.23.15",
     "typescript": "^5.7.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.1156.0"
   }
 }

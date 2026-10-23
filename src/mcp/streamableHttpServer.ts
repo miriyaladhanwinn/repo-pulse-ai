@@ -1,9 +1,10 @@
 import http from 'node:http';
 import crypto from 'node:crypto';
-import { analyzePRWithBedrock, sanitizeDiffWithGuardrails } from '../amazon/bedrockGuardrailEngine.js';
+import { analyzePRWithBedrock, invokeBedrockConverseOnDiff, sanitizeDiffWithGuardrails } from '../amazon/bedrockGuardrailEngine.js';
 import { correlateBeeTranscriptsWithPR } from '../amazon/beeWearableBridge.js';
 import { verifyAndSynthesizePatch } from '../amazon/astSandboxVerifier.js';
 import { evaluateRingDeploymentGate, reduceFireTvRemoteInput, createInitialFireTvState, FireTvRemoteKey } from '../amazon/multiDeviceOrchestrator.js';
+import { DEFAULT_AMAZON_JUDGE_SCENARIO } from '../amazon/judgeSimulationMode.js';
 
 export const MCP_PROTOCOL_VERSION = '2025-11-25';
 
@@ -182,7 +183,7 @@ export async function handleMcpJsonRpc(request: JsonRpcRequest): Promise<Record<
       const args = (params.arguments ?? {}) as Record<string, any>;
 
       if (toolName === 'repopulse_alexa_voice_triage') {
-        const result = await analyzePRWithBedrock({
+        const result = await invokeBedrockConverseOnDiff({
           repo: String(args.repo),
           prNumber: Number(args.prNumber),
           diff: String(args.diff),
@@ -308,6 +309,40 @@ export function createMcpStreamableHttpServer(): http.Server {
           specVersion: MCP_PROTOCOL_VERSION,
           tracks: ['Alexa+', 'Bee Wearable AI', 'Fire TV', 'Ring', 'AWS Builder', 'Open Source'],
         })
+      );
+      return;
+    }
+
+    if (req.url?.startsWith('/judge-scenario') && req.method === 'GET') {
+      const gateStatus = evaluateRingDeploymentGate(
+        DEFAULT_AMAZON_JUDGE_SCENARIO.targetPR.prNumber,
+        88
+      );
+      const fireTvState = reduceFireTvRemoteInput(
+        {
+          focusedAstNodeIndex: 0,
+          totalNodes: DEFAULT_AMAZON_JUDGE_SCENARIO.targetPR.astSymbolsChanged.length,
+          inspectingDiffModal: false,
+          autoRotate3DCore: true,
+          lastActionAnnouncement: 'Initialized Fire TV 10-Foot War Room HUD',
+        },
+        'SELECT',
+        DEFAULT_AMAZON_JUDGE_SCENARIO.targetPR.astSymbolsChanged
+      );
+
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(
+        JSON.stringify(
+          {
+            judgeMode: true,
+            mcpSpec: MCP_PROTOCOL_VERSION,
+            scenario: DEFAULT_AMAZON_JUDGE_SCENARIO,
+            ringDeploymentGate: gateStatus,
+            fireTvHudState: fireTvState,
+          },
+          null,
+          2
+        )
       );
       return;
     }
