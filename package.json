@@ -13,7 +13,7 @@
     "start": "node dist/cli/index.js",
     "studio": "node dist/cli/index.js studio",
     "desktop": "npm run build && electron dist/desktop/main.js",
-    "test": "node --test dist/tests/**/*.test.js",
+    "test": "node --test dist/tests/",
     "pretest": "npm run build",
     "lint": "tsc --noEmit",
     "prepare": "npm run build"
