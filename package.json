@@ -13,7 +13,7 @@
     "start": "node dist/cli/index.js",
     "studio": "node dist/cli/index.js studio",
     "desktop": "npm run build && electron dist/desktop/main.js",
-    "test": "node --test dist/tests/",
+    "test": "node -e \"const fs = require('fs'); const path = require('path'); const files = fs.readdirSync('dist/tests').filter(f => f.endsWith('.test.js')).map(f => path.join('dist/tests', f)); const { spawnSync } = require('child_process'); const res = spawnSync('node', ['--test', ...files], { stdio: 'inherit' }); process.exit(res.status);\"",
     "pretest": "npm run build",
     "lint": "tsc --noEmit",
     "prepare": "npm run build"
