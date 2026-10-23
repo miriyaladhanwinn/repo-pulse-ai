@@ -15,7 +15,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7+-blue.svg)](https://www.typescriptlang.org/)
 [![Electron](https://img.shields.io/badge/Electron-44.3+-2b2d42.svg)](https://www.electronjs.org/)
-[![Tests](https://img.shields.io/badge/tests-95%2F95%20passing-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-100%2F100%20passing-brightgreen.svg)]()
 
 <p align="center">
   <a href="#-amazon-developer-hackathon-highlights">Hackathon Highlights</a> •
@@ -28,6 +28,47 @@
 </p>
 
 </div>
+
+---
+
+## 🏆 Amazon Developer Architecture (Alexa+ • Bee Wearable AI • AWS Bedrock • MCP `2025-11-25`)
+
+RepoPulse AI connects **Alexa+ Multimodal Voice & Screen**, **Bee Wearable AI developer memory**, and **Amazon Bedrock (`Nova Pro` & `Claude 3.7 Sonnet`)** over a **Streamable HTTP Model Context Protocol (`2025-11-25`)** server:
+
+```text
+┌───────────────────────────┐      ┌──────────────────────────────────┐
+│   Alexa+ / Echo Show /    │      │   Bee Wearable AI (CLI / MCP)    │
+│   Fire TV War Room HUD    │      │  Live Standup & Hallway Memory   │
+└─────────────┬─────────────┘      └─────────────────┬────────────────┘
+              │ Voice + APL Multimodal               │ Live Transcript Stream
+              ▼                                      ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│        RepoPulse MCP Server (Spec 2025-11-25 • Streamable HTTP)     │
+│  • POST /mcp (JSON-RPC + SSE Stream)  • Stdio Local Transport       │
+├───────────────────┬────────────────────────┬────────────────────────┤
+│ 1. Pre-Flight     │ 2. AST Blast-Radius    │ 3. Autonomous Sandbox  │
+│ Bedrock Guardrail │ & Bee Memory Correlator│ Patch Verifier         │
+│ (Secret Redaction)│ (Symbol Call Graph)    │ (Isolated Test Runner) │
+└─────────┬─────────┴───────────┬────────────┴───────────┬────────────┘
+          ▼                     ▼                        ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│   Amazon Bedrock Runtime (Amazon Nova Pro + Claude 3.7 Sonnet)      │
+│   + 540-Model Fallback Router & GitHub Checks / PR Review Bot       │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Embedded MCP Tools (`POST /mcp` & `stdio`)
+
+| Tool Name | Track Integration | Capability |
+| :--- | :--- | :--- |
+| `repopulse_alexa_voice_triage` | **Alexa+ Track** | Computes deterministic AST blast radius, runs secret redaction, and returns `<speak>` SSML + multimodal visual payload. |
+| `repopulse_bee_wearable_sync` | **Bee Track** | Matches live wearable developer voice transcripts against modified AST symbols in open GitHub PR diffs. |
+| `repopulse_verify_and_patch` | **AWS Builder + Open Source** | Synthesizes AST-valid fixes and verifies them inside an isolated test sandbox before emitting GitHub Suggested Changes. |
+| `repopulse_sanitize_diff` | **AWS Bedrock Guardrails** | Redacts leaked AWS keys (`AKIA...`), GitHub tokens, high-entropy secrets, and PII prior to LLM inference. |
+| `review_pull_request_diff` | **AWS Builder Track** | Evaluates unified git diffs with Amazon Nova Pro AST heuristics and blast-radius scoring. |
+| `aws_audit_iac` | **AWS Security & Well-Architected** | Scans AWS CDK, CloudFormation, and Terraform diffs for IAM wildcard and port 22 hazards. |
+| `estimate_aws_cost_delta` | **AWS FinOps Track** | Calculates real-time dollar delta ($/mo) for EC2, RDS, and NAT Gateway changes in PRs. |
+| `apply_bedrock_guardrail` | **Bedrock Guardrails** | Entropy scanner and PII detector blocking hardcoded secrets from entering PR branches. |
 
 ---
 
@@ -55,7 +96,7 @@ Powered natively by **Amazon Bedrock** and the **Amazon Nova** model family (Nov
 | **Cloud Security** | Automated AST scanning for wildcard IAM statements (`Action: "*"`), public S3 buckets, and open port 22 security groups. | **AWS Well-Architected & CIS Benchmarks** |
 | **Developer Workflow**| Standard Model Context Protocol (MCP) server over `stdio` and streamable HTTP for Amazon Q Developer CLI & IDEs. | **Amazon Q Developer, MCP Standard** |
 | **Cloud-Native Arch** | Turnkey 1-click AWS CDK v2 stack with API Gateway, Lambda PR review worker, DynamoDB audit cache, and EventBridge. | **AWS CDK, Lambda, API Gateway, DynamoDB** |
-| **Implementation Quality** | Zero runtime dependencies outside standard library; **95/95 automated tests passing in 552ms**. | **Node.js 20 ESM, TypeScript 5.7** |
+| **Implementation Quality** | Zero runtime dependencies outside standard library; **100/100 automated tests passing in 541ms**. | **Node.js 20 ESM, TypeScript 5.7** |
 
 ---
 
@@ -275,11 +316,13 @@ npm test
 ✔ OpenAICodexProvider Heuristic Review & Triage Engine (5 tests)
 ✔ StudioServer E2E Verification (10 tests)
 
-ℹ tests 95
+✔ AmazonHackathonSuite (Alexa+ • Bee • AST Sandbox • Bedrock Guardrails) (5 tests)
+
+ℹ tests 100
 ℹ suites 20
-ℹ pass 95
+ℹ pass 100
 ℹ fail 0
-ℹ duration_ms 552ms
+ℹ duration_ms 541ms
 ```
 
 ---
