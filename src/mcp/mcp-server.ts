@@ -1,12 +1,16 @@
 /**
  * Native Model Context Protocol (MCP) Server
- * Exposes repository intelligence, diff reviews, and triage tools to ChatGPT & Codex.
+ * Exposes repository intelligence, diff reviews, AWS IaC audits, FinOps cost delta,
+ * and Bedrock Guardrails to Amazon Q Developer, Claude Code, Cursor, and ChatGPT.
  * Copyright (c) 2026 MRLDHANWINN. Apache-2.0 Licensed.
  */
 
 import { MCPToolDefinition, ParsedDiff, ReviewSummary } from '../types/index.js';
 import { DiffAnalyzer } from '../core/diff-analyzer.js';
 import { OpenAICodexProvider } from '../providers/openai-codex.js';
+import { AwsIacAnalyzer } from '../core/aws-iac-analyzer.js';
+import { AwsFinOpsEstimator } from '../core/finops-estimator.js';
+import { BedrockGuardrailsEngine } from '../core/bedrock-guardrails.js';
 
 export interface JSONRPCRequest {
   jsonrpc: '2.0';
@@ -28,9 +32,11 @@ export interface JSONRPCResponse {
 
 export class MCPServer {
   private provider: OpenAICodexProvider;
+  private guardrails: BedrockGuardrailsEngine;
 
   constructor() {
     this.provider = new OpenAICodexProvider();
+    this.guardrails = new BedrockGuardrailsEngine();
   }
 
   /**
@@ -48,6 +54,40 @@ export class MCPServer {
             repoContext: { type: 'string', description: 'Brief description of repository purpose' }
           },
           required: ['diffText']
+        }
+      },
+      {
+        name: 'aws_audit_iac',
+        description: 'Scans AWS CDK (TypeScript/Python), CloudFormation, SAM, or Terraform diffs for security violations, wildcard IAM policies, and open security groups.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            diffText: { type: 'string', description: 'Raw git diff output of infrastructure files' },
+            filePath: { type: 'string', description: 'Optional path of file being audited' },
+            fileContent: { type: 'string', description: 'Optional raw content of IaC template or CDK stack' }
+          }
+        }
+      },
+      {
+        name: 'estimate_aws_cost_delta',
+        description: 'Analyzes infrastructure git diffs and calculates projected monthly and annual AWS spend impact (FinOps) with Bedrock optimization advice.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            diffText: { type: 'string', description: 'Raw git diff output containing infrastructure changes' }
+          },
+          required: ['diffText']
+        }
+      },
+      {
+        name: 'apply_bedrock_guardrail',
+        description: 'Evaluates code diffs or issue text through Amazon Bedrock Guardrails, blocking leaked AWS credentials, PII, and prompt injections.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            text: { type: 'string', description: 'Code diff, prompt, or comment text to evaluate' }
+          },
+          required: ['text']
         }
       },
       {
@@ -129,6 +169,46 @@ export class MCPServer {
               id,
               result: {
                 content: [{ type: 'text', text: JSON.stringify(review, null, 2) }]
+              }
+            };
+          }
+
+          if (toolName === 'aws_audit_iac') {
+            let report;
+            if (args.fileContent) {
+              report = AwsIacAnalyzer.auditFileContent(args.filePath || 'stack.ts', args.fileContent);
+            } else {
+              const parsed = DiffAnalyzer.parseUnifiedDiff(args.diffText || '');
+              report = AwsIacAnalyzer.auditDiff(parsed);
+            }
+            return {
+              jsonrpc: '2.0',
+              id,
+              result: {
+                content: [{ type: 'text', text: JSON.stringify(report, null, 2) }]
+              }
+            };
+          }
+
+          if (toolName === 'estimate_aws_cost_delta') {
+            const parsed = DiffAnalyzer.parseUnifiedDiff(args.diffText || '');
+            const report = AwsFinOpsEstimator.estimateDiff(parsed);
+            return {
+              jsonrpc: '2.0',
+              id,
+              result: {
+                content: [{ type: 'text', text: JSON.stringify(report, null, 2) }]
+              }
+            };
+          }
+
+          if (toolName === 'apply_bedrock_guardrail') {
+            const guardResult = await this.guardrails.evaluate(args.text || '');
+            return {
+              jsonrpc: '2.0',
+              id,
+              result: {
+                content: [{ type: 'text', text: JSON.stringify(guardResult, null, 2) }]
               }
             };
           }

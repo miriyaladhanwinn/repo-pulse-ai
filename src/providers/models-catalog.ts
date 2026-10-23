@@ -297,7 +297,20 @@ export const MODEL_REGISTRY: ModelDescriptor[] = [
   { id: 'codellama:13b', name: 'CodeLlama 13B (Ollama)', provider: 'ollama', contextWindow: 16384, reasoningSupport: false, visionSupport: false, toolCallSupport: false, tier: 'local', description: 'Local CodeLlama model running locally on developer workstation.' },
 
   // --- 20. Custom User-Defined API Endpoint ---
+  // --- 30. Amazon Bedrock & Amazon Nova (10 models) ---
+  { id: 'amazon.nova-pro-v1:0', name: 'Amazon Nova Pro', provider: 'amazon', contextWindow: 300000, reasoningSupport: true, visionSupport: true, toolCallSupport: true, tier: 'frontier', description: 'Amazon flagship multimodal reasoning model for advanced coding, AST analysis, and agent workflows.' },
+  { id: 'amazon.nova-lite-v1:0', name: 'Amazon Nova Lite', provider: 'amazon', contextWindow: 300000, reasoningSupport: false, visionSupport: true, toolCallSupport: true, tier: 'fast', description: 'High-speed, cost-effective multimodal model for high-velocity code reviews and triage.' },
+  { id: 'amazon.nova-micro-v1:0', name: 'Amazon Nova Micro', provider: 'amazon', contextWindow: 128000, reasoningSupport: false, visionSupport: false, toolCallSupport: false, tier: 'fast', description: 'Lowest-latency text-only model delivering instant classification and AST hunk slicing.' },
+  { id: 'amazon.nova-premier-v1:0', name: 'Amazon Nova Premier', provider: 'amazon', contextWindow: 1000000, reasoningSupport: true, visionSupport: true, toolCallSupport: true, tier: 'frontier', description: 'Amazon frontier foundation model for ultra-complex multi-repository architectures.' },
+  { id: 'amazon.titan-text-premier-v1:0', name: 'Amazon Titan Text Premier', provider: 'amazon', contextWindow: 32000, reasoningSupport: false, visionSupport: false, toolCallSupport: true, tier: 'frontier', description: 'High-performance AWS enterprise model optimized for RAG and enterprise document reasoning.' },
+  { id: 'amazon.titan-text-express-v1:0', name: 'Amazon Titan Text Express', provider: 'amazon', contextWindow: 8192, reasoningSupport: false, visionSupport: false, toolCallSupport: false, tier: 'fast', description: 'Low-cost general text generation model on Amazon Bedrock.' },
+  { id: 'amazon.titan-embed-text-v2:0', name: 'Amazon Titan Text Embeddings V2', provider: 'amazon', contextWindow: 8192, reasoningSupport: false, visionSupport: false, toolCallSupport: false, tier: 'specialized', description: 'Next-gen semantic text embeddings for Bedrock Knowledge Bases and vector search.' },
+  { id: 'anthropic.claude-3-7-sonnet-bedrock', name: 'Claude 3.7 Sonnet on Amazon Bedrock', provider: 'amazon', contextWindow: 200000, reasoningSupport: true, visionSupport: true, toolCallSupport: true, tier: 'frontier', description: 'Anthropic Claude 3.7 Sonnet hosted on Amazon Bedrock with AWS IAM security.' },
+  { id: 'anthropic.claude-3-5-sonnet-bedrock', name: 'Claude 3.5 Sonnet on Amazon Bedrock', provider: 'amazon', contextWindow: 200000, reasoningSupport: false, visionSupport: true, toolCallSupport: true, tier: 'frontier', description: 'Industry benchmark Claude 3.5 Sonnet hosted on Amazon Bedrock.' },
+  { id: 'meta.llama3-3-70b-bedrock', name: 'Meta Llama 3.3 70B on Amazon Bedrock', provider: 'amazon', contextWindow: 128000, reasoningSupport: true, visionSupport: false, toolCallSupport: true, tier: 'frontier', description: 'Open weights Llama 3.3 70B deployed on managed Amazon Bedrock infrastructure.' },
+
   { id: 'custom-endpoint', name: 'Custom OpenAI-Compatible API', provider: 'custom', contextWindow: 128000, reasoningSupport: true, visionSupport: true, toolCallSupport: true, tier: 'frontier', description: 'User-specified OpenAI-compatible base URL with bearer token.' }
+
 ];
 
 export class ModelCatalog {

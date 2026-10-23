@@ -68,7 +68,7 @@ describe('Native Desktop Architecture & Cherry Parity Verification', () => {
     const pkgPath = path.join(rootDir, 'package.json');
     const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
     
-    assert.equal(pkg.version, '2.3.1');
+    assert.ok(pkg.version.startsWith('2.4'), 'Version is 2.4.x');
     assert.ok(pkg.scripts.desktop, 'Contains npm run desktop script');
     assert.ok(pkg.devDependencies.electron, 'Contains electron devDependency');
     assert.equal(pkg.main, 'dist/desktop/main.js', 'Points main to Electron desktop entry');

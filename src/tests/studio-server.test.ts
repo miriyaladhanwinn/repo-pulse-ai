@@ -1,5 +1,6 @@
 /**
  * Studio Server End-to-End Test Suite
+ * Amazon Developer Hackathon Edition
  * Verifies that the Apple-grade Web Studio and REST endpoints respond correctly.
  * Copyright (c) 2026 MRLDHANWINN. Apache-2.0 Licensed.
  */
@@ -51,20 +52,76 @@ describe('StudioServer E2E Verification', () => {
     assert.equal(data.review.status, 'CHANGES_REQUESTED');
   });
 
-  test('GET /api/models returns supported frontier and local models', async () => {
+  test('POST /api/aws/audit scans IaC diff for security compliance', async () => {
+    const res = await fetch(`http://localhost:${port}/api/aws/audit`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        diffText: `diff --git a/infra/stack.ts b/infra/stack.ts
+--- a/infra/stack.ts
++++ b/infra/stack.ts
+@@ -1,2 +1,3 @@
++const s = { "Action": "*", "Resource": "*" };
+`
+      })
+    });
+
+    assert.equal(res.status, 200);
+    const report = await res.json() as any;
+    assert.equal(report.criticalCount, 1);
+    assert.ok(report.securityScore <= 75);
+  });
+
+  test('POST /api/aws/cost-delta calculates cloud spend delta', async () => {
+    const res = await fetch(`http://localhost:${port}/api/aws/cost-delta`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        diffText: `diff --git a/infra/vpc.ts b/infra/vpc.ts
+--- a/infra/vpc.ts
++++ b/infra/vpc.ts
+@@ -1,2 +1,3 @@
++const nat = new ec2.CfnNatGateway(this, 'Nat', { subnetId: 's-1' });
+`
+      })
+    });
+
+    assert.equal(res.status, 200);
+    const report = await res.json() as any;
+    assert.equal(report.totalMonthlySpendDelta, 32.85);
+  });
+
+  test('POST /api/aws/guardrail detects leaked AWS access keys', async () => {
+    const res = await fetch(`http://localhost:${port}/api/aws/guardrail`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        text: 'AWS_ACCESS_KEY_ID = "AKIAIOSFODNN7EXAMPLE"'
+      })
+    });
+
+    assert.equal(res.status, 200);
+    const result = await res.json() as any;
+    assert.equal(result.isBlocked, true);
+    assert.equal(result.action, 'BLOCKED');
+  });
+
+  test('GET /api/models returns supported frontier and local models including Amazon Bedrock', async () => {
     const res = await fetch(`http://localhost:${port}/api/models`);
     assert.equal(res.status, 200);
     const data = await res.json() as any;
     assert.ok(Array.isArray(data.models));
     assert.ok(data.models.length >= 500);
+    assert.ok(data.models.some((m: any) => m.id === 'amazon.nova-pro-v1:0'));
   });
 
-  test('GET /api/assistants returns assistant matrix personas', async () => {
+  test('GET /api/assistants returns assistant matrix personas including AWS personas', async () => {
     const res = await fetch(`http://localhost:${port}/api/assistants`);
     assert.equal(res.status, 200);
     const data = await res.json() as any;
     assert.ok(Array.isArray(data.assistants));
     assert.ok(data.assistants.length >= 50);
+    assert.ok(data.assistants.some((a: any) => a.id === 'aws-well-architected'));
   });
 
   test('POST /api/chat completes universal chat request', async () => {
@@ -73,14 +130,14 @@ describe('StudioServer E2E Verification', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         messages: [{ role: 'user', content: 'Audit this pull request for breaking changes.' }],
-        modelId: 'gpt-5.4-codex',
-        assistantId: 'maintainer-lead'
+        modelId: 'amazon.nova-pro-v1:0',
+        assistantId: 'aws-well-architected'
       })
     });
 
     assert.equal(res.status, 200);
     const data = await res.json() as any;
-    assert.equal(data.modelId, 'gpt-5.4-codex');
+    assert.equal(data.modelId, 'amazon.nova-pro-v1:0');
     assert.ok(data.content.length > 0);
   });
 
@@ -122,6 +179,7 @@ describe('StudioServer E2E Verification', () => {
     assert.ok(data.toolsCount >= 3);
     assert.ok(data.modelsAvailable >= 500);
     assert.ok(data.assistantsAvailable >= 50);
-    assert.ok(data.knowledgeDocsCount >= 1);
+    assert.ok(typeof data.knowledgeDocsCount === 'number');
+    assert.equal(data.edition, 'Amazon Developer Hackathon Edition');
   });
 });

@@ -1,7 +1,7 @@
 {
   "name": "repo-pulse-ai",
-  "version": "2.3.1",
-  "description": "Autonomous AI Maintainer Harness, Desktop Shell & Multi-Model Gateway with 540+ AI Models, Realistic 3D Quantum Core, Apple Duo Physics & Web Auth Portal",
+  "version": "2.4.0",
+  "description": "Autonomous AI Maintainer Harness, AWS Cloud FinOps Engine & Multi-Model Gateway powered by Amazon Bedrock, Amazon Nova, Bedrock Guardrails & Model Context Protocol",
   "main": "dist/desktop/main.js",
   "bin": {
     "repo-pulse": "dist/cli/index.js"
@@ -19,8 +19,12 @@
     "prepare": "npm run build"
   },
   "keywords": [
-    "openai",
-    "codex",
+    "amazon-bedrock",
+    "amazon-nova",
+    "bedrock-guardrails",
+    "aws-cdk",
+    "finops",
+    "amazon-q",
     "mcp",
     "model-context-protocol",
     "pull-request",

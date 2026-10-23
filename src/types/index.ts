@@ -93,3 +93,6 @@ export interface MCPToolDefinition {
     required?: string[];
   };
 }
+
+export * from './aws.js';
+

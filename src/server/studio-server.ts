@@ -1,5 +1,6 @@
 /**
  * RepoPulse Studio Server - Embedded HTTP Server
+ * Amazon Developer Hackathon Edition
  * Serves the Apple Developer-grade Web Studio and provides interactive REST APIs.
  * Copyright (c) 2026 MRLDHANWINN. Apache-2.0 Licensed.
  */
@@ -10,6 +11,10 @@ import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DiffAnalyzer } from '../core/diff-analyzer.js';
 import { OpenAICodexProvider } from '../providers/openai-codex.js';
+import { AmazonBedrockProvider } from '../providers/bedrock-provider.js';
+import { AwsIacAnalyzer } from '../core/aws-iac-analyzer.js';
+import { AwsFinOpsEstimator } from '../core/finops-estimator.js';
+import { BedrockGuardrailsEngine } from '../core/bedrock-guardrails.js';
 import { IssueClassifier } from '../triage/issue-classifier.js';
 import { Reproducer } from '../triage/reproducer.js';
 import { MCPServer } from '../mcp/mcp-server.js';
@@ -24,6 +29,8 @@ const __dirname = path.dirname(__filename);
 export class StudioServer {
   private port: number;
   private provider: OpenAICodexProvider;
+  private bedrockProvider: AmazonBedrockProvider;
+  private guardrailsEngine: BedrockGuardrailsEngine;
   private mcpServer: MCPServer;
   private knowledgeVault: KnowledgeVault;
   private authService: AuthService;
@@ -32,17 +39,11 @@ export class StudioServer {
   constructor(port: number = 3000) {
     this.port = port;
     this.provider = new OpenAICodexProvider();
+    this.bedrockProvider = new AmazonBedrockProvider();
+    this.guardrailsEngine = new BedrockGuardrailsEngine();
     this.mcpServer = new MCPServer();
     this.knowledgeVault = new KnowledgeVault();
     this.authService = new AuthService();
-
-    // Pre-populate with essential maintainer guides
-    this.knowledgeVault.indexDocument({
-      title: 'RepoPulse Governance & Architectural Invariants',
-      path: 'docs/architecture.md',
-      category: 'doc',
-      content: 'RepoPulse enforces strict backward compatibility, zero dynamic evaluation sinks, bounded token scheduling, and native MCP stdio interoperability.'
-    });
   }
 
   public start(): Promise<number> {
@@ -218,15 +219,60 @@ export class StudioServer {
           // 4. PR Diff Review Endpoint
           if (req.method === 'POST' && url.pathname === '/api/review') {
             const body = await this.readBody(req);
-            const { diffText, repoContext } = JSON.parse(body || '{}');
+            const { diffText, repoContext, provider } = JSON.parse(body || '{}');
             const parsed = DiffAnalyzer.parseUnifiedDiff(diffText || '');
-            const review = await this.provider.reviewDiff(parsed, repoContext || 'Local Workspace');
+            
+            // Allow selecting Amazon Bedrock as review engine
+            let review;
+            if (provider === 'amazon' || provider === 'bedrock') {
+              review = await this.bedrockProvider.reviewDiff(parsed, repoContext || 'AWS Project');
+            } else {
+              review = await this.provider.reviewDiff(parsed, repoContext || 'Local Workspace');
+            }
+            
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ parsed, review }));
             return;
           }
 
-          // 5. Issue Triage Endpoint
+          // 5. AWS IaC Security Audit Endpoint
+          if (req.method === 'POST' && url.pathname === '/api/aws/audit') {
+            const body = await this.readBody(req);
+            const { diffText, fileContent, filePath } = JSON.parse(body || '{}');
+            let report;
+            if (fileContent) {
+              report = AwsIacAnalyzer.auditFileContent(filePath || 'stack.ts', fileContent);
+            } else {
+              const parsed = DiffAnalyzer.parseUnifiedDiff(diffText || '');
+              report = AwsIacAnalyzer.auditDiff(parsed);
+            }
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(report));
+            return;
+          }
+
+          // 6. AWS FinOps Cost-Delta Estimator Endpoint
+          if (req.method === 'POST' && url.pathname === '/api/aws/cost-delta') {
+            const body = await this.readBody(req);
+            const { diffText } = JSON.parse(body || '{}');
+            const parsed = DiffAnalyzer.parseUnifiedDiff(diffText || '');
+            const report = AwsFinOpsEstimator.estimateDiff(parsed);
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(report));
+            return;
+          }
+
+          // 7. Amazon Bedrock Guardrails Endpoint
+          if (req.method === 'POST' && url.pathname === '/api/aws/guardrail') {
+            const body = await this.readBody(req);
+            const { text } = JSON.parse(body || '{}');
+            const guardResult = await this.guardrailsEngine.evaluate(text || '');
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(guardResult));
+            return;
+          }
+
+          // 8. Issue Triage Endpoint
           if (req.method === 'POST' && url.pathname === '/api/triage') {
             const body = await this.readBody(req);
             const { id, title, body: issueBody } = JSON.parse(body || '{}');
@@ -245,7 +291,7 @@ export class StudioServer {
             return;
           }
 
-          // 6. Knowledge Vault Endpoints
+          // 9. Knowledge Vault Endpoints
           if (req.method === 'GET' && url.pathname === '/api/knowledge') {
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ documents: this.knowledgeVault.getAll() }));
@@ -283,7 +329,7 @@ export class StudioServer {
             return;
           }
 
-          // 7. MCP JSON-RPC Endpoint
+          // 10. MCP JSON-RPC Endpoint
           if (req.method === 'POST' && url.pathname === '/api/mcp') {
             const body = await this.readBody(req);
             const rpcReq = JSON.parse(body || '{}');
@@ -293,19 +339,23 @@ export class StudioServer {
             return;
           }
 
-          // 8. System Health Endpoint
+          // 11. System Health Endpoint
           if (req.method === 'GET' && url.pathname === '/api/health') {
             const isConfigured = await this.provider.isConfigured();
+            const bedrockConfigured = await this.bedrockProvider.isConfigured();
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({
               status: 'operational',
               model: this.provider.modelId,
+              bedrockModel: this.bedrockProvider.modelId,
               hasApiKey: isConfigured,
+              hasBedrock: bedrockConfigured,
               nodeVersion: process.version,
               toolsCount: this.mcpServer.getSupportedTools().length,
               modelsAvailable: MultiModelRouter.getModels().length,
               assistantsAvailable: AssistantMatrix.getAll().length,
               knowledgeDocsCount: this.knowledgeVault.getAll().length,
+              edition: 'Amazon Developer Hackathon Edition',
               timestamp: new Date().toISOString()
             }));
             return;
