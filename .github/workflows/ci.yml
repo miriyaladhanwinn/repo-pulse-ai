@@ -29,8 +29,5 @@ jobs:
       - name: Compile TypeScript & Assets
         run: npm run build
 
-      - name: Debug dist contents
-        run: ls -la dist/ && echo "--- tests dir ---" && ls -la dist/tests/ || echo "NO dist/tests DIR"
-
       - name: Execute 100% Test Suite
         run: npm test
